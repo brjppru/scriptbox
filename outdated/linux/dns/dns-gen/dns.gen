@@ -1,0 +1,16 @@
+/ip dns static
+add address=127.0.0.1 name=localhost
+add address=127.0.0.1 name=localhost.37.local
+add address=192.168.88.1 name=border.37.local
+add address=192.168.88.40 name=baza.37.local
+add address=192.168.88.40 name=home.brj.pp.ru
+add address=192.168.88.41 name=u1f.37.local
+add address=192.168.88.37 name=hp250.37.local
+add address=192.168.88.42 name=x5.37.local
+add address=192.168.88.43 name=q415.37.local
+add address=192.168.88.50 name=tv.37.local
+add address=192.168.88.44 name=multipad.37.local
+add address=192.168.88.47 name=elka.37.local
+add address=192.168.88.45 name=idol.37.local
+add address=192.168.20.1 name=gre-brj-ms.37.local
+add address=192.168.20.2 name=gre-brj-ms.37.local

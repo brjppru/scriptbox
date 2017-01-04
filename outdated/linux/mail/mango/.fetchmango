@@ -1,0 +1,7 @@
+poll localhost
+protocol imap
+timeout 300
+username "sip" password "Sipspy2016"
+#folder "sip"
+mimedecode
+mda "/usr/bin/procmail -m '/root/bin/mail/sba/.procmail'"

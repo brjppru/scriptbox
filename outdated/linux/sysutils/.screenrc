@@ -1,0 +1,36 @@
+#
+# brj@screen config
+#
+
+encoding UTF-8
+defencoding UTF-8
+defutf8 on
+
+pow_detach_msg "Screen session of \$LOGNAME \$:cr:\$:nl:ended."
+
+term screen-256color
+
+nonblock	on 			# Don't block command output if the terminal stops responding
+defutf8		on			# включаем utf8, ага
+defflow		on			# настройка режим управления потоком окна.
+deflogin	on  			# включает login-режим (для обновления /var/run/utmp)
+
+altscreen	on
+startup_message off			# Who cares :P
+nethack 	off			# Nicer messages
+vbell		off			# I hate barking dogs :P
+autodetach on
+
+# hacked
+hardstatus alwayslastline '%{= G}[ %{G}%H %{g}][%= %{= w}%?%-Lw%?%{= R}%n*%f %t%?%{= R}(%u)%?%{= w}%+Lw%?%= %{= g}][ %{y}Load: %l %{g}][%{B}%Y-%m-%d %{W}%c:%s %{g}]'
+
+# These apps are started up on default when a new screen-session is started.
+screen    -t htop 0 htop
+screen    -t zero 1 bash
+screen    -t sumc  2 mc -a
+
+termcapinfo * ti@:te@
+
+# This is the initial window.
+
+log off

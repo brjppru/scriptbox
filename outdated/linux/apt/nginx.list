@@ -1,0 +1,8 @@
+#nginx mainline
+# http://nginx.org/ru/linux_packages.html#mainline
+# wget http://nginx.org/keys/nginx_signing.key
+# apt-key add nginx_signing.key
+
+deb http://nginx.org/packages/mainline/ubuntu/ trusty nginx
+deb-src http://nginx.org/packages/mainline/ubuntu/ trusty nginx
+

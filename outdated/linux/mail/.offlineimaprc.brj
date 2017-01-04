@@ -1,0 +1,43 @@
+[general]
+ui = TTY.TTYUI
+accounts = yandex
+
+[Account yandex]
+localrepository = ya-Local
+remoterepository = ya-Remote
+status_backend = sqlite
+postsynchook = notmuch new
+
+[Repository ya-Local]
+type = Maildir
+localfolders = /yandex.mail/yandex.ru
+nametrans = lambda folder: {'sent': '&BB4EQgQ,BEAEMAQyBDsENQQ9BD0ESwQ1-',
+                            'outbox': '&BBgEQQRFBD4ENARPBEkEOAQ1-',
+                            'drafts': '&BCcENQRABD0EPgQyBDgEOgQ4-',
+                            'spam': '&BCEEPwQwBDw-',
+                            'trash': '&BCMENAQwBDsENQQ9BD0ESwQ1-',
+                            'inbox': 'INBOX'}.get(folder, folder)
+
+
+[Repository ya-Remote]
+type = IMAP
+remotehost = imap.yandex.com
+remoteuser = ya@dr.dre
+remotepass = drdre
+realdelete = no
+maxconnections = 5
+nametrans = lambda folder: {'&BB4EQgQ,BEAEMAQyBDsENQQ9BD0ESwQ1-': 'sent',
+                            '&BBgEQQRFBD4ENARPBEkEOAQ1-': 'outbox',
+                            '&BCcENQRABD0EPgQyBDgEOgQ4-': 'drafts',
+                            '&BCEEPwQwBDw-': 'spam',
+                            '&BCMENAQwBDsENQQ9BD0ESwQ1-': 'trash',
+                            'INBOX': 'inbox'}.get(folder, folder)
+
+
+[mbnames]
+enabled = yes
+filename = ~/.mutt/mailboxes
+header = "mailboxes "
+peritem = "+%(accountname)s.ru/%(foldername)s"
+sep = " "
+footer = "\n"

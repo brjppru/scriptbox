@@ -1,0 +1,81 @@
+00:0c:29:45:e1:27	10.10.24.10	pfsense	pfsense	 
+00:8c:fa:c8:4d:80	10.10.24.11	esxi	esxi	 
+00:08:9b:f0:3c:3e	10.10.24.14	qnap	qnap storage	 
+00:0c:29:62:40:2b	10.10.24.15	1C	1C server	 
+28:80:23:a1:c7:84	10.10.24.18	lab2-hp	lab2-hp server	 
+12:13:14:15:16:04	10.10.24.19	lab2-ilo	LAB2 ilo in rack	 
+08:00:23:37:4e:2a	10.10.24.20	ats	ATS	 
+08:00:23:37:4e:2b	10.10.24.21	ats-e1	ats trunk1	 
+08:00:23:37:4e:2c	10.10.24.22	ats-e2	ats trunk2	 
+00:90:e8:34:27:d3	10.10.24.30	moxa-au680	moxa-au680	 
+00:90:e8:4d:7a:d9	10.10.24.31	moxa-au5800	moxa-au5800	 
+00:90:e8:4d:7a:c3	10.10.24.32	moxa-ir200l	moxa-ir200l	 
+00:90:e8:4d:7b:32	10.10.24.33	moxa-ir200r	moxa-ir200r	 
+00:90:e8:4d:7a:a6	10.10.24.34	moxa-evolis	moxa-evolis	 
+00:90:e8:4d:7a:ab	10.10.24.35	moxa-roller	moxa-roller	 
+00:90:e8:4d:7a:af	10.10.24.36	moxa-alifax1	moxa-alifax1	 
+d8:cb:8a:b3:5d:d7	10.10.24.37	brj	Roman Y. Bogdanov	 
+00:90:e8:4e:5b:05	10.10.24.38	moxa-alifax2	moxa-alifax2	 
+00:90:e8:4e:5b:0b	10.10.24.39	moxa-alifax3	moxa-alifax3	 
+b8:ae:ed:d1:93:74	10.10.24.50	skorohod	Skorohodova TG	 
+d8:cb:8a:b3:60:2a	10.10.24.51	rm	Romanchenko Alexander	 
+d8:cb:8a:b3:60:2e	10.10.24.52	polina	Korsun Polina	 
+d8:cb:8a:b3:60:2b	10.10.24.53	petra	Petrachenko	 
+00:17:c8:04:73:dc	10.10.24.54	kyocera	kyocera in 36	 
+d8:cb:8a:b3:5f:60	10.10.24.56	matus	S.G.	 
+d8:cb:8a:b3:5d:7e	10.10.24.57	pcr22	PCR + anal	 
+40:8d:5c:2c:e6:7a	10.10.24.58	pcr1	pcr no anal	 
+60:02:92:4e:68:26	10.10.24.59	buhprint	buh olga print	 
+3c:a8:2a:f9:2a:cc	10.10.24.60	olgaprint	buh olga nout print	 
+d8:cb:8a:b3:60:23	10.10.24.61	labsort	lab sorter comp	 
+00:01:29:62:1a:da	10.10.24.62	sorter	sorter 2500	 
+58:20:b1:53:34:81	10.10.24.63	itprint	itprint	 
+d8:cb:8a:b3:60:22	10.10.24.64	lab28	lab28 - kto eto?	 
+90:e2:ba:a5:4f:a4	10.10.24.65	arc2000	arc2000	 
+10:10:10:20:30:20	10.10.24.66	vipnet	vipnet	 
+10:10:10:20:30:21	10.10.24.67	vipclient	vipclient	 
+d8:cb:8a:b3:60:34	10.10.24.68	zebra	zebra	 
+58:20:b1:52:27:70	10.10.24.69	pcrprint	pcrprint	 
+34:64:a9:96:c8:21	10.10.24.70	color-print	color-print	 
+f0:76:1c:31:1d:0d	10.10.24.71	karpov	karpov	 
+50:7b:9d:b0:cf:b1	10.10.24.72	olgap	olga p nastol	 
+fc:3f:db:c1:9c:0a	10.10.24.73	printolga	olga p. print	 
+d8:cb:8a:b3:60:1f	10.10.24.74	stat-01	stat-01	 
+58:20:b1:52:77:dc	10.10.24.75	polinaprint	polinaprint	 
+94:de:80:df:74:6c	10.10.24.76	pcr-gp		 
+2c:60:0c:e7:fd:20	10.10.24.77	brjap	brjap	 
+00:19:0f:24:c5:a1	10.10.24.78	au680-inet	au680-inet	 
+fc:3d:93:75:0b:fb	10.10.24.79	brjfox2	brjfox2	 
+08:00:23:a8:00:2f	10.10.24.80		sip122	 
+08:00:23:a8:00:2e	10.10.24.81		sip123	 
+08:00:23:a8:00:2c	10.10.24.82		sip126	 
+08:00:23:a8:00:4c	10.10.24.83		sip127	 
+08:00:23:a8:00:4b	10.10.24.84		sip125	 
+08:00:23:a8:00:4a	10.10.24.85		sip116	 
+08:00:23:a8:00:43	10.10.24.86		sip131	 
+08:00:23:a8:00:41	10.10.24.87		sip132	 
+08:00:23:a8:00:40	10.10.24.88		sip124	 
+08:00:23:a8:00:c2	10.10.24.89		sip111	 
+08:00:23:a8:00:c0	10.10.24.90		sip112	 
+08:00:23:a8:00:c1	10.10.24.91		sip113	 
+08:00:23:a7:ff:f3	10.10.24.92		sip114	 
+08:00:23:a7:ff:f1	10.10.24.93		sip115	 
+08:00:23:a7:ff:f2	10.10.24.94		sip121	 
+68:f7:28:50:3b:21	10.10.24.95	dianov-book	dianov-book	 
+d8:cb:8a:b3:60:3d	10.10.24.96	clinica	clinica	 
+00:19:0f:25:fb:7d	10.10.24.97		del-iris	 
+d8:cb:8a:b3:60:1c	10.10.24.98	immunologia	immunologia	 
+00:01:02:03:02:02	10.10.24.99	test-test	test-test	 
+d8:cb:8a:b3:60:3c	10.10.24.100	hozyayka	hozyayka Irina	 
+d8:cb:8a:b3:5f:89	10.10.24.101		hematology	 
+d8:cb:8a:b3:5e:ec	10.10.24.102	lab28-2	lab28-2	 
+c8:3a:35:09:0e:d0	10.10.24.103	video	video net	 
+d8:cb:8a:b3:5f:4d	10.10.24.104	reg-04	reg-04	 
+d8:cb:8a:b3:60:3b	10.10.24.105	reg-01	reg-01	 
+fc:3f:db:bd:78:cd	10.10.24.106	HP-M604-reg-left	print-HP-M604-reg-left	 
+d8:cb:8a:b3:5f:b2	10.10.24.107	reg-03	reg-03	 
+d8:cb:8a:b3:60:38	10.10.24.108	reg-02	reg-02	 
+d8:cb:8a:b3:60:31	10.10.24.109	reg-05	reg-05	 
+d8:cb:8a:b3:60:28	10.10.24.110	gemostaz	gemostaz	 
+50:7b:9d:b3:0a:18	10.10.24.111	kadri	kadri	 
+3c:97:0e:dc:4d:dc	10.10.24.112	pcr-notebook	pcr-notebook

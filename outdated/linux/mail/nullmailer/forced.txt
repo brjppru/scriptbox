@@ -1,0 +1,26 @@
+
+https://gist.github.com/bbrodriges/2397565
+
+As small replacement for postfix and the like, nullmailer has established on the one and other Linux home server тАУ such as mine. My specific problem with the provider/email relay: They check if the sender email address matches the relay account email address to prevent spam. ThatтАЩs a good feature, but nullmailer uses actual user@host, where host defaults to the content of /etc/mailname (e.g. root@myserver.dyndns.org or www-data@myserver.dyndns.org). Nullmailer has no rewrite functionality based on config files, but in the specific case a simple (but not completely accurate) solution can be applied:
+
+# 1) Rename the original sendmail binary:
+$ mv /usr/sbin/sendmail /usr/sbin/sendmail-bin
+ 
+# 2) Create and edit a script called sendmail:
+$ touch /usr/sbin/sendmail
+$ chmod 755 /usr/sbin/sendmail
+Edit the sendmail script file and paste this content:
+
+#!/bin/bash
+/usr/sbin/sendmail-bin $@ -f `cat /etc/nullmailer/forced-from` </dev/stdin
+The script simply forwards all arguments and the STDIN to the original sendmail, but adds the -f argument to replace the from address. In my case, I save the full sender address of the relay account in the file /etc/nullmailer/forced-from. ThatтАЩs it.
+
+There are two things I did not test yet:
+
+After done a test with PHP and тАЬsendmail -f www-dataтАЭ in the php.ini, I assume that the last тАЬ-f SENDER-EMAILтАЭ argument that occurs will be the used one. No idea if this will be that way for all time. The argument list will have to be filtered then.
+What does the package manager/aptitude do with this when removing, updating, etc. (ThatтАЩs why I say not really accurate :-) )
+
+/usr/sbin/sendmail-bin -f `cat /etc/nullmailer/forced-from` $@ </dev/stdin
+
+
+https://gist.github.com/bbrodriges/2397565

@@ -1,0 +1,15 @@
+192.168.18.8	backup.ms.local
+192.168.18.22	iloesxi.ms.local
+192.168.18.23	ilobackup.ms.local
+192.168.18.4	chief.ms.local
+192.168.18.254	ix.ms.local
+217.117.188.210	kramz-tel.ms.local
+217.117.188.193 gate-kramz.ms.local
+109.226.195.88	home.brj.pp.ru
+192.168.18.37	pr-mng-samsung.ms.local
+192.168.18.7	mts-fem.ms2013.local
+192.168.18.6	debbackup.ms2013.local
+192.168.18.45	mssrv00.ms2013.local
+192.168.18.237	esxi.ms2013.local
+192.168.18.54	ibank.ms2013.local
+192.168.18.255	255.ms2013.local
