@@ -1,0 +1,7 @@
+To clear all Windows events from the logs, simply open an administrator-level command prompt and enter:
+
+for /f %x in ('wevtutil el') do wevtutil cl "%x"
+
+For batch file use:
+
+for /f %%x in ('wevtutil el') do wevtutil cl "%%x"
