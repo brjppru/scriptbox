@@ -1,0 +1,9 @@
+<!--#include virtual="/cgi-bin/ssi/begin.cgi?title=ебануца%20не%20по%20децки" -->
+
+<!--#include virtual="/cgi-bin/ssi/menu-selector.cgi?menu=about" -->
+
+<!--#include virtual="/cgi-bin/ssi/close-menu.cgi" -->
+
+<!--#include virtual="/test/content.txt" -->
+
+<!--#include virtual="/cgi-bin/ssi/end.cgi" -->

@@ -1,0 +1,8 @@
+REGEDIT4
+
+; (c) tuned by roman y. bogdanov, http://brj.pp.ru/
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Dnscache\Parameters]
+"NegativeCacheTime"=dword:00000000
+"NetFailureCacheTime"=dword:00000000
+"NegativeSOACacheTime"=dword:00000000

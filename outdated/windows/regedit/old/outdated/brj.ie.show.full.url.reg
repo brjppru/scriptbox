@@ -1,0 +1,6 @@
+REGEDIT4
+
+; (c) tuned by roman y. bogdanov, http://brj.pp.ru/
+
+[HKEY_CURRENT_USER\Software\Microsoft\Internet Explorer]
+"Show_FullURL"=dword:00000001

@@ -1,0 +1,75 @@
+#!/bin/sh  
+###############################################################################
+## Copyright (C) 2012 Andrew Kundryukov 
+#  http://blogzadrota.ru
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; version 2 of the License.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# This script a balancer tool for MPD5 VPN server and BIND DNS server 
+# for advanced round robin balancing. 
+#
+###############################################################################
+######## BEGIN CONFIGURATION ##################################################
+###############################################################################          
+login="foo"                           # Login and                                            
+password="bar"                        #           password for MPD servers                   
+prcload="90"                          # Maximum sessions per server in percents             
+name="vpn.example.com."               # Name of VPN service. !NOTE! The "." in the end of string is not mistake!
+srvlist="/root/srv"                   # Path to MPD servers list
+conf="/var/named/etc/namedb/vpn"      # path to named included file, NOT TO named.conf or example.com etc  
+workdir="/tmp"                        # path to tmp direcotry 
+###############################################################################
+######## END CONFIGURATION ####################################################
+###############################################################################
+echo ""$"TTL 3600" > $conf    # this lines need 
+echo "" >> $conf              #                 to named included conf
+###############################################################################
+######## PARSING MPD SERVERS FOR SESSIONS INFO ################################
+###############################################################################
+echo "#######################################################################"
+if [ -s $srvlist ]
+    then
+    while read ipsrv ; do                                                         
+    set -- $ipsrv
+    fetch -o $workdir/$ipsrv -q "http://$login:$password@$ipsrv:5006/cmd?show%20ippool" > /dev/null 2>&1 
+	if [ -e $workdir/$ipsrv ]                                                     
+	then                                                                           
+	    mpdsrv="`cat "$workdir/$ipsrv" | grep used | awk '{print ($3)}' `"        
+	    maxloadsrv="`cat "$workdir/$ipsrv" | grep used | awk '{print ($5)}' | tr -d "\015\032" `" 
+	    loadsrv="`echo "$mpdsrv/($maxloadsrv/100)" | bc`"                         
+##############################################################################
+######## DETAILED INFO ABOUT SESSIONS ########################################
+##############################################################################
+	    echo "$ipsrv hosts $mpdsrv sessions and this is $loadsrv% of maximum load"
+##############################################################################
+######## COMPILING NAMED INCLUDED CONF FILE ##################################
+##############################################################################
+	    if [ "$loadsrv" -lt "$prcload" ]                                                     
+	    then
+		echo "$name IN A $ipsrv" >> $conf
+	    else
+		echo ";$name IN A $ipsrv" >> $conf
+	    fi
+	else
+	    echo $ipsrv offline
+	    echo ";$name IN A $ipsrv" >> $conf
+	fi
+    done < $srvlist        
+##############################################################################
+######## IF SERVERS IP LIST DOSN`T EXIST####### ##############################
+##############################################################################
+else
+echo "You need a list of your MPD servers ip in $srvlist file"
+echo "Example:" 
+echo "192.168.0.1"
+echo "192.168.0.2"
+fi
+/usr/sbin/rndc reload
+echo "#######################################################################"

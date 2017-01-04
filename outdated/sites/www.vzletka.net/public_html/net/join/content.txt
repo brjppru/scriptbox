@@ -1,0 +1,72 @@
+<h3>Заявка на подключение</h3>
+
+<form action="/cgi-bin/join/form.cgi">
+<table border=0>
+
+	<tr>
+	    <td colspan=2 ><b>Ваше имя</b></td>
+	</tr>
+	<tr>
+	    <td >Фамилия</td>
+	    <td ><input type=text name=lastname size=25></td>
+	</tr>
+	<tr>
+	    <td >Имя</td>
+	    <td ><input type=text name=firstname size=25></td>
+
+	</tr>
+	<tr>
+	    <td >Отчество</td>
+	    <td ><input type=text name=midname size=25></td>
+	</tr>
+	<tr>
+	    <td colspan=2 ><br><b>Ваш точный адрес</b></td>
+	</tr>
+	<tr>
+	    <td >Улица</td>
+	    <td ><input type=text name=street size=25></td>
+	</tr>
+	<tr>
+	    <td >Дом</td>
+	    <td ><input type=text name=house size=5></td>
+	</tr>
+	<tr>
+	    <td >Строение/корпус</td>
+	    <td ><input type=text name=building size=5></td>
+	</tr>
+	<tr>
+	    <td >Подъезд</td>
+	    <td ><input type=text name=blabla size=5></td>
+	</tr>
+	<tr>
+	    <td >Квартира</td>
+	    <td ><input type=text name=flat size=5></td>
+	</tr>
+	<tr>
+	    <td colspan=2 ><br><b>Контактная информация</b></td>
+	</tr>
+	<tr>
+	    <td >Телефон</td>
+	    <td ><input type=text name=phone size=25></td>
+	</tr>
+	<tr>
+	    <td >Прочая контактная информация</td>
+	    <td ><textarea name=misccontacts cols=27 rows=3></textarea></td>
+	</tr>
+	<tr>
+	    <td >Время, в которое удобнее<br>всего с вами связаться</td>
+	    <td ><select name=timetodie><option value=утром>утром</option><option value=днём>днём</option><option value=вечером>вечером</option></select></td>
+	</tr>
+	<tr>
+	    <td colspan=2 ><br><b>Дополнительная информация</b></td>
+	</tr>
+	<tr>
+	    <td >Дополнительная информация</td>
+	    <td ><textarea name=addinfo cols=27 rows=3></textarea></td>
+        </tr>
+	<tr>
+	    <td  align=right>&nbsp;</td>
+	    <td ><input type=reset value="Очистить"><input type=submit value="Отправить заявку"></td>
+	</tr>
+	</table>
+	</form>

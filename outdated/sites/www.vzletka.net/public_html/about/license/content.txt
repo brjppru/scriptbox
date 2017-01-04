@@ -1,0 +1,6 @@
+<h3>Разрешения и Лицензии</h3>
+
+<a href=li-spd.jpg><img src="li-spd.gif" border=1></a>
+<a href=li-tlm.jpg><img src="li-tlm.gif" border=1></a>
+<a href=li-exp.jpg><img src="li-exp.gif" border=1></a>
+

@@ -1,0 +1,9 @@
+<!--#include virtual="/cgi-bin/ssi/begin.cgi?title=iXBT:%20Даешь%20ЛВС!%20или%20Не%20так%20страшна%20Ethernet,%20как%20ее%20спецификации..." -->
+
+<!--#include virtual="/cgi-bin/ssi/menu-selector.cgi?menu=net" -->
+
+<!--#include virtual="/cgi-bin/ssi/close-menu.cgi" -->
+
+<!--#include virtual="/net/card/content.txt" -->
+
+<!--#include virtual="/cgi-bin/ssi/end.cgi" -->

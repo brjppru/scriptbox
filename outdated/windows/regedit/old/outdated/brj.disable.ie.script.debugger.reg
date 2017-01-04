@@ -1,0 +1,7 @@
+REGEDIT4
+
+; (c) tuned by roman y. bogdanov, http://brj.pp.ru/
+
+;Отключить отладку скриптов в IE
+[HKEY_CURRENT_USER\Software\Microsoft\Internet Explorer\Main]
+"Disable Script Debugger"="yes"

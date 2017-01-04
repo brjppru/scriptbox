@@ -1,0 +1,7 @@
+REGEDIT4
+
+; (c) tuned by roman y. bogdanov, http://brj.pp.ru/
+
+;Не группировать сходные приложения в панели задач
+[HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced]
+"TaskbarGlomming"=dword:00000000

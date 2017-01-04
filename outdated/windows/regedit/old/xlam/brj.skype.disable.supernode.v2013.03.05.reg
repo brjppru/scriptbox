@@ -1,0 +1,13 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Skype]
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Skype\Phone]
+"DisableSupernode"=dword:00000001
+"DisableSupernodePolicy"=dword:00000001
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Skype]
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Skype\Phone]
+"DisableSupernode"=dword:00000001
+"DisableSupernodePolicy"=dword:00000001

@@ -1,0 +1,36 @@
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+From:    Jean-Francois Dockes <jean-francois.dockes@wanadoo.fr>
+To:      Roman Y. Bogdanov <peps37@ktk.ru>
+Date:    Monday, September 17, 2001, 8:26:17 PM
+Subject: Need help?
+Files:   plex1.tif; plex2.tif
+--====----====----====----====----====----====----====----====----====----===--
+Roman Y. Bogdanov writes:
+ > ... now playing: 02 H-Lоль  - Track  2-A
+ > 
+ >  I try to set this byte's via camcontrol and nothing happened.
+ >  Can you give me full right command for setting speed?
+
+I am attaching the 2 pages of plextor doc. (sorry, I don't have the
+document reference, and I can't remember where I got this from).
+
+This only gives the actual page data. Of course, there must be a command
+block, and param header, so that the full command might look
+something like:
+
+
+0x15 0x10 0x0 0x0 0x8 0x0   0 0 0 0         0x31 0x2 speed 0
+-------------------------   -------         ----------------
+ command block              param header      speed page
+
+Where the value for 'speed' is documented in the attached pages.
+
+This doc is several years old, but it's quite probable that it still work
+on recent drives, except that recent scsi3/mmc drives (esp. writers) would
+probably rather use the standard mmc command.
+
+JF
+
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+

@@ -1,0 +1,8 @@
+REGEDIT4
+
+; (c) tuned by roman y. bogdanov, http://brj.pp.ru/
+
+;Отключить приглашение на Тур по Windows
+[HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Applets\Tour]
+"RunCount"=dword:00000000
+

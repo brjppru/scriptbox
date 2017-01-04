@@ -1,0 +1,28 @@
+XTerm*numLock: false
+XTerm*alwaysUseMods: false
+#XTerm*TermName: xterm-color
+
+!if ServerNumLock in XF86Config, these lines useless
+XTerm*VT100*translations:   #override\
+!    @Num_Lock <Key>KP_Multiply: string("\033Oj")\n \
+!    @Num_Lock <Key>KP_Add: string("\033Ok")\n \
+!    @Num_Lock <Key>KP_Decimal: string("\033Ol")\n \
+!    @Num_Lock <Key>KP_Subtract: string("\033Om")\n \
+!    @Num_Lock <Key>KP_Divide: string("\033Oo")\n \
+
+    @Num_Lock <Key>KP_0: string("\033Op")\n \
+    @Num_Lock <Key>KP_1: string("\033Oq")\n \
+    @Num_Lock <Key>KP_2: string("\033Or")\n \
+    @Num_Lock <Key>KP_3: string("\033Os")\n \
+    @Num_Lock <Key>KP_4: string("\033Ot")\n \
+    @Num_Lock <Key>KP_5: string("\033Ou")\n \
+    @Num_Lock <Key>KP_6: string("\033Ov")\n \
+    @Num_Lock <Key>KP_7: string("\033Ow")\n \
+    @Num_Lock <Key>KP_8: string("\033Ox")\n \
+    @Num_Lock <Key>KP_9: string("\033Oy")\n
+
+XTerm*VT100*font: -screen-fixed-medium-*-*-*-*-*-*-*-*-*-koi8-r
+XTerm*VT100*deleteIsDEL: true
+XTerm*VT100*background: black
+XTerm*VT100*foreground: white
+XTerm*VT100*saveLines: 2000

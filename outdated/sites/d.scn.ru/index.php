@@ -1,0 +1,3 @@
+<?
+include "./news/index.php";
+?>

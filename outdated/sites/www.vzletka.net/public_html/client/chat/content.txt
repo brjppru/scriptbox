@@ -1,0 +1,10 @@
+<H3>Пользователю о IRC чате</H3>
+
+<p><a href=/client/chat/irc/>О IRC чатах, для пользователя windows</a>
+<p><a href=http://egor.vzletka.net/projects/~vzletka.networking/texts/irc/>Неофициальные вопросы и ответы о mIRC и Trilian</a>
+
+<p>  </p>
+
+<p><a href=/client/chat/etiquette/>Этикет в IRC</a>
+<p><a href=/client/chat/vzletka/>Правила поведения на канале #vzletka</a>
+<p><a href=/client/chat/mirc>ЧАТ клиент для сети vzletka.net</a>

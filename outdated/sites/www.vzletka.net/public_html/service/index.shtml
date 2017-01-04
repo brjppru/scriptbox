@@ -1,0 +1,9 @@
+<!--#include virtual="/cgi-bin/ssi/begin.cgi?title=Услуги" -->
+
+<!--#include virtual="/cgi-bin/ssi/menu-selector.cgi?menu=service" -->
+
+<!--#include virtual="/cgi-bin/ssi/close-menu.cgi" -->
+
+<!--#include virtual="/service/content.txt" -->
+
+<!--#include virtual="/cgi-bin/ssi/end.cgi" -->

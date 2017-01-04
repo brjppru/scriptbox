@@ -1,0 +1,9 @@
+swap /dev mfs rw,noatime -s=12000 0 0
+/dev/vn1c              /tmp            ufs     rw,noauto              0	0
+/dev/vn3c              /var            ufs     rw,noauto              0	0
+/dev/vn4c              /etc            ufs     rw,noauto              0	0
+/dev/vn5c              /home           ufs     rw,noauto              0	0
+/dev/vn6c              /root           ufs     rw,noauto              0	0
+/dev/vn7c              /usr/local      ufs     rw,noauto              0	0
+/dev/vn8c              /usr/X11R6      ufs     rw,noauto              0	0
+proc                   /proc           procfs  rw              0        0

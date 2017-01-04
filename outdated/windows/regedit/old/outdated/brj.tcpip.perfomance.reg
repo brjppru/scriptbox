@@ -1,0 +1,9 @@
+REGEDIT4
+
+; (c) tuned by roman y. bogdanov, http://brj.pp.ru/.
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters]
+"MaxUserPort"=dword:0000fffe
+"TcpTimedWaitDelay"=dword:0000001e
+"StrictTimeWaitSeqCheck"=dword:00000001
+

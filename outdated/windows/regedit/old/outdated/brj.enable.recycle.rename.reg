@@ -1,0 +1,8 @@
+REGEDIT4
+
+; (c) tuned by roman y. bogdanov, http://brj.pp.ru/
+
+;Позволить переименовывать Корзину
+[HKEY_CLASSES_ROOT\CLSID\{645FF040-5081-101B-9F08-00AA002F954E}\ShellFolder]
+"Attributes"=hex:50,01,00,20
+"CallForAttributes"=dword:00000000

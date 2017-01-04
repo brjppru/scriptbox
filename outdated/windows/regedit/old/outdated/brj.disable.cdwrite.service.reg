@@ -1,0 +1,7 @@
+REGEDIT4
+
+; (c) tuned by roman y. bogdanov, http://brj.pp.ru/
+
+;Отключить службу записи на оптические носители (IMAPI, нужна только для встроенной в XР записи)
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\ImapiService]
+"Start"=dword:00000004

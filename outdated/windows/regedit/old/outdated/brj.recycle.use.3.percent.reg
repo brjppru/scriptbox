@@ -1,0 +1,7 @@
+REGEDIT4
+
+; (c) tuned by roman y. bogdanov, http://brj.pp.ru/
+
+;Корзина использует 3% от доступного места на диске (не 10%)
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\BitBucket]
+"Percent"=dword:00000003

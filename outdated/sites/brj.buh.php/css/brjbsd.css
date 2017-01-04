@@ -1,0 +1,87 @@
+A {
+    COLOR: blue; TEXT-DECORATION: none
+}
+A:hover {
+    COLOR: red; TEXT-DECORATION: underline
+}
+BODY {
+    BACKGROUND: #ffffee; MARGIN: 3% 5px 0% 5px; COLOR: #663300; zMARGIN: 3% 5% 1%;
+}
+TABLE.header {
+    WIDTH: 100%; BORDER-BOTTOM: #663300 2px solid
+}
+H1.pagehead {
+    MARGIN: 0px;
+}
+DIV.docnav {
+    BACKGROUND: #ffff99
+}
+TABLE.docnav {
+    
+}
+TD.docnav {
+    PADDING-RIGHT: 0.5em; PADDING-LEFT: 0.5em; PADDING-BOTTOM: 0.25em; PADDING-TOP: 0.25em
+}
+TD.menu {
+    TEXT-ALIGN: left
+}
+TABLE.navmenu {
+    
+}
+TD.navcell {
+    PADDING-RIGHT: 0.5em; PADDING-LEFT: 0.5em
+}
+TD.logo {
+    VERTICAL-ALIGN: text-bottom; TEXT-ALIGN: right
+}
+DIV.pagetext {
+    PADDING-RIGHT: 1em; PADDING-LEFT: 1em; PADDING-BOTTOM: 1em; VERTICAL-ALIGN: top; PADDING-TOP: 1em
+}
+DIV.filelist {
+    BACKGROUND: #ffff99
+}
+DIV.latest {
+    FONT-WEIGHT: bold; FONT-SIZE: 75%; VERTICAL-ALIGN: middle; COLOR: #ff0000
+}
+DIV.boxed {
+    BORDER-RIGHT: #663300 1px solid; PADDING-RIGHT: 1em; BORDER-TOP: #663300 1px solid; PADDING-LEFT: 1em; PADDING-BOTTOM: 1em; BORDER-LEFT: #663300 1px solid; PADDING-TOP: 1em; BORDER-BOTTOM: #663300 1px solid
+}
+TD.filecell {
+    PADDING-RIGHT: 0.5em; PADDING-LEFT: 0.5em; PADDING-BOTTOM: 0.25em; PADDING-TOP: 0.25em
+}
+DIV.faqq {
+    BORDER-TOP: #663300 1px solid; FONT-WEIGHT: bold; FONT-SIZE: 125%; PADDING-TOP: 1em
+}
+DIV.faqa {
+    
+}
+DIV.news {
+    BORDER: #663300 1px solid; PADDING: 0.5em; BACKGROUND: #ffffbb;
+}
+TABLE.footer {
+    BORDER-TOP: #663300 1px solid; MARGIN-TOP: 5em; FONT-SIZE: 75%
+}
+TD.copyright {
+    PADDING-LEFT: 1em; TEXT-ALIGN: left
+}
+TD.latestlink {
+    PADDING-RIGHT: 1em; TEXT-ALIGN: right
+}
+.color0 TD, .color0 INPUT, .color0  SELECT{
+    BACKGROUND: #ffddcc;
+}
+.color1 TD, .color1 INPUT {
+    BACKGROUND: #ffffbb;
+}
+.color2 TD, .color2 INPUT {
+    BACKGROUND: #FFeeBB;
+}
+.line   {
+    BORDER: 0px; FONT-SIZE: 90%;
+}
+.filtr  {
+    FONT-SIZE: 60%; font-weight: normal;
+}
+.error  {
+    COLOR:#FF0000;
+}

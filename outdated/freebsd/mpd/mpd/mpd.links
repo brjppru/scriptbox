@@ -1,0 +1,32 @@
+internet: 
+    set link type pppoe
+    set pppoe service ""
+    set pppoe iface rl0
+
+ng1:
+    set link type pptp
+    set pptp enable incoming
+    set pptp disable originate outcall
+    set pptp disable delayed-ack
+    set pptp disable windowing
+
+ng2:
+    set link type pptp
+    set pptp enable incoming
+    set pptp disable originate outcall
+    set pptp disable delayed-ack
+    set pptp disable windowing
+
+ng3:
+    set link type pptp
+    set pptp enable incoming
+    set pptp disable originate outcall
+    set pptp disable delayed-ack
+    set pptp disable windowing
+
+ng4:
+    set link type pptp
+    set pptp enable incoming
+    set pptp disable originate outcall
+    set pptp disable delayed-ack
+    set pptp disable windowing

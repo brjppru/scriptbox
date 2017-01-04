@@ -1,0 +1,123 @@
+====== FreeBSD 9.0 ======
+
+==== FreeBSD 8 и pkg ====
+
+Перевод портов на работу через pkg для FreeBSD 8:
+
+Устанавливаем /usr/ports/ports-mgmt/pkg. На текущий момент там версия 1.2.6
+
+Добавляем WITH_PKGNG=yes в /etc/make.conf
+
+Создаём каталог /etc/pkg/ и кладём туда файл FreeBSD.conf:
+
+<code bash>
+FreeBSD: {
+  url: "pkg+http://pkg.FreeBSD.org/${ABI}/latest",
+  mirror_type: "srv",
+  enabled: yes
+}
+</code>
+
+Запускаем pkg2ng
+
+Всё. Отдельная благодарность Всеволоду Стахову (cebka) за консультацию и, разумеется, за учет пожеланий при разработке pkg.
+
+==== прочее ====
+
+
+http://freebsdonhyper-v.github.com/
+
+==== rpcaptd ====
+
+Как запустить rpcapd на FreeBSD9, типа для Intercepter-NG -> http://sniff.su/
+
+  - Выкурить http://www.winpcap.org/docs/docs_40_2/html/group__remote.html
+  - Скачать сорцы WinPCAP WpcapSrc_4_1_2.zip
+  - Можно поставить gcc46, но опционально
+  - Ставим libpcap-1.1.1 с портов
+  - идем в сорцы/wpcap/libpcap/rpcapd
+  - Правим Makefile
+  - на строку 6: -DHAVE_STRLCPY
+  - типа того: CFLAGS  = -pthread -DHAVE_REMOTE -DHAVE_SNPRINTF -DHAVE_STRLCPY
+  - (опционально) в строке 5: CC на gcc46
+  - Сохраняемся
+  - gmake
+  - Наслаждаемся rpcapd
+
+==== nullmailer ====
+
+nullmailer_enable="YES" -> /etc/rc.conf
+
+<code bash>
+sendmail        /usr/local/libexec/nullmailer/sendmail
+send-mail       /usr/local/libexec/nullmailer/sendmail
+mailq           /usr/local/libexec/nullmailer/mailq
+</code>
+
+cat /usr/local/etc/nullmailer/remotes
+
+<code bash>
+smtp.gmail.com smtp --port=587 --auth-login --user=you@gmail.com --pass=Yourpassword --starttls
+</code>
+
+==== ntop ====
+
+<code bash>
+/usr/local/bin/ntop -u nobody -A
+</code>
+
+<code bash>
+ntop_enable="YES"
+ntop_flags="-d --use-syslog=daemon -w192.168.0.1:3000 -i em0 --local-subnets 10.24.0.1/24,10.24.1.0/24"
+</code>
+
+==== sendmail ====
+
+В /mail/sendmail.cf
+<code bash>
+# "Smart" relay host (may be null)
+DSmy.smarthost.server
+</code>
+Если вместо dns-имени сервера используется ip-адрес, его необходимо брать в квадратные скобки, например DS[10.10.10.1]
+
+{{tag>freebsd unix Intercepter-NG Intercepter ng rpcapd 9.0}}
+
+==== upnpd =====
+
+<code bash>
+trashwall# pfctl -a miniupnpd -s nat
+trashwall# pfctl -a miniupnpd -s rules
+</code>
+
+==== git ====
+
+<code bash>
+$ git config --global --add alias.punch "push --force"
+$ git punch origin
+</code>
+
+<code bash>
+git clone https://github.com/brjppru/public.git
+git add .
+git commit -m 'some files'
+git commit -a -m "delete"
+git push
+</code>
+
+
+Когда много удалено файлов «руками» по привычке и потом «git status» показывает приличную грядку файлов со статусом «deleted», спасет bash:
+
+<code bash>$ for i in `git status | grep deleted | awk '{print $3}'`; do git rm $i; done</code>
+
+А вообще надо привыкать удалять файлы из проекта и с диска с помощью:
+
+<code bash>$ git rm имя_файла</code>
+
+==== вычетание ====
+
+Вычитание таблиц
+есть столбец A
+есть столбец B
+надо выбрать значения в котором C = исключеное A из B
+
+<code bash>grep -vxFf exception.txt list.txt</code>

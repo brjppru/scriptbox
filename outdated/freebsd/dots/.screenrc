@@ -1,0 +1,31 @@
+#
+# brj@screen config
+#
+
+startup_message off   # Who cares :P
+nethack on            # Nicer messages
+vbell off             # I hate barking dogs :P
+msgminwait 0          # the first message is ignored.
+msgwait 10            # the last message is displayed for 10 seconds or until keypress.
+
+#hardstatus lastline "%{+b wk} %c %D %d %M %Y $LOGNAME : %H %=[ %w ] "
+hardstatus lastline "%{+b wk} %c %D %d %M %Y : %H : %l %=[ %w ] "
+
+# %{BW}%16=%l
+
+# These apps are started up on default when a new screen-session is started.
+screen    -t zero 0 csh
+screen    -t log  1 sudo /usr/bin/tail -F /var/log/all.log
+screen    -t sumc 2 sudo mc
+#screen       -t vlan41 3 sudo tcpdump -ni vlan41
+#screen       -t ng0 4 sudo tcpdump -ni ng0
+
+
+# This is the initial window.
+
+log off
+
+# change the default c-a to c-e, use c-e s to get a litteral c-e
+escape ^Ee
+#
+

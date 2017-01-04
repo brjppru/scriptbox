@@ -1,0 +1,7 @@
+REGEDIT4
+
+; (c) tuned by roman y. bogdanov, http://brj.pp.ru/
+
+;Отключить удаленный рабочий стол
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\RDSessMgr"]
+"Start"=dword:00000004

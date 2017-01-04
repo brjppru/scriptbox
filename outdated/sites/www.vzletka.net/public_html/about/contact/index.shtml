@@ -1,0 +1,9 @@
+<!--#include virtual="/cgi-bin/ssi/begin.cgi?title=Как%20до%20нас%20доехать" -->
+
+<!--#include virtual="/cgi-bin/ssi/menu-selector.cgi?menu=about" -->
+
+<!--#include virtual="/cgi-bin/ssi/close-menu.cgi" -->
+
+<!--#include virtual="/about/contact/content.txt" -->
+
+<!--#include virtual="/cgi-bin/ssi/end.cgi" -->

@@ -1,0 +1,44 @@
+<table cellspacing=0 cellpadding=0 border=0 width=100%>
+<td class=b2><span class=r><img src=/o.gif width=9 height=27 align=absmiddle></span><br><img src=/o.gif width=200 height=3></td>
+<td><img src=/o.gif width=7 height=19></td>
+<td width=100%>
+
+	<table cellspacing=0 cellpadding=0 border=0 width=100%>
+	<tr><td><img src=/o.gif width=9 height=30></td>
+	<td width=100%><div class=y>Необходимые условности для становления дауном</div></td>
+        </tr></table>
+</td></tr>
+</table>
+
+<img src=/o.gif height=3><br>
+
+<table cellspacing=0 cellpadding=0 border=0 width=100% height=55%>
+<tr><td valign=top width=100%>
+
+	<table cellspacing=0 cellpadding=0 border=0 width=100%>
+	<tr><td class=b0><img src=/o.gif width=200 height=5></td>
+	<td><img src=/o.gif width=7 height=5></td>
+	<td width=100% class=b0><img src=/o.gif height=5></td></tr><tr valign=top>
+	<td><img src=/o.gif height=3><br>
+
+	<table cellspacing=0 cellpadding=0 border=0 width=200>
+	<tr><td class=b1><img src=/o.gif width=9 height=30></td>
+	<td width=100% class=b1><div class=y>дown-соответствие</div></td>
+	</tr></table><img src=/o.gif height=3></td>
+
+	<td><img src=/o.gif width=7></td>
+	<td>
+
+	<table cellspacing=3 cellpadding=0 border=0 width=400>
+	<tr valign=top><td><img src=/o.gif width=400 height=1><div align=justify class=t>
+	Вот закончу разбиратся с <a href=http://ee-staff.ethz.ch/~oetiker/webtools/rrdtool/>rrdtool</a> и будут тут красивые графики.
+	Сколько даунов на даун-сервере, сколько у даунов музыки и сколько даун песен сейчас доступно.
+	
+	</div></td></tr></table>
+
+	<br>
+
+	</td></tr><tr>
+
+	</tr></table>
+    </td></tr></table>

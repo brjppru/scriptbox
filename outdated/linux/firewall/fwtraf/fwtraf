@@ -1,0 +1,1563 @@
+#!/bin/bash
+#
+#    --------------   -----------   ---------------
+#    | PREROUTING |   | FORWARD |   | POSTROUTING |
+# -->|------------|-->|---------|-->|-------------|-->
+#    | mangle     |   | mangle  |   | mangle      |
+#    | nat        |   | filter  |   | nat         |
+#    --------------   -----------   ---------------
+#          ||                             /\
+#          ||                             ||
+#          \/                             ||
+#    --------------    ---------    ---------------
+#    | INPUT      |   |         |   | OUTPUT      |
+#    |------------|-->| LOCAL   |-->|-------------|
+#    | mangle     |   | PROCESS |   | filter      |
+#    | filter     |   |         |   | mangle      |
+#    |            |   |         |   | nat         |
+#    --------------    ---------    ---------------
+#
+#
+#                (Network)             -------------------------[ mangle ]----------------------------------   --[ nat ]--
+#                    |                 |  ---------------   ---------                                      |   |         |
+#                  mangle              |  | PREROUTING  |   | _exti |   ------------                       |   |         |
+#                PREROUTING            |  |      EXT_IN-+-->|   ALL-+-->| _extiall |-------------> RETURN  |   |         |
+#                    |                 |  |             |   |       |   ------------                       |   |         |
+#                   nat                |  |             |   |       |   ------------    --------           |   |         |
+#                PREROUTING            |  |             |   |   WEB-+-->| _extiweb |-+->| deny |           |   |         |
+#                    |                 |  |             |   |       |   ------------ |  |      |           |   |         |
+#         ---<Routing decision>---     |  |             |   |       |   ------------ |  | BAD1-+-> DROP    |   |         |
+#         |                      |     |  |             |   |   FTP-+-->| _extiftp |-+  | BAD2-+-> DROP    |   |         |
+#       mangle                mangle   |  |             |   |       |   ------------ |  | BAD3-+-> DROP    |   |         |
+#       INPUT                 FORWARD  |  |             |   |       |   ------------ |  | BAD4-+-> DROP    |   |         |
+#         |                      |     |  |             |   |   EML-+-->| _extieml |-+  | BAD5-+-> DROP    |   |         |
+#       filter                filter   |  |             |   |       |   ------------ |  | BAD6-+-> DROP    |   |         |
+#       INPUT                 FORWARD  |  |             |   |       |   ------------ |  |  IP1-+-> DROP    |   |         |
+#         |                      |     |  |             |   | OTHER-+-->| _extixxx |-+  |  IP2-+-> DROP    |   |         |
+#   [Local process]              |     |  |             |   ---------   ------------ |  ---+----           |   |         |
+#         |                      |     |  |             |   ---------                |     |               |   |         |
+#         |                      |     |  |      INT_IN-+-->| _inti |                |     +-----> ACCEPT -+-->|         |
+#         |                      |     |  ---------------   |TO_LAN-+----------------|-----------> ACCEPT -+-->|         |
+#         |                      |     |                    | OTHER-+----------------+                     |   |         |
+#         |                      |     |                    ---------                                      |   |         |
+# <Routing decision>             |     |  ---------------   ---------                                      |   |         |
+#         |                      |     |  | POSTROUTING |   | _exto |   ------------                       |   |         |
+#       mangle                   |     |  |     EXT_OUT-+-->|   ALL-+-->| _extoall |-------------> RETURN  |   |         |
+#       OUTPUT                   |     |  |             |   |       |   ------------                       |   |         |
+#         |                      |     |  |             |   |       |   ------------                       |   |         |
+#        nat                     |     |  |             |   |   WEB-+-->| _extoweb |-------------> ACCEPT -+-->|         |
+#       OUTPUT                   |     |  |             |   |       |   ------------                       |   |         |
+#         |                      |     |  |             |   |       |   ------------                       |   |         |
+#       filter                   |     |  |             |   |   FTP-+-->| _extoftp |-------------> ACCEPT -+-->|         |
+#       OUTPUT                   |     |  |             |   |       |   ------------                       |   |         |
+#         |                      |     |  |             |   |       |   ------------                       |   |         |
+#         ------------------------     |  |             |   |   EML-+-->| _extoeml |-------------> ACCEPT -+-->|         |
+#                    |                 |  |             |   |       |   ------------                       |   |         |
+#                  mangle              |  |             |   |       |   ------------                       |   |         |
+#                POSTROUTING           |  |             |   | OTHER-+-->| _extoxxx |-------------> ACCEPT -+-->|         |
+#                    |                 |  |             |   ---------   ------------                       |   |         |
+#                   nat                |  |  FROM_EXTIF-+----------------------------------------> ACCEPT -+-->|         |
+#                POSTROUTING           |  |             |   ---------                                      |   |         |
+#                    |                 |  |             |   | _into |                                      |   |         |
+#                    |                 |  |    INT_PROX-+-->|   IP1-+----------------------------> ACCEPT -+-->|         |
+#                (Network)             |  | EXT_NONPROX-+-->|   IP2-+----------------------------> ACCEPT -+-->|         |
+#                                      |  ---------------   ---------                                      |   |         |
+#                                      ---------------------------------------------------------------------   -----------
+#
+# ВНИМАНИЕ!
+# * Только первый пакет из потока проходит через цепочки таблицы nat,
+#   трансляция адресов или маскарадинг применяются ко всем последующим пакетам в потоке автоматически.
+# * Если в созданной цепочке заканчиваются правила, то пакет возвращается в родительскую цепочку
+#   (т.е. в конце цепочки "-j RETURN" писать не нужно).
+# * Если в стандартной цепочке заканчиваются правила, то к пакету применяется политика цепочки.
+
+#################################################################################################
+# ПЕРЕМЕННЫЕ
+#################################################################################################
+
+         PATH='/bin:/sbin:/usr/bin:/usr/sbin'; export PATH                                      #
+     MESSAGES='/var/log/messages'                                                               # Лог-файл IPTables.
+ IPTABLESFILE='/etc/sysconfig/iptables'                                                         # Файл правил IPTables.
+      IPTFILE='/etc/sysconfig/ipt'                                                              # Файл с командами iptables.
+     LOCKFILE='/var/lock/subsys/fwtraf'                                                         # Файл блокировки.
+    CONFIGDIR='/etc/fwtraf'                                                                     # Каталог с файлами конфигурации.
+      IPDBDIR='/var/log/ipdb'                                                                   # Каталог ip-базы данных.
+    REPORTDIR='/var/www/fwtraf'                                                                 # Каталог с отчетами о трафике.
+ STATICROUTES='/etc/sysconfig/static-routes'                                                    # Файл со статическими маршрутами
+   DHCPD_CONF='/etc/dhcpd.conf'                                                                 # Файл конфигурации DHCPd.
+   CONFIGFILE="$CONFIGDIR/fwtraf.conf"                                                          # Файл конфигурации FWTraf.
+   REPORTFILE="$REPORTDIR/$(date +%Y-%m-%d).htm"                                                # Файл отчета о трафике.
+#  DNSROOTDIR='/var/named/chroot'; [ -d "$DNSROOTDIR" ] || DNSROOTDIR='/'                       # Корневой каталог DNS.
+   DNSNAMESIG=''; [[ "$(named -v)" > 'BIND 9.2.4' ]] && DNSNAMESIG='check-names ignore; '       # Уст. опцию игн. проверку имён для новых версий BIND.
+      DG_CONF='/etc/dansguardian/dansguardian.conf'                                             # Основной конфиг-файл DansGuardian.
+      DG_FGRP=`grep 2>/dev/null -aw ^filtergroups     "$DG_CONF"|awk 'BEGIN{FS="="}{print $2}'` # Последняя группа фильтрации.
+      DG_FGRP=${DG_FGRP//[ \'\"]/}                                                              #
+  DG_FGRPLIST=`grep 2>/dev/null -aw ^filtergroupslist "$DG_CONF"|awk 'BEGIN{FS="="}{print $2}'` # Фильтруемые IP и соотв. им группы фильтрации.
+  DG_FGRPLIST=${DG_FGRPLIST//[ \'\"]/}                                                          #
+  DG_EXIPLIST=`grep 2>/dev/null -aw ^exceptioniplist  "$DG_CONF"|awk 'BEGIN{FS="="}{print $2}'` # Нефильтруемые IP (группа 0).
+  DG_EXIPLIST=${DG_EXIPLIST//[ \'\"]/}                                                          #
+    LIMIT_EML='100'                                                                             # Лимит для EMLSERVICES.
+    LIMIT_WEB='100'                                                                             # Лимит для WEBSERVICES.
+
+#################################################################################################
+# ВСПОМОГАТЕЛЬНЫЕ ПЕРЕМЕННЫЕ
+#################################################################################################
+
+     HOSTNAME=`hostname 2>/dev/null -s`                                                         # Имя хоста.
+   DOMAINNAME=`hostname 2>/dev/null -d`                                                         # Имя домена.
+        STATE='-m conntrack --ctstate'                                                          # Критерий iptables - ctstate.
+ _HOST_OR_NET='[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*'                                                  # Критерий - хост или сеть.
+         _NET='[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*/[0-9]*'                                           # Критерий - сеть.
+       BLANK1='[ \t]\+'                                                                         # Строка, содерж. минимум 1 пробел/таб.
+       BLANK0='[ \t]\?\+'                                                                       # Строка, содерж. минимум 0 пробелов/табов.
+            N='[0-9]\+'                                                                         # Строка, содерж. минимум 1 цифру.
+
+  LOGGED_TERM="$SSH_TTY"; [ "$LOGGED_TERM" ] || LOGGED_TERM=`tty 2>/dev/null`                   # Имя терминала, с которого запущен скрипт.
+  LOGGED_USER=`last 2>/dev/null -a|awk 2>/dev/null -v t=${LOGGED_TERM#/dev/} '{if ($2==t && $8=="logged") print $1 }'`
+    LOGGED_IP=`last 2>/dev/null -a|awk 2>/dev/null -v t=${LOGGED_TERM#/dev/} '{if ($2==t && $8=="logged") print $10}'`
+
+#################################################################################################
+# ФУНКЦИИ
+#################################################################################################
+
+lock_set()   { echo>"$LOCKFILE" "locked by $LOGGED_USER ($LOGGED_IP)"; }
+lock_run()   { echo>"$LOCKFILE" "already running by $LOGGED_USER ($LOGGED_IP)"; }
+lock_unset() { rm -f "$LOCKFILE"; }
+lock_check() { local status=`cat 2>/dev/null "$LOCKFILE"`; [ "$status" ] && { printf "ERROR: $status\a\n"; exit 1; }; }
+
+move_file() # (SRC_FILE,DST_FILE)
+{
+  [ -a "$1" ] || return 1
+  [ -a "$2" ] && rm -f "$2"
+  mv -f "$1" "$2"
+}
+
+check_net() # (HOST_OR_NET) - Проверяет: это сеть или нет.
+{
+  case "$1" in
+         '') return 3 ;;
+        0.*) return 2 ;;
+    ${_NET}) return 0 ;;
+          *) return 1 ;;
+  esac
+}
+
+check_local() # (HOST_OR_NET) - Проверяет: это локальный IP/сеть или нет.
+{
+  case "$1" in
+           '') return 2 ;;
+         10.*) return 0 ;;
+     172.16.*) return 0 ;;
+    192.168.*) return 0 ;;
+            *) return 1 ;;
+  esac
+}
+
+summa()  # (DATEMASK,FILE) - Выводит суммарный трафик, соотв. указанной маске даты [YYYYMMDDHHMM].
+{
+  cat 2>/dev/null "$2"|awk -v datemask="^$1" 'BEGIN{sum=0}{if ($1 ~ datemask) sum+=$2};END{CONVFMT="%.0f";printf "%s\n",sum}'
+}
+
+ip_or_net_valid()  # (STRING) - Проверяет корректность IP или сети.
+{
+  local ip=$1
+  ip=${ip/%\/[0-9]/}
+  ip=${ip/%\/[0-9][0-9]/}
+  [[ "${ip//[0-9]/}" != "..."     ]] && return 1 # Выходим, если посторонние символы или нет трех точек.
+  [[ ".$ip."         == *..*      ]] && return 1 # Выходим, если не четыре элемента.
+  [[ ".$ip"          == *.0[0-9]* ]] && return 1 # Выходим, если хотя бы один ведущий 0.
+  for i in ${ip//./ }; do                        # Разбиваем IP на четыре числа и проверяем каждое.
+    [ $i -gt 255 ]                   && return 1 # Выходим, если число больше 255.
+  done
+  return 0
+}
+ip()  # (STRING) - Проверяет корректность и возвращает $IP.
+{
+  IP='255.255.255.255'
+  ip_or_net_valid "$1" && IP="$1" || printf "\nERROR: \"$1\" - bad ip or net\a\n"
+}
+name()  # (STRING) - Проверяет корректность и возвращает $NAME.
+{
+  NAME='noname'
+  case "$1" in
+    [a-zA-Z0-9_-]*) NAME="$1"                               ;;
+                 *) printf "\nERROR: \"$1\" - bad name\a\n" ;;
+  esac
+}
+prot()  # (STRING) - Проверяет корректность и возвращает $PROT.
+{
+  PROT='' # Возвращаемый протокол.
+  case "$1" in
+    tcp|udp|gre) PROT="-p $1"                                ;;
+              *) printf "\nERROR: \"$1\" - bad protocol\a\n" ;;
+  esac
+}
+ports()  # (STRING) - Проверяет корректность и возвращает $PORTS,$SPORTS,$DPORTS,$DNAT_DPORT,$DNAT_TPORT.
+{
+  SPORTS='' # Возвращаемые порты-источники.
+  DPORTS='' # Возвращаемые порты-назначения.
+  PORTS=`echo "$1"|sed -e "s/\<bc_gp\>/5443,48491/g;
+                           s/\<bc_nb\>/14112/g;
+                           s/\<bc_pb\>/9091/g;
+                           s/\<bc_sb\>/1024,9443/g;
+                           s/\<bc_sb_udp\>/87/g;
+                           s/\<bc_tc\>/3239/g;
+                           s/\<bc_uc\>/7235/g;
+                           s/\<bc_us\>/613,614/g;
+                           s/\<biolink\>/3411/g;
+                           s/\<dns\>/53/g;
+                           s/\<eml\>/25,110,143,587,995/g;
+                           s/\<feanor\>/36789/g;
+                           s/\<fns\>/50025,50110/g;
+                           s/\<ftp\>/20,21/g;
+                           s/\<tftp\>/69/g;
+                           s/\<gpsmon\>/2226/g;
+                           s/\<http\>/80/g;
+                           s/\<https\>/443/g;
+                           s/\<icq\>/5190/g;
+                           s/\<imap\>/143/g;
+                           s/\<irc\>/6667/g;
+                           s/\<jabber\>/5222,5223/g;
+                           s/\<mssql\>/1433,1434/g;
+                           s/\<ntp\>/123/g;
+                           s/\<openvpn\>/81/g;
+                           s/\<oracle\>/1521/g;
+                           s/\<pop3\>/110/g;
+                           s/\<pop3tls\>/995/g;
+                           s/\<pptp\>/1723/g;
+                           s/\<quik\>/5750,9999,15100/g;
+                           s/\<radmin\>/4899/g;
+                           s/\<rdp\>/3389/g;
+                           s/\<rsync\>/873/g;
+                           s/\<sip\>/5060/g;
+                           s/\<smb\>/137,138,139/g;
+                           s/\<smtp\>/25/g;
+                           s/\<smtpalt\>/2525/g;
+                           s/\<smtpstls\>/587/g;
+                           s/\<snmp\>/161,162/g;
+                           s/\<ssh\>/22/g;
+                           s/\<squid\>/3128/g;
+                           s/\<telnet\>/23/g;
+                           s/\<torrent\>/6881,6882,6883,6884,6885,6886,6887,6888,6889/g;
+                           s/\<traceroute\>/33434:33459/g;
+                           s/\<web\>/$WEBPORT,443/g;
+                           s/\<webinar\>/8088,8089/g;
+                           s/\<webmin\>/10000/g;
+                           s/\<webmoney\>/2802/g;
+                           s/!/! /g"`
+  DNAT_DPORT=`echo "$PORTS"|sed -e "s/all//; s/[0-9:]\+,//g; s/^[0-9:]\+$//g; s/! $N//g"|cut -d'-' -f1`
+  DNAT_TPORT=`echo "$PORTS"|sed -e "s/all//; s/,[0-9:]\+//g; s/^[0-9:]\+$//g; s/! $N//g"|cut -d'-' -f2`
+  PORTS=${PORTS//-/,} # Замещает все вхождения "-" строкой ",".
+  case "$PORTS" in
+               all|'')                                                                               return ;; # Все порты/нет портов.
+    [^0-9!]*|*[^0-9!]) printf "\nERROR: \"$1\" - bad ports\a\n";                                     return ;; # Неправильные порты.
+        [0-9]*,[0-9]*) SPORTS="-m multiport --sports $PORTS"; DPORTS="-m multiport --dports $PORTS"; return ;; # Несколько портов.
+    '! '[0-9]*|[0-9]*) SPORTS="--sport $PORTS"              ; DPORTS="--dport $PORTS"              ; return ;; # Кроме порта/один порт.
+                    *) printf "\nERROR: \"$1\" - bad ports\a\n";                                     return ;; # Неправильные порты.
+  esac
+}
+limit()  # (STRING) - Проверяет корректность и возвращает $LIMIT.
+{
+  LIMIT='' # Возвращаемый лимит.
+  case "$1" in
+        '')                                          ;;
+    [0-9]*) LIMIT="-m limit --limit $1/s"            ;;
+         *) printf "\nERROR: \"$1\" - bad limit\a\n" ;;
+  esac
+}
+conn_limit()  # (STRING) - Проверяет корректность и возвращает $CONN_LIMIT - макс. число подключений в минуту.
+{
+  CONN_LIMIT='' # Возвращаемый лимит.
+  case "$1" in
+        '')                                               ;;
+    [0-9]*) CONN_LIMIT="$1"                               ;;
+         *) printf "\nERROR: \"$1\" - bad conn_limit\a\n" ;;
+  esac
+}
+wa()  # (STRING) - Проверяет корректность и возвращает $WA.
+{
+  WA='' # Возвращаемый web-доступ.
+  case "$1" in
+       '') WA=''                                               ;;
+    [0-9]) WA="$1"                                             ;;
+        *) printf "\nERROR: \"$1\" - bad web access group\a\n" ;;
+  esac
+}
+
+function forwarders()  # () - Ищем внешние DNS-сервера в /etc/resolv.conf и выводим.
+{
+  cat 2>/dev/null '/etc/resolv.conf' \
+  |awk '{if ($1=="nameserver" && $2!~/127\.0\.0\./ && $2~/[0-9]/) forwarders=forwarders$2"; "};
+         END{if (forwarders!="") printf "           forwarders      { %s};\n",forwarders}'
+}
+write_dns_cfg_head()  # () - Устанавливаем флаг начала и пишем его заголовок.
+{
+F_DNS_CFG='Y'
+cat>"$DNSROOTDIR/etc/named.conf"<<*
+options  { directory "/var/named/";
+           allow-query     {"trusted";};
+           allow-transfer  {"trusted";};
+           allow-recursion {"trusted";};
+$(forwarders)
+           // * If there is a firewall between you and nameservers you want to talk to, you might need to uncomment
+           // * the query-source directive below. Previous versions of BIND always asked questions using port 53,
+           // * but BIND 8.1 uses an unprivileged port by default.
+           // query-source address * port 53;
+         };
+acl      "trusted"                      { 127.0.0.1; 10.0.0.0/8; 172.16.0.0/12; 192.168.0.0/16; };
+include  "/etc/rndc.key";
+#controls                               { inet 127.0.0.1 allow {localhost;} keys {rndckey;}; };
+zone     "."                            { type hint  ; file "named.ca"; };
+zone     "$DOMAINNAME"                  { type master; file "$DOMAINNAME.zone"; $DNSNAMESIG};
+zone     "localdomain"           IN     { type master; file "localdomain.zone"; allow-update {none;}; };
+zone     "localhost"                    { type master; file "localhost.zone"  ; allow-update {none;}; };
+zone     "0.0.127.in-addr.arpa"         { type master; file "named.local"     ; allow-update {none;}; };
+zone     "255.in-addr.arpa"      IN     { type master; file "named.broadcast" ; allow-update {none;}; };
+
+*
+}
+write_dns_z_head()  # (ZONE) - Пишем заголовок прямой или обратной зоны.
+{
+cat>"$DNSROOTDIR/var/named/$1.zone"<<*
+;TTL - Time To Live (время жизни записей).
+;SOA - marks of start of zone of authority (начало полномочий).
+;@   - имя зоны.
+
+\$TTL 86400
+@                          IN  SOA  @       root.localhost. (
+                                                              2002112100  ; Serial
+                                                              28800       ; Refresh
+                                                              7200        ; Retry
+                                                              604800      ; Expire
+                                                              86400       ; TTL
+                                                            )
+
+@                          IN  NS           127.0.0.1    ; Name Server для зоны
+@                          IN  MX   0       127.0.0.1    ; Mail eXchanger для зоны
+
+*
+}
+write_dns_rz_head()  # (RZONE,IPN3,IPN2,IPN1) - Пишем заголовок обратной DNS-зоны, описываем ее в конфиг.файле.
+{
+  let F_DNS_RZ_${2}_${3}_${4}='Y'                                                                                   # Устанавливаем флаг начала зоны,
+  write_dns_z_head "$1"                                                                                             # пишем заголовок обратной зоны.
+  printf>>"$DNSROOTDIR/etc/named.conf" "zone %30s     { type master; file %31s; $DNSNAMESIG};\n" \"$1\" \"$1.zone\" # Дописываем конфиг.файл DNS.
+}
+write_dns_dz_head()  # (DZONE) - Устанавливаем флаг начала прямой зоны и пишем ее заголовок.
+{
+  F_DNS_DZ='Y'                                                                                                      # Устанавливаем флаг начала зоны,
+  write_dns_z_head "$1"                                                                                             # пишем заголовок прямой зоны.
+}
+write_dns_edz_head()  # (EDZONE,NAME) - Устанавливаем флаг начала прямой внешней зоны и пишем ее заголовок.
+{
+  let F_DNS_EDZ_${2}='Y'                                                                                            # Устанавливаем флаг начала зоны,
+  write_dns_z_head "$1"                                                                                             # пишем заголовок прямой зоны.
+  printf>>"$DNSROOTDIR/etc/named.conf" "zone %30s     { type master; file %31s; $DNSNAMESIG};\n" \"$1\" \"$1.zone\" # Дописываем конфиг.файл DNS.
+}
+write_dns() # (IP,NAME) - Пишем хост в зоны DNS.
+{
+  [ -d "$DNSROOTDIR" ] || return                                                                   # Если каталог не задан или не существует.
+
+  check_net   "$1" && return                                                                       # Если это сеть.
+  check_local "$1" || return                                                                       # Если это не локальный IP.
+
+       local -a   IPN=(${1//./ })
+       local     IPN1=${IPN[0]}
+       local     IPN2=${IPN[1]}
+       local     IPN3=${IPN[2]}
+       local     IPN4=${IPN[3]}
+       local       RZ="$IPN3.$IPN2.$IPN1.in-addr.arpa"                                             # Имя обратной зоны.
+       local       DZ="$DOMAINNAME"                                                                # Имя прямой зоны.
+
+  eval local F_DNS_RZ=\${F_DNS_RZ_${IPN3}_${IPN2}_${IPN1}}
+
+  [ "${F_DNS_CFG}" ] || write_dns_cfg_head                                                         # Если в конфиг.файл DNS еще не писали.
+  [ "${F_DNS_DZ}"  ] || write_dns_dz_head "$DZ"                                                    # Если в прямую DNS-зону еще не писали.
+  [ "${F_DNS_RZ}"  ] || write_dns_rz_head "$RZ" "$IPN3" "$IPN2" "$IPN1"                            # Если в эту обратную DNS-зону еще не писали.
+
+  printf>>"$DNSROOTDIR/var/named/$DZ.zone"  '%-25s  IN  A            %s\n' "$2"          "$1"      # Дописываем прямую   DNS-зону.
+  printf>>"$DNSROOTDIR/var/named/$RZ.zone"  '%-25s  IN  PTR          %s\n' $IPN4         "$2.$DZ." # Дописываем обратную DNS-зону.
+  [ "$2" == 'kms' ] && \
+  printf>>"$DNSROOTDIR/var/named/$DZ.zone"  '%-25s  IN  SRV 0 0 1688 %s\n' '_vlmcs._tcp' "$2"      # Дописываем SRV-запись в прямую DNS-зону.
+  [ "$EXTDOMAINFLAG" ] || return                                                                   # Проверяем, нужно ли писать в зону внешнего домена.
+  [ "$EXTDOMAINNAME" ] || return                                                                   # Проверяем, указан ли внешний домен.
+
+       local       EDZ="$2.$EXTDOMAINNAME"                                                         # Имя прямой зоны внешнего домена.
+
+  eval local F_DNS_EDZ=\${F_DNS_EDZ_${2}}
+
+  [ "${F_DNS_EDZ}"   ] || write_dns_edz_head "$EDZ" "$2"                                           # Если в прямую внешнюю DNS-зону еще не писали.
+  printf>>"$DNSROOTDIR/var/named/$EDZ.zone" '%-25s  IN  A            %s\n' '@'           "$1"      # Дописываем прямую внешнюю DNS-зону.
+}
+write_dg_exiplist_head()  # () - Устанавливаем флаг начала exceptioniplist и очищаем его.
+{
+  F_DG_EXIPLIST='Y'    # Устанавливаем флаг начала файла.
+  :>"$DG_EXIPLIST.tmp" # Очищаем временный файл exceptioniplist.
+}
+write_dg_fgrplist_head()  # () - Устанавливаем флаг начала filtergroupslist и очищаем его.
+{
+  F_DG_FGRPLIST='Y'    # Устанавливаем флаг начала файла.
+  :>"$DG_FGRPLIST.tmp" # Очищаем временный файл filtergroupslist.
+}
+write_dg()  # (IP,GROUP_NUM) - Пишем IP и номер фильтрующей группы GROUP_NUM в файл filtergroupslist.
+{
+  [[ "$WEBPROXY" == 'DGSQUID' ]] || return               # Если не используется DansGurdian.
+  [[ "$1"        == ${_NET}   ]] && return               # Если это сеть.
+  case "$2" in
+    '') return                                           # WEB-доступ: нет группы.
+        ;;
+     0) [ "$DG_EXIPLIST"     ] || return                 # WEB-доступ: нефильтруемый.
+        [ "${F_DG_EXIPLIST}" ] || write_dg_exiplist_head # Если в exceptioniplist еще не писали, то создаем его.
+        echo>>"$DG_EXIPLIST.tmp" "$1"                    # Дописываем временный файл exceptioniplist.
+        ;;
+     *) [ "$DG_FGRPLIST"     ] || return                 # WEB-доступ: фильтруемый в соотв. с номером группы.
+        [ "${F_DG_FGRPLIST}" ] || write_dg_fgrplist_head # Если в filtergroupslist еще не писали, то создаем его.
+        echo>>"$DG_FGRPLIST.tmp" "$1=filter$2"           # Дописываем временный файл filtergroupslist.
+        ;;
+  esac
+}
+write_ipdb()  # (IP) - Пишем информацию в ip-базу данных.
+{
+  add_uniqstr()  # (FILE,STR) - Дописываем уникальную строку, время игнорируем.
+  {
+    local file="$1"
+    local  str=`echo $2` # Удаляем пробелы в начале и в конце.
+    [ "$file" ] || return
+    [ "$str"  ] || return
+    cat 2>/dev/null "$file"|grep -av "^.* $str\$">"/tmp/fwtraf.add_uniqstr.$$"
+    move_file "/tmp/fwtraf.add_uniqstr.$$" "$file"
+    echo>>"$file" "$DATE $str"
+  }
+
+  local ip="${1/\/*}"
+
+  [[ "$IPDBDIR" ]]  || return # Если каталог не задан.
+  check_local "$ip" || return # Если это не локальный IP.
+
+  declare    local   line=`sed -n "/^${BLANK0}[ad]${BLANK1}.*${ip}[\/[0-9]\+]\?${BLANK1}/p" $CONFIGFILE|sed -e 's/^#//p'|sed q`; [ "$line" ] || return
+  declare -a local a_line=( ${line%% #*} )
+  declare    local    cmd=' '; [[ "${a_line[0]}" == [ad]           ]] &&   cmd=${a_line[0]}
+  declare    local   name=' '; [[ "${a_line[2]}" == [0-9a-zA-Z_-]* ]] &&  name=${a_line[2]}
+  declare    local     wa=' '; [[ "${a_line[3]}" == [0-9]*         ]] &&    wa=${a_line[3]}
+  declare    local  ports=' '; [[ "${a_line[4]}" == [0-9a-z!]*     ]] && ports=${a_line[4]}
+  declare    local  limit=' '; [[ "${a_line[5]}" == [0-9]*         ]] && limit=${a_line[5]}
+  declare    local   desc=' '; [[ "${line/*#/}"  >  ' '            ]] &&  desc="${line/*#/}"
+  declare    local   DATE="$(date +%Y%m%d%H%M)"
+  mkdir -p    "$IPDBDIR/$ip"
+  add_uniqstr "$IPDBDIR/$ip/fwtraf_name"   "$name"
+  add_uniqstr "$IPDBDIR/$ip/fwtraf_access" "$cmd $ports $wa $limit"
+  add_uniqstr "$IPDBDIR/$ip/fwtraf_desc"   "$desc"
+}
+ipt_begin()  # () - Начинаем запись команд iptables в файл $IPTFILE.tmp.
+{
+  echo>"$IPTFILE.tmp" '#!/bin/bash'
+}
+ipt()  # (RULES...) - Пишем команды iptables в файл $IPTFILE.tmp.
+{
+  echo>>"$IPTFILE.tmp" "iptables $@"
+}
+ipt_end()  # () - Применяем команды iptables из файла $IPTFILE.tmp.
+{
+  printf '\n'
+  [ -a "$IPTFILE.tmp" ] || return
+  diff &>/dev/null "$IPTFILE" "$IPTFILE.tmp" && { rm -f "$IPTFILE.tmp"; return; }
+  move_file "$IPTFILE"     "$IPTFILE.old"
+  move_file "$IPTFILE.tmp" "$IPTFILE"
+  printf '[ save traffic counters ]\n'; trafhourly # Сохраняем трафик, т.к. сейчас цепочки будут созданы заново.
+  printf '[ all rules apply ]\n'      ; time nice -n -20 bash -c ". $IPTFILE"
+}
+dg_begin()  # () - Сохраняем списки DG, чтобы потом узнать, были ли в них изменения.
+{
+  [ "$WEBPROXY" == 'DGSQUID' ] || return               # Если не используется DansGurdian.
+  [ "$DG_EXIPLIST"           ] && :>"$DG_EXIPLIST.tmp" # Очищаем временный файл exceptioniplist.
+}
+dg_end()  # () - Перезапускаем DG, если были изменения.
+{
+  printf '\n'
+  [ "$WEBPROXY" == 'DGSQUID' ] || return # Если не используется DansGurdian.
+  [ -a "$DG_EXIPLIST"        ] || return # Если не существует файл exceptioniplist.
+  [ -a "$DG_FGRPLIST"        ] || return # Если не существует файл filtergroupslist.
+  local dg_restart=''
+  if [ -a "$DG_EXIPLIST.tmp" ]; then
+    diff &>/dev/null "$DG_EXIPLIST" "$DG_EXIPLIST.tmp"
+    if [ $? -eq 0 ]; then
+      rm -f "$DG_EXIPLIST.tmp"
+    else
+      dg_restart='Y'
+      move_file "$DG_EXIPLIST"     "$DG_EXIPLIST.old"
+      move_file "$DG_EXIPLIST.tmp" "$DG_EXIPLIST"
+    fi
+  fi
+  if [ -a "$DG_FGRPLIST.tmp" ]; then
+    diff &>/dev/null "$DG_FGRPLIST" "$DG_FGRPLIST.tmp"
+    if [ $? -eq 0 ]; then
+      rm -f "$DG_FGRPLIST.tmp"
+    else
+      dg_restart='Y'
+      move_file "$DG_FGRPLIST"     "$DG_FGRPLIST.old"
+      move_file "$DG_FGRPLIST.tmp" "$DG_FGRPLIST"
+    fi
+  fi
+  if [ "$dg_restart" ]; then
+    [ "$WEBPROXY" == "DGSQUID" ] && $NICE service dansguardian restart # Перезапускаем DansGuardian.
+  fi
+}
+dnat()  # (IP,DPORT,TPORT) - Перенаправляем внешний входящий tcp-трафик с $IF_EXT:$DPORT на $IP:$TPORT.
+{
+  ip "$1" # Получаем $IP
+  ipt -t nat    -A PREROUTING  -p tcp -i $IF_EXT --dport $2 -d $IP_EXT  -j DNAT --to-destination $1:$3
+  ipt -t filter -A FORWARD     -p tcp -i $IF_EXT --dport $3             -j ACCEPT
+  ipt -t filter -A FORWARD     -p tcp -s $IP $STATE ESTABLISHED,RELATED -j ACCEPT # Установленные соединения с IP.
+  ipt -t filter -A FORWARD     -p tcp -d $IP $STATE ESTABLISHED,RELATED -j ACCEPT # Установленные соединения к IP.
+# ipt -t nat    -A POSTROUTING -p tcp -o $IF_EXT            -s $1       -j SNAT --to-source $IP_EXT
+# ipt -t nat    -A POSTROUTING -p tcp -o $IF_EXT --dport $3 -s $1       -j SNAT --to-source $IP_EXT
+  printf '-'
+}
+i()  # (PROT,PORTS,LIMIT) - Разрешаем порты/протоколы c лимитом для внутренней сети.
+{
+  [ "$ENABLE_IEC" ] || return                        # Проверяем, разрешено ли исполнять команду.
+  prot "$1"; ports "$2"; limit "$3"; conn_limit "$4" # Получаем $PROT; $PORTS,$SPORTS,$DPORTS,DNAT_DPORT,$DNAT_TPORT; $LIMIT; $CONN_LIMIT.
+  if [ "$CONN_LIMIT" ]; then
+  CONN_NAME=$((CONN_NAME+1))
+  ipt -t filter -A INPUT   $PROT $DPORTS -i $IFs_INT $STATE NEW -m recent --name i$CONN_NAME --update --seconds 60 --hitcount $CONN_LIMIT -j LOG --log-prefix "fwtraf_i$CONN_NAME:"
+  ipt -t filter -A INPUT   $PROT $DPORTS -i $IFs_INT $STATE NEW -m recent --name i$CONN_NAME --update --seconds 60 --hitcount $CONN_LIMIT -j DROP
+  ipt -t filter -A INPUT   $PROT $DPORTS -i $IFs_INT $STATE NEW -m recent --name i$CONN_NAME --set
+  fi
+  for lan in $LANS; do
+  ipt -t filter -A INPUT   $PROT $DPORTS -i $IFs_INT -d $lan     $LIMIT -j ACCEPT
+  ipt -t filter -A INPUT   $PROT $SPORTS -i $IFs_INT -d $lan     $LIMIT -j ACCEPT
+# ipt -t filter -A OUTPUT  $PROT $DPORTS -s $lan     -o $IFs_INT $LIMIT -j ACCEPT
+  ipt -t filter -A OUTPUT  $PROT $SPORTS -s $lan     -o $IFs_INT $LIMIT -j ACCEPT
+  done
+  ipt -t filter -A FORWARD $PROT $DPORTS -i $IFs_INT -o $IFs_INT $LIMIT -j ACCEPT
+  ipt -t filter -A FORWARD $PROT $SPORTS -i $IFs_INT -o $IFs_INT $LIMIT -j ACCEPT
+  # Для доступа к внешнему интерфейсу из LAN.
+  ipt -t filter -A INPUT   $PROT $DPORTS -i $IFs_INT -d $IP_EXT  $LIMIT -j ACCEPT
+  ipt -t filter -A INPUT   $PROT $SPORTS -i $IFs_INT -d $IP_EXT  $LIMIT -j ACCEPT
+# ipt -t filter -A OUTPUT  $PROT $DPORTS -s $IP_EXT  -o $IFs_INT $LIMIT -j ACCEPT
+  ipt -t filter -A OUTPUT  $PROT $SPORTS -s $IP_EXT  -o $IFs_INT $LIMIT -j ACCEPT
+  printf 'i'
+}
+e()  # (PROT,PORTS,LIMIT) - Разрешаем порты/протоколы c лимитом для внешней сети.
+{
+  [ "$ENABLE_IEC" ] || return                        # Проверяем, разрешено ли исполнять команду.
+  prot "$1"; ports "$2"; limit "$3"; conn_limit "$4" # Получаем $PROT; $PORTS,$SPORTS,$DPORTS,DNAT_DPORT,$DNAT_TPORT; $LIMIT; $CONN_LIMIT.
+  if [ "$CONN_LIMIT" ]; then
+  CONN_NAME=$((CONN_NAME+1))
+  ipt -t filter -A INPUT  $PROT $DPORTS -i $IF_EXT $STATE NEW -m recent --name e$CONN_NAME --update --seconds 60 --hitcount $CONN_LIMIT -j LOG --log-prefix "fwtraf_e$CONN_NAME:"
+  ipt -t filter -A INPUT  $PROT $DPORTS -i $IF_EXT $STATE NEW -m recent --name e$CONN_NAME --update --seconds 60 --hitcount $CONN_LIMIT -j DROP
+  ipt -t filter -A INPUT  $PROT $DPORTS -i $IF_EXT $STATE NEW -m recent --name e$CONN_NAME --set
+  fi
+  ipt -t filter -A INPUT  $PROT $DPORTS -i $IF_EXT $LIMIT -j ACCEPT
+  ipt -t filter -A INPUT  $PROT $SPORTS -i $IF_EXT $LIMIT -j ACCEPT
+  ipt -t filter -A OUTPUT $PROT $DPORTS -o $IF_EXT $LIMIT -j ACCEPT
+  ipt -t filter -A OUTPUT $PROT $SPORTS -o $IF_EXT $LIMIT -j ACCEPT
+  printf 'e'
+}
+c()  # (PROT,PORTS,LIMIT) - Разрешаем порты/протоколы c лимитом для внутренней и внешней сетей.
+{
+  [ "$ENABLE_IEC" ] || return                        # Проверяем, разрешено ли исполнять команду.
+  prot "$1"; ports "$2"; limit "$3"; conn_limit "$4" # Получаем $PROT; $PORTS,$SPORTS,$DPORTS,DNAT_DPORT,$DNAT_TPORT; $LIMIT; $CONN_LIMIT.
+  if [ "$CONN_LIMIT" ]; then
+                   CONN_NAME=$((CONN_NAME+1))
+                   ipt -t filter -A INPUT       $PROT $DPORTS $STATE NEW -m recent --name c$CONN_NAME --update --seconds 60 --hitcount $CONN_LIMIT -j LOG --log-prefix "fwtraf_c$CONN_NAME:"
+                   ipt -t filter -A INPUT       $PROT $DPORTS $STATE NEW -m recent --name c$CONN_NAME --update --seconds 60 --hitcount $CONN_LIMIT -j DROP
+                   ipt -t filter -A INPUT       $PROT $DPORTS $STATE NEW -m recent --name c$CONN_NAME --set
+  fi
+                   ipt -t filter -A INPUT       $PROT $DPORTS $LIMIT             -j ACCEPT
+  [ "$SPORTS" ] && ipt -t filter -A INPUT       $PROT $SPORTS $LIMIT             -j ACCEPT
+                   ipt -t filter -A OUTPUT      $PROT $DPORTS $LIMIT             -j ACCEPT
+  [ "$SPORTS" ] && ipt -t filter -A OUTPUT      $PROT $SPORTS $LIMIT             -j ACCEPT
+                   ipt -t filter -A FORWARD     $PROT $DPORTS $LIMIT             -j ACCEPT
+  [ "$SPORTS" ] && ipt -t filter -A FORWARD     $PROT $SPORTS $LIMIT             -j ACCEPT
+  [ "$SNAT" ] && [ "$PROT" != 'gre' ] && \
+  for lan in $LANS; do
+                   ipt -t nat    -A POSTROUTING $PROT $DPORTS -s $lan -o $IF_EXT -j SNAT --to-source $IP_EXT
+  done
+  printf 'c'
+}
+count_ip()  # (IP) - Считаем трафик для IP-адреса хоста или сети.
+{
+  check_local "$1" || return # Если это не локальный IP.
+  ipt -t mangle -A _into -d $1 -j ACCEPT # Если это локальный хост, то учитываем внешний входящий трафик.
+}
+allow_ip()  # (IP) - Разрешаем tcp-трафик для IP (а также udp-трафик, если не заданы порты).
+{
+  [ "$DPORTS" ] && PROT='-p tcp' || PROT=''
+  ipt -t filter -A INPUT       $PROT -s $1 $DPORTS            $LIMIT -j ACCEPT # Разрешаем входящий tcp-трафик для портов от клиента к     серверу.
+  ipt -t filter -A FORWARD     $PROT -s $1 $DPORTS            $LIMIT -j ACCEPT # Разрешаем          tcp-трафик для портов от клиента через сервер.
+  ipt -t filter -A OUTPUT      $PROT -d $1                    $LIMIT -j ACCEPT # Режем скорость отдачи пакетов сервером клиенту.
+  [ "$SNAT" ] && \
+  ipt -t nat    -A POSTROUTING $PROT -s $1 $DPORTS -o $IF_EXT $LIMIT -j SNAT --to-source $IP_EXT # Разрешаем SNAT для трафика, стремящегося наружу.
+}
+allow_tcpservice()  # (IP,PORTS,LIMIT) - Разрешаем обращения к внешним сервисам (ip,tcp-портам) для всей внутренней сети.
+{
+  ip "$1"; ports "$2"; limit "$3" # Получаем $IP; $PROT; $PORTS; $LIMIT.
+  ipt -t nat    -A PREROUTING  -p tcp -i $IFs_INT $DPORTS         -d $IP $LIMIT -j ACCEPT
+  ipt -t filter -A FORWARD     -p tcp -i $IFs_INT $DPORTS         -d $IP $LIMIT -j ACCEPT
+  [ "$SNAT" ] && \
+  for lan in $LANS; do
+  ipt -t nat    -A POSTROUTING -p tcp -o $IF_EXT  $DPORTS -s $lan -d $IP $LIMIT -j SNAT --to-source $IP_EXT
+  done
+  printf '@'
+}
+deny_ip()  # (IP) - Запрещаем tcp/udp-трафик для IP.
+{
+  ipt -t mangle -A deny -p tcp -s $1 $DPORTS -j DROP # Запрещаем весь входящий tcp-трафик с IP.
+  ipt -t mangle -A deny -p tcp -s $1 $SPORTS -j DROP # Запрещаем весь входящий tcp-трафик с IP.
+  ipt -t mangle -A deny -p udp -s $1 $DPORTS -j DROP # Запрещаем весь входящий udp-трафик с IP.
+  ipt -t mangle -A deny -p udp -s $1 $SPORTS -j DROP # Запрещаем весь входящий udp-трафик с IP.
+}
+deny_ip_all()  # (IP) - Запрещаем весь tcp/udp-трафик для IP.
+{
+  ipt -t mangle -A deny -s $1 -j DROP # Запрещаем весь входящий tcp/udp-трафик с IP.
+}
+d()  # (IP,NAME,WA,PORTS) - Запрещаем весь входящий трафик для IP.
+{
+  [ "$ENABLE_D" ] || return        # Проверяем, разрешено ли исполнять команду.
+  ip "$1"; name "$2"; wa "$3"; ports "$4" # Получаем $IP; $NAME; $WA; $PORTS,$SPORTS,$DPORTS,DNAT_DPORT,$DNAT_TPORT.
+  case "$PORTS" in
+     '') write_dns   "$IP" "$NAME" # Прописываем в DNS, если адрес из локальной сети.
+         write_ipdb  "$IP"         # Пишем информацию в ip-базу данных, если адрес из локальной сети.
+         ;;
+    all) deny_ip_all "$IP"         # Запрещаем весь tcp/udp-трафик для IP.
+         write_dns   "$IP" "$NAME" # Прописываем в DNS, если адрес из локальной сети.
+         write_ipdb  "$IP"         # Пишем информацию в ip-базу данных, если адрес из локальной сети.
+         ;;
+      *) deny_ip     "$IP"         # Запрещаем tcp/udp-трафик для IP.
+         count_ip    "$IP"         # Считаем трафик для IP.
+         write_dns   "$IP" "$NAME" # Прописываем в DNS, если адрес из локальной сети.
+         write_dg    "$IP" "$WA"   # Определяем права WEB-доступа.
+         write_ipdb  "$IP"         # Пишем информацию в ip-базу данных, если адрес из локальной сети.
+         ;;
+  esac
+  printf 'd'
+}
+a()  # (IP,NAME,WA,PORTS,LIMIT) - Разрешаем tcp-порты для IP хоста/сети, определяем группу WEB-доступа, устанавливаем лимит.
+{
+  [ "$ENABLE_A" ] || return       # Проверяем, разрешено ли исполнять команду.
+  ip "$1"; name "$2"; wa "$3"; ports "$4"; limit "$5" # Получаем $IP; $NAME; $WA; $PORTS,$SPORTS,$DPORTS,DNAT_DPORT,$DNAT_TPORT; $LIMIT.
+  case "$PORTS" in
+     '') write_dns  "$IP" "$NAME" # Прописываем в DNS, если адрес из локальной сети.
+         write_ipdb "$IP"         # Пишем информацию в ip-базу данных, если адрес из локальной сети.
+         ;;
+    all) allow_ip   "$IP"         # Разрешаем порты для IP, устанавливаем лимит.
+         count_ip   "$IP"         # Считаем трафик для IP.
+         write_dns  "$IP" "$NAME" # Прописываем в DNS, если адрес из локальной сети.
+         write_dg   "$IP" "$WA"   # Определяем права WEB-доступа.
+         write_ipdb "$IP"         # Пишем информацию в ip-базу данных, если адрес из локальной сети.
+         ;;
+      *) allow_ip   "$IP"         # Разрешаем порты для IP, устанавливаем лимит.
+         count_ip   "$IP"         # Считаем трафик для IP.
+         [ "$DNAT_DPORT" ] && [ "$DNAT_TPORT" ] && dnat "$IP" "$DNAT_DPORT" "$DNAT_TPORT"
+         write_dns  "$IP" "$NAME" # Прописываем в DNS, если адрес из локальной сети.
+         write_dg   "$IP" "$WA"   # Определяем права WEB-доступа.
+         write_ipdb "$IP"         # Пишем информацию в ip-базу данных, если адрес из локальной сети.
+         ;;
+  esac
+  printf 'a'
+}
+D()  # (IP,NAME,WA,PORTS) - Запрещаем весь входящий трафик для IP.
+{
+  EXTDOMAINFLAG='Y' # Уст. флаг записи в зону внешнего домена.
+  d $1 $2 $3 $4
+  EXTDOMAINFLAG=''  # Сбрасываем флаг записи в зону внешнего домена.
+}
+A()  # (IP,NAME,WA,PORTS,LIMIT) - Разрешаем tcp-порты для IP хоста/сети, определяем группу WEB-доступа, устанавливаем лимит.
+{
+  EXTDOMAINFLAG='Y' # Уст. флаг записи в зону внешнего домена.
+  a $1 $2 $3 $4 $5
+  EXTDOMAINFLAG=''  # Сбрасываем флаг записи в зону внешнего домена.
+}
+enable_gw()  # () - Включаем маршрутизацию/NAT через внутренний шлюз к сетям.
+{
+  [ "$NETS_VIA_GW" ] || NETS_VIA_GW=`cat 2>/dev/null "$STATICROUTES"|grep -a '.*/.*'|awk '{print $3}'`
+  # Удаляем из STATICROUTES добавленные ранее сети.
+  cat 2>/dev/null "$STATICROUTES"|grep -av '.*/.*'>"/tmp/fwtraf.enable_gw.$$"
+  move_file "/tmp/fwtraf.enable_gw.$$" "$STATICROUTES"
+  chmod 644                            "$STATICROUTES"
+  chown root:root                      "$STATICROUTES"
+  # Удаляем сети, и если задан шлюз GW, добавляем их снова в таблицу маршрутизации и в STATICROUTES.
+  for net in $NETS_VIA_GW; do
+    route 2>/dev/null del -net $net
+    [ "$GW" ] || continue
+
+    printf "Add route to $net via $GW"
+    route 2>/dev/null add -net $net gw $GW
+    if [ $? -eq 0 ]; then
+      # Определяем интерфейс, через который подключен шлюз.
+      local if_to_gw=`route -n|grep -a "^${net%%\/*} "|awk '{print $8}'`
+      # Добавляем в STATICROUTES сеть.
+      echo>>"$STATICROUTES" "$if_to_gw net $net gw $GW"
+      # Разрешаем пакеты через шлюз к сетям.
+      ipt -t mangle -A PREROUTING  -i $IFs_INT -d $net -j ACCEPT
+      for lan in $LANS; do
+      ipt -t mangle -A POSTROUTING -s $lan     -d $net -j ACCEPT
+      done
+      # Разрешаем пакеты конкретно на шлюз (нужно только для его контроля).
+      ipt -t mangle -A PREROUTING  -i $IFs_INT -d $GW  -j ACCEPT
+      for lan in $LANS; do
+      ipt -t mangle -A POSTROUTING -s $lan     -d $GW  -j ACCEPT
+      done
+      [ "$SNAT_TO_GW" ] || { echo; continue; }
+      echo ". Enable SNAT to $net on $SNAT_TO_GW"
+      for lan in $LANS; do
+      ipt -t nat -A POSTROUTING -s $lan -d $net -j SNAT --to-source $SNAT_TO_GW
+      ipt -t nat -A POSTROUTING -s $lan -d $GW  -j SNAT --to-source $SNAT_TO_GW
+      done
+    else
+      echo ': Error'
+    fi
+  done
+}
+fwprepare()  # (POLICY) - Подготавливает IPTables.
+{
+  # Задаем политики на цепочки.
+  ipt -t mangle -P PREROUTING  ACCEPT; ipt -t filter -P INPUT   $1; ipt -t nat -P PREROUTING  ACCEPT
+  ipt -t mangle -P OUTPUT      ACCEPT; ipt -t filter -P FORWARD $1; ipt -t nat -P OUTPUT      ACCEPT
+  ipt -t mangle -P POSTROUTING ACCEPT; ipt -t filter -P OUTPUT  $1; ipt -t nat -P POSTROUTING ACCEPT
+  # Удаляем все правила и очищаем цепочки.
+  ipt -t mangle -F; ipt -t mangle -X
+  ipt -t filter -F; ipt -t filter -X
+  ipt -t nat    -F; ipt -t nat    -X
+  # Разрешаем трафик с петлевого интерфейса.
+  ipt -t mangle -A PREROUTING  -i $IF_LO -j ACCEPT; ipt -t filter -A INPUT  -i $IF_LO -j ACCEPT # входящий.
+  ipt -t mangle -A POSTROUTING -o $IF_LO -j ACCEPT; ipt -t filter -A OUTPUT -o $IF_LO -j ACCEPT # исходящий.
+  # Загружаем модули.
+  depmod -a
+  modprobe &>/dev/null ip_conntrack
+  modprobe &>/dev/null ip_conntrack_ftp ports=21,2121
+  modprobe &>/dev/null ip_nat_ftp       ports=21,2121
+  modprobe &>/dev/null ip_nat_pptp
+  modprobe &>/dev/null ip_conntrack_pptp
+  modprobe &>/dev/null ip_gre
+  echo>'/proc/sys/net/ipv4/ip_conntrack_max' '131072'
+}
+fwaccept()  # () - Разрешаем все пакеты, отключаем SNAT.
+{
+  lock_check # Проверяем, не запущен ли скрипт уже.
+  lock_run   # Устанавливаем блокировку запуска.
+  ipt_begin  # Начинаем запись команд iptables в файл $IPTFILE.
+  fwprepare ACCEPT
+  ipt_end    # Применяем команды iptables из файла $IPTFILE.
+  lock_unset # Удаляем блокировку запуска.
+}
+fwsimple()  # () - Устанавливает простые правила для всех локалых сетей.
+{
+  [ "$IF_EXT" ] || { printf 'ERROR: external interface not found\a\n'; exit 1; }
+  lock_check # Проверяем, не запущен ли скрипт уже.
+  lock_run   # Устанавливаем блокировку запуска.
+  ipt_begin  # Начинаем запись команд iptables в файл $IPTFILE.
+  fwprepare ACCEPT
+  enable_gw  # Включаем маршрутизацию/NAT через внутренний шлюз к сетям.
+  # Перенаправляем http на Squid/DansGuardian.
+  [ "$WEBPROXY" == 'SQUID'   ] && ipt -t nat -A PREROUTING  -p tcp -i $IFs_INT --dport 80   -j REDIRECT --to-ports 3128
+  [ "$WEBPROXY" == 'SQUID'   ] && ipt -t nat -A PREROUTING  -p tcp -i $IFs_INT --dport 8080 -j REDIRECT --to-ports 3128
+  [ "$WEBPROXY" == 'DGSQUID' ] && ipt -t nat -A PREROUTING  -p tcp -i $IFs_INT --dport 80   -j REDIRECT --to-ports 8080
+  [ "$SNAT"                  ] && \
+  {
+    # Запрещаем NAT для SMTP.
+    ipt     -t nat -A POSTROUTING -p tcp -o $IF_EXT --dport 25 -j DROP
+    for lan in $LANS; do
+      [ "$REMOTE_LANS" ] && \
+      for remote_lan in $REMOTE_LANS; do
+        ipt -t nat -A POSTROUTING -s $lan -d $remote_lan -j ACCEPT
+      done
+      ipt   -t nat -A POSTROUTING -s $lan -o $IF_EXT     -j SNAT --to-source $IP_EXT
+    done
+  }
+  ipt_end    # Применяем команды iptables из файла $IPTFILE.
+  lock_unset # Удаляем блокировку запуска.
+}
+fwsingle()  # (IP) - Устанавливает простые правила для одного локального IP (опасно).
+{
+  ip "$1" # Получаем $IP
+  [ "$IP"     ] || { printf 'ERROR: local IP not specified\a\n'      ; exit 1; }
+  [ "$IF_EXT" ] || { printf 'ERROR: external interface not found\a\n'; exit 1; }
+  lock_check # Проверяем, не запущен ли скрипт уже.
+  lock_run   # Устанавливаем блокировку запуска.
+  ipt_begin  # Начинаем запись команд iptables в файл $IPTFILE.
+  fwprepare ACCEPT
+  enable_gw  # Включаем маршрутизацию/NAT через внутренний шлюз к сетям.
+  [ "$SNAT" ] && \
+  {
+    # Запрещаем NAT для SMTP.
+    ipt   -t nat -A POSTROUTING -p tcp -o $IF_EXT --dport 25 -j DROP
+    [ "$REMOTE_LANS" ] && \
+    for remote_lan in $REMOTE_LANS; do
+      ipt -t nat -A POSTROUTING -s $IP -d $remote_lan -j ACCEPT
+    done
+    ipt   -t nat -A POSTROUTING -s $IP -o $IF_EXT     -j SNAT --to-source $IP_EXT
+  }
+  ipt_end    # Применяем команды iptables из файла $IPTFILE.
+  lock_unset # Удаляем блокировку запуска.
+}
+fwnormal()  # () - Устанавливает правила для нормальной работы сервера.
+{
+  [ "$HOSTNAME"   ] || { printf 'ERROR: host name unknown - check /etc/hosts\a\n'  ; exit 1; }
+  [ "$DOMAINNAME" ] || { printf 'ERROR: domain name unknown - check /etc/hosts\a\n'; exit 1; }
+  [ "$IF_EXT"     ] || { printf 'ERROR: external interface not found\a\n'          ; exit 1; }
+  lock_check # Проверяем, не запущен ли скрипт уже.
+  lock_run   # Устанавливаем блокировку запуска.
+  dg_begin   # Сохраняем списки DG, чтобы потом узнать, были ли в них изменения.
+  ipt_begin  # Начинаем запись команд iptables в файл $IPTFILE.
+  printf '\n[ base rules processing ]\n'; fwprepare DROP # Подготавливаем IPTables.
+
+  ###################################    Правила, в которые попадает больше всего трафика,
+  ###   Цепочки (таблица mangle)  ###    ставим повыше для увеличения скорости и снижения нагрузки на CPU).
+  ###################################
+
+# # Маркируем внешний трафик (Type Of Service: 0x02 - Minimize Cost).
+# ipt -t mangle -A PREROUTING -i $IF_EXT -j TOS  --set-tos  0x02
+# ipt -t mangle -A PREROUTING -i $IF_EXT -j MARK --set-mark 0x02
+
+  ############################################################################
+  ###   Цепочка и правила для отсева ненужных пакетов - (таблица mangle)   ###
+  ############################################################################
+
+  ipt -t mangle -N deny # Создаем цепочку для отсева ненужных пакетов.
+  ipt -t mangle -A deny -p tcp --tcp-flags SYN,ACK                  SYN,ACK $STATE NEW      -j DROP
+  ipt -t mangle -A deny -p tcp ! --syn                                      $STATE NEW      -j DROP
+  ipt -t mangle -A deny -p tcp --tcp-flags FIN,SYN,RST,PSH,ACK,URG  NONE                    -j DROP
+  ipt -t mangle -A deny -p tcp --tcp-flags FIN,SYN                  FIN,SYN                 -j DROP
+  ipt -t mangle -A deny -p tcp --tcp-flags SYN,RST                  SYN,RST                 -j DROP
+  ipt -t mangle -A deny -p tcp --tcp-flags FIN,RST                  FIN,RST                 -j DROP
+  ipt -t mangle -A deny -p tcp --tcp-flags FIN,ACK                  FIN                     -j DROP
+  ipt -t mangle -A deny -p tcp --tcp-flags PSH,ACK                  PSH                     -j DROP
+  ipt -t mangle -A deny -p tcp --tcp-flags ACK,URG                  URG                     -j DROP
+  ipt -t mangle -A deny -p tcp --tcp-flags FIN,SYN,RST,PSH,ACK,URG  FIN                     -j DROP
+  ipt -t mangle -A deny -p tcp --tcp-flags FIN,SYN,RST,PSH,ACK,URG  FIN,PSH,URG             -j DROP
+  ipt -t mangle -A deny -p tcp --tcp-flags FIN,SYN,RST,PSH,ACK,URG  FIN,SYN,RST,ACK,URG     -j DROP
+  ipt -t mangle -A deny -p tcp --tcp-flags FIN,SYN,RST,PSH,ACK,URG  FIN,SYN,RST,PSH,ACK,URG -j DROP
+
+  ##############################################################
+  ###   Цепочки и правила учета трафика - (таблица mangle)   ###
+  ##############################################################
+
+  # Создаем цепочки учета трафика и добавляем туда правила, с которых снимается статистика
+  # (поик по ключ. словам "deny", "ACCEPT" и "RETURN").
+  ipt -t mangle -N _exti              # Цепочка учета внешнего входящего         трафика.
+  ipt -t mangle -N _extiall           # Цепочка учета внешнего входящего   всего трафика.
+  ipt -t mangle -N _extiweb           # Цепочка учета внешнего входящего     WEB-трафика.
+  ipt -t mangle -N _extiftp           # Цепочка учета внешнего входящего     FTP-трафика.
+  ipt -t mangle -N _extieml           # Цепочка учета внешнего входящего     EML-трафика.
+  ipt -t mangle -N _extixxx           # Цепочка учета внешнего входящего прочего трафика.
+  ipt -t mangle -A _exti                                                 -j _extiall
+  ipt -t mangle -A _exti -p tcp -m multiport --dports 80,443             -j _extiweb
+  ipt -t mangle -A _exti -p tcp -m multiport --sports 80,443             -j _extiweb
+  ipt -t mangle -A _exti -p tcp              --dport  20:21              -j _extiftp
+  ipt -t mangle -A _exti -p tcp              --sport  20:21              -j _extiftp
+  ipt -t mangle -A _exti -p tcp -m multiport --dports 25,110,143,587,995 -j _extieml
+  ipt -t mangle -A _exti -p tcp -m multiport --sports 25,110,143,587,995 -j _extieml
+  ipt -t mangle -A _exti                                                 -j _extixxx
+  ipt -t mangle -A _extiall -j RETURN # Это правило используется для подсчета трафика.
+  ipt -t mangle -A _extiweb -j deny   # Это правило используется для подсчета трафика.
+  ipt -t mangle -A _extiftp -j deny   # Это правило используется для подсчета трафика.
+  ipt -t mangle -A _extieml -j deny   # Это правило используется для подсчета трафика.
+  ipt -t mangle -A _extixxx -j deny   # Это правило используется для подсчета трафика.
+
+  ipt -t mangle -N _exto              # Цепочка учета внешнего исходящего         трафика.
+  ipt -t mangle -N _extoall           # Цепочка учета внешнего исходящего   всего трафика.
+  ipt -t mangle -N _extoweb           # Цепочка учета внешнего исходящего     WEB-трафика.
+  ipt -t mangle -N _extoftp           # Цепочка учета внешнего исходящего     FTP-трафика.
+  ipt -t mangle -N _extoeml           # Цепочка учета внешнего исходящего     EML-трафика.
+  ipt -t mangle -N _extoxxx           # Цепочка учета внешнего исходящего прочего трафика.
+  ipt -t mangle -A _exto                                         -j _extoall
+  ipt -t mangle -A _exto -p tcp -m multiport --dports 80,443     -j _extoweb
+  ipt -t mangle -A _exto -p tcp -m multiport --sports 80,443     -j _extoweb
+  ipt -t mangle -A _exto -p tcp              --dport  20:21      -j _extoftp
+  ipt -t mangle -A _exto -p tcp              --sport  20:21      -j _extoftp
+  ipt -t mangle -A _exto -p tcp -m multiport --dports 25,110,143 -j _extoeml
+  ipt -t mangle -A _exto -p tcp -m multiport --sports 25,110,143 -j _extoeml
+  ipt -t mangle -A _exto                                         -j _extoxxx
+  ipt -t mangle -A _extoall -j RETURN # Это правило используется для подсчета трафика.
+  ipt -t mangle -A _extoweb -j ACCEPT # Это правило используется для подсчета трафика.
+  ipt -t mangle -A _extoftp -j ACCEPT # Это правило используется для подсчета трафика.
+  ipt -t mangle -A _extoeml -j ACCEPT # Это правило используется для подсчета трафика.
+  ipt -t mangle -A _extoxxx -j ACCEPT # Это правило используется для подсчета трафика.
+
+  ipt -t mangle -N _inti                   # Цепочка фильтрации входящего локального трафика.
+  for lan in $LANS; do
+  ipt -t mangle -A _inti -d $lan -j ACCEPT # Внутренний входящий трафик к серверу.
+  done
+  ipt -t mangle -A _inti -j deny           # Переходим в цепочку запрета.
+
+  ipt -t mangle -N _into # Цепочка учета внешнего входящего трафика по хостам и сетям.
+
+  # Отлавливаем внешний
+  ipt -t mangle -A PREROUTING  -i $IF_EXT                                     -j _exti  # входящий трафик.
+  ipt -t mangle -A POSTROUTING -o $IF_EXT                                     -j _exto  # исходящий трафик.
+  # Отлавливаем внутренний
+  ipt -t mangle -A PREROUTING  -i $IFs_INT                                    -j _inti  # входящий трафик.
+  ipt -t mangle -A POSTROUTING -o $IFs_INT                         -s $IP_EXT -j ACCEPT # исходящий в LAN, с внешнего интерфейса - его не считаем.
+  [ "$WEBPROXY" ] && \
+  for lan in $LANS; do
+  ipt -t mangle -A POSTROUTING -o $IFs_INT -p tcp --sport $WEBPORT -s $lan    -j _into  # проксируемый LAN->LAN, WEB.
+  ipt -t mangle -A POSTROUTING -o $IFs_INT                         -s $lan    -j ACCEPT # остальной    LAN->LAN - его не считаем.
+  done
+  ipt -t mangle -A POSTROUTING -o $IFs_INT                                    -j _into  # остальной       ->LAN - внешний непроксируемый (HTTPS,FTP,EML,ICQ,...).
+# # Отлавливаем маркированный исходящий трафик с внутреннего интерфейса.
+# ipt -t mangle -A POSTROUTING -o $IFs_INT -m tos --tos 0x02 -o $IFs_INT -j _into
+
+# ipt -t mangle -A FORWARD -i $IFs_INT -s 10.5.33.212 -j TOS --set-tos 0x10
+
+  enable_gw # Включаем маршрутизацию/NAT через внутренний шлюз к сетям.
+
+  # Разрешаем почтовые сервисы.
+  [ "$EMLSERVICES" ] && \
+  for emlservice in $EMLSERVICES; do
+  allow_tcpservice "$emlservice" '25,110' $LIMIT_EML
+  done
+
+  # Разрешаем web-сервисы.
+  [ "$WEBSERVICES" ] && \
+  for webservice in $WEBSERVICES; do
+  allow_tcpservice "$webservice" '80,443' $LIMIT_WEB
+  done
+
+  ###################################################
+  ###   DNAT - Цепочка PREROUTING (таблица nat)   ###
+  ###################################################
+
+# # DNAT из локальной сети для FTP.
+# ipt -t nat -A PREROUTING -p tcp -i $IFs_INT -d 192.168.0.5 --dport 20:21 -j DNAT --to-destination 192.168.34.211
+# # DNAT из Интернет для RDP.
+# ipt -t nat -A PREROUTING -p tcp             -d $IP_EXT     --dport 3389  -j DNAT --to-destination 192.168.1.103:3389
+# ipt -t nat -A PREROUTING -p tcp             -d 57.67.17.135              -j DNAT --to-destination 192.168.100.1
+# ipt -t nat -A PREROUTING -p tcp             -d 63.87.6.92                -j DNAT --to-destination 192.168.100.1
+  # DNAT для Exchange (RPC Over HTTPs)
+  [ "$HOSTNAME" == 'main' ] && dnat '10.124.8.133' '443' '443'
+
+  #######################################################
+  ###   REDIRECT - Цепочка PREROUTING (таблица nat)   ###
+  #######################################################
+
+  # Закрываем порты, на которые делаем перенаправление.
+  if [ "$FTPPROXY" == 'FROX'    ]; then
+                               ipt -t nat -A PREROUTING -p tcp -i $IF_EXT                         --dport 2121       -j DROP
+    for ip_int in $IPs_INT; do ipt -t nat -A PREROUTING -p tcp -d $ip_int                         --dport 2121       -j DROP; done
+  fi
+  if [ "$WEBPROXY" == 'SQUID'   ]; then
+                               ipt -t nat -A PREROUTING -p tcp -i $IF_EXT                         --dport 3128       -j DROP
+    for ip_int in $IPs_INT; do ipt -t nat -A PREROUTING -p tcp -d $ip_int                         --dport 3128       -j DROP; done
+  fi
+  if [ "$WEBPROXY" == 'DGSQUID' ]; then
+                               ipt -t nat -A PREROUTING -p tcp -i $IF_EXT -d $IP_EXT -m multiport --dports 3128,8080 -j DROP
+    for ip_int in $IPs_INT; do ipt -t nat -A PREROUTING -p tcp            -d $ip_int -m multiport --dports 3128,8080 -j DROP; done
+  fi
+  # Избавляемся от LAN->LAN/REMOTE_LAN-трафика в этой цепочке.
+  for lan in $LANS $REMOTE_LANS; do ipt -t nat -A PREROUTING -i $IFs_INT -d $lan -j RETURN; done
+  # Перенаправляем LAN->EXT-трафик.
+  [ "$FTPPROXY" == 'FROX'    ] && ipt -t nat -A PREROUTING -i $IFs_INT -p tcp --dport 21   -j REDIRECT --to-ports 2121
+  [ "$WEBPROXY" == 'SQUID'   ] && ipt -t nat -A PREROUTING -i $IFs_INT -p tcp --dport 80   -j REDIRECT --to-ports 3128
+  [ "$WEBPROXY" == 'SQUID'   ] && ipt -t nat -A PREROUTING -i $IFs_INT -p tcp --dport 8080 -j REDIRECT --to-ports 3128
+  [ "$WEBPROXY" == 'DGSQUID' ] && ipt -t nat -A PREROUTING -i $IFs_INT -p tcp --dport 80   -j REDIRECT --to-ports 8080
+
+  ###################################    Правила, в которые попадает больше всего трафика,
+  ###   Цепочки (таблица filter)  ###    ставим повыше для увеличения скорости и снижения нагрузки на CPU).
+  ###################################
+
+# ipt -t filter -A INPUT -m mac --mac-source 00:18:f3:a3:3f:24  -j DROP # Блокируем входящий трафик с MAC-адреса (ogk812).
+# ipt -t filter -A FORWARD -p udp -m length --length 39 -m u32 --u32 '27&0x8f=7' --u32 '31=0x527c4833' -j DROP # Режем Skype.
+
+  ipt -t filter -A INPUT               $STATE ESTABLISHED,RELATED -j ACCEPT # Установленные соединения к серверу.
+  ipt -t filter -A FORWARD -o $IFs_INT $STATE ESTABLISHED,RELATED -j ACCEPT # Исходящие установленные соединения с внутренних интерфейсов.
+  ipt -t filter -A OUTPUT  -o $IF_EXT -s $IP_EXT                  -j ACCEPT # Исходящий с внешнего интерфейса наружу.
+
+  for lan in $LANS; do
+    ipt -t filter -A FORWARD -i $IFs_INT        -d $lan                    -j ACCEPT # Транзитный из локальных сетей в локальные сети.
+    ipt -t filter -A OUTPUT  -o $IFs_INT -p tcp -s $lan --sport ! $WEBPORT -j ACCEPT # Исходящий TCP, кроме WEB, с внутреннего интерфейса вовнутрь.
+    ipt -t filter -A OUTPUT  -o $IFs_INT -p udp -s $lan                    -j ACCEPT # Исходящий UDP с внутренних интерфейсов вовнутрь.
+    [ "$REMOTE_LANS" ] && \
+    for remote_lan in $REMOTE_LANS; do
+      ipt -t filter -A INPUT       -s $remote_lan -d $lan        -j ACCEPT # Входящий   из удалённых локальных сетей в           локальные сети.
+      ipt -t filter -A FORWARD     -s $remote_lan -d $lan        -j ACCEPT # Транзитный из удалённых локальных сетей в           локальные сети.
+      ipt -t filter -A FORWARD     -s $lan        -d $remote_lan -j ACCEPT # Транзитный из           локальных сетей в удалённые локальные сети.
+      ipt -t filter -A OUTPUT      -s $lan        -d $remote_lan -j ACCEPT # Исходящий  из           локальных сетей в удалённые локальные сети.
+      ipt -t nat    -A POSTROUTING -s $lan        -d $remote_lan -j ACCEPT # Не допускаем SNAT из    локальных сетей в удалённые локальные сети.
+    done
+  done
+
+  # ICMP (type: 0-ответ "Echo reply", 8-запрос "Echo request", 11-ответ "TTL equals 0").
+  ipt -t filter -A INPUT       -p icmp                    -j ACCEPT                   # Входящий  ICMP.
+# ipt -t filter -A INPUT       -p icmp --icmp-type 0      -j ACCEPT                   # Входящий  ICMP.
+# ipt -t filter -A INPUT       -p icmp --icmp-type 8      -j ACCEPT                   # Входящий  ICMP.
+# ipt -t filter -A INPUT       -p icmp --icmp-type 11     -j ACCEPT                   # Входящий  ICMP.
+  ipt -t filter -A OUTPUT      -p icmp                    -j ACCEPT                   # Исходящий ICMP.
+  ipt -t filter -A FORWARD     -p icmp                    -j ACCEPT                   #           ICMP.
+  [ "$SNAT" ] && \
+  for lan in $LANS; do
+    ipt -t nat  -A POSTROUTING -p icmp -s $lan -o $IF_EXT -j SNAT --to-source $IP_EXT # NAT для   ICMP.
+  done
+
+  [ "$FTPPROXY" ] && \
+  for lan in $LANS; do
+    ipt -t filter -A INPUT -p tcp -i $IFs_INT -d $lan --dport 2121 -j ACCEPT # Входящий локальный Frox.
+  done
+
+  printf '\n[ deny rules processing ]\n'  ; ENABLE_D='Y'; ENABLE_IEC='' ; ENABLE_A='' ; . $CONFIGFILE # Подключаем $CONFIGFILE 2 раз - выполняем d().
+  printf '\n[ policy rules processing ]\n'; ENABLE_D='' ; ENABLE_IEC='Y'; ENABLE_A='' ; . $CONFIGFILE # Подключаем $CONFIGFILE 3 раз - выполняем i(),e(),c().
+  printf '\n[ allow rules processing ]\n' ; ENABLE_D='' ; ENABLE_IEC='' ; ENABLE_A='Y'; . $CONFIGFILE # Подключаем $CONFIGFILE 4 раз - выполняем a(),A().
+
+  ipt -t filter -A FORWARD -i $IF_EXT -p tcp --sport 1024: --dport 1024: -j DROP # Запрещаем соединения с
+  ipt -t filter -A FORWARD -o $IF_EXT -p tcp --sport 1024: --dport 1024: -j DROP # непривелигированных портов
+  ipt -t filter -A FORWARD -i $IF_EXT -p udp --sport 1024: --dport 1024: -j DROP # на непривелигированные
+  ipt -t filter -A FORWARD -o $IF_EXT -p udp --sport 1024: --dport 1024: -j DROP # на внешнем интерфейсе.
+
+  # Чтобы оставшийся трафик не вернулся в родительские цепочки подсчета, разрешаем его.
+  ipt -t mangle -A deny -j ACCEPT
+
+  ipt_end                                                            # Применяем команды iptables, если необходимо.
+  dg_end                                                             # Перезапускаем DansGuardian, если необходимо.
+  [ -a "$DNSROOTDIR/etc/named.conf" ] && $NICE service named reload  # Перечитываем DNS-зоны.
+  lock_unset                                                         # Удаляем блокировку запуска.
+  status                                                             # Показываем статус.
+}
+fwsave()  # fwsave () - Сохраняет правила.
+{
+  lock_check # Проверяем, не запущен ли скрипт уже.
+  lock_run   # Устанавливаем блокировку запуска.
+  iptables-save>"$IPTABLESFILE"
+  lock_unset # Удаляем блокировку запуска.
+}
+fwview()  # (OPTIONS,SUBSTR) - Просм. цепочки [совп. с п/строкой]
+{
+  printf '\n************\nMANGLE table\n************\n\n' >"/tmp/fwtraf.fwview.$$"; iptables -t mangle -L $1>>"/tmp/fwtraf.fwview.$$"
+  printf '\n************\nFILTER table\n************\n\n'>>"/tmp/fwtraf.fwview.$$"; iptables -t filter -L $1>>"/tmp/fwtraf.fwview.$$"
+  printf '\n************\nNAT table   \n************\n\n'>>"/tmp/fwtraf.fwview.$$"; iptables -t nat    -L $1>>"/tmp/fwtraf.fwview.$$"
+  if [ "$2" ]; then
+    cat 2>/dev/null "/tmp/fwtraf.fwview.$$"|grep -ai "$2">"/tmp/fwtraf.fwview1.$$"
+    move_file "/tmp/fwtraf.fwview1.$$" "/tmp/fwtraf.fwview.$$"
+  fi
+  mc -e "/tmp/fwtraf.fwview.$$"
+  rm -f "/tmp/fwtraf.fwview.$$"
+}
+fwviewb() { mc -v "$IPTABLESFILE";       }  # Просм. правила, уст. при загрузке.
+fwviewi() { mc -v "$IPTFILE";            }  # Просм. тек. команды iptables.
+fwviewio(){ mc -v "$IPTFILE.old";        }  # Просм. предыд. команды iptables.
+fwconf()  { mc -e "${CONFIGFILE//.tmp}"; }  # Редакт. конфиг. файл.
+dginet()  # (MODE) - Меняет последнюю группу фильтрации на первую (т.е. включает Интернет) или наооборот.
+{
+  [    "$DG_CONF"     ] || { printf 'ERROR: variable "DG_CONF" not found\a\n'          ; exit 1; }
+  [ -a "$DG_CONF"     ] || { printf "ERROR: file \"$DG_CONF\" not found\a\n"           ; exit 1; }
+  [    "$DG_FGRP"     ] || { printf 'ERROR: parameter "filtergroups" not found\a\n'    ; exit 1; }
+  [    "$DG_FGRPLIST" ] || { printf 'ERROR: parameter "filtergroupslist" not found\a\n'; exit 1; }
+  [ -a "$DG_FGRPLIST" ] || { printf "ERROR: file \"$DG_FGRPLIST\" not found\a\n"       ; exit 1; }
+  lock_check # Проверяем, не запущен ли скрипт уже.
+  lock_run   # Устанавливаем блокировку запуска.
+  case "$1" in
+    on ) cat 2>/dev/null "$DG_FGRPLIST"|sed 2>/dev/null -e "s/=filter${DG_FGRP}/= filter1/g">"/tmp/filtergroupslist.$$" ;;
+    off) cat 2>/dev/null "$DG_FGRPLIST"|sed 2>/dev/null -e "s/= filter1/=filter${DG_FGRP}/g">"/tmp/filtergroupslist.$$" ;;
+  esac
+  [ -a "/tmp/filtergroupslist.$$" ] || { printf "ERROR: file \"/tmp/filtergroupslist.$$\" not found\a\n"; exit 1; }
+  diff &>/dev/null "/tmp/filtergroupslist.$$" "$DG_FGRPLIST" || \
+  {
+    cat 2>/dev/null "/tmp/filtergroupslist.$$">"$DG_FGRPLIST"
+    service dansguardian restart
+  }
+  rm -f "/tmp/filtergroupslist.$$"
+  lock_unset # Удаляем блокировку запуска.
+}
+trafhourly()  # () - Выполняется в 58 минут каждого часа.
+{
+  local dt=`date +%Y%m%d%H%M`
+  mkdir -p "$IPDBDIR/EXT_IN"  "$IPDBDIR/EXT_IN_WEB"  "$IPDBDIR/EXT_IN_FTP"  "$IPDBDIR/EXT_IN_EML"  "$IPDBDIR/EXT_IN_XXX"
+  mkdir -p "$IPDBDIR/EXT_OUT" "$IPDBDIR/EXT_OUT_WEB" "$IPDBDIR/EXT_OUT_FTP" "$IPDBDIR/EXT_OUT_EML" "$IPDBDIR/EXT_OUT_XXX"
+  iptables 2>/dev/null -t mangle -L _extiall -v -x -n -Z|awk -v outdir=$IPDBDIR -v date=$dt '{if ($3=="RETURN") {print date,$2>>outdir"/EXT_IN/fwtraf_counter"     }}'
+  iptables 2>/dev/null -t mangle -L _extiweb -v -x -n -Z|awk -v outdir=$IPDBDIR -v date=$dt '{if ($3=="deny")   {print date,$2>>outdir"/EXT_IN_WEB/fwtraf_counter" }}'
+  iptables 2>/dev/null -t mangle -L _extiftp -v -x -n -Z|awk -v outdir=$IPDBDIR -v date=$dt '{if ($3=="deny")   {print date,$2>>outdir"/EXT_IN_FTP/fwtraf_counter" }}'
+  iptables 2>/dev/null -t mangle -L _extieml -v -x -n -Z|awk -v outdir=$IPDBDIR -v date=$dt '{if ($3=="deny")   {print date,$2>>outdir"/EXT_IN_EML/fwtraf_counter" }}'
+  iptables 2>/dev/null -t mangle -L _extixxx -v -x -n -Z|awk -v outdir=$IPDBDIR -v date=$dt '{if ($3=="deny")   {print date,$2>>outdir"/EXT_IN_XXX/fwtraf_counter" }}'
+  iptables 2>/dev/null -t mangle -L _extoall -v -x -n -Z|awk -v outdir=$IPDBDIR -v date=$dt '{if ($3=="RETURN") {print date,$2>>outdir"/EXT_OUT/fwtraf_counter"    }}'
+  iptables 2>/dev/null -t mangle -L _extoweb -v -x -n -Z|awk -v outdir=$IPDBDIR -v date=$dt '{if ($3=="ACCEPT") {print date,$2>>outdir"/EXT_OUT_WEB/fwtraf_counter"}}'
+  iptables 2>/dev/null -t mangle -L _extoftp -v -x -n -Z|awk -v outdir=$IPDBDIR -v date=$dt '{if ($3=="ACCEPT") {print date,$2>>outdir"/EXT_OUT_FTP/fwtraf_counter"}}'
+  iptables 2>/dev/null -t mangle -L _extoeml -v -x -n -Z|awk -v outdir=$IPDBDIR -v date=$dt '{if ($3=="ACCEPT") {print date,$2>>outdir"/EXT_OUT_EML/fwtraf_counter"}}'
+  iptables 2>/dev/null -t mangle -L _extoxxx -v -x -n -Z|awk -v outdir=$IPDBDIR -v date=$dt '{if ($3=="ACCEPT") {print date,$2>>outdir"/EXT_OUT_XXX/fwtraf_counter"}}'
+  iptables 2>/dev/null -t mangle -L _into    -v -x -n -Z \
+  |while read pkts bytes target prot opt in out src dst; do
+     if [ "$target" == 'ACCEPT' -a "$bytes" != '0' ]; then
+       mkdir -p "$IPDBDIR/${dst/\/*}"
+       echo>>"$IPDBDIR/${dst/\/*}/fwtraf_counter" "$dt $bytes"
+     fi
+   done
+  find 2>/dev/null $IPDBDIR/*/fwtraf_counter -type f -mtime +90 -exec rm -rf {} \; # Удаляем файлы, не обновлявшиеся в течение 90 суток.
+}
+trafmake_body()  # (FILEMASK,FILEMASK_DESC) - Дописывает тело отчета по указанной маске.
+{
+  cat>>"$REPORTFILE"<<*
+<TABLE border=0 cellSpacing=0 cellPadding=0>
+  <TR bgcolor=#C0C0C0>
+    <TD width=20>
+    <TD width=10>
+    <TD width=210 colspan=3><B>$2 трафик (Мб) с начала:</B>
+    <TD width=70 align=right><B>суток</B>
+    <TD width=70 align=right><B>месяца</B>
+    <TD width=70 align=right><B>года</B>
+    <TD width=30>
+    <TD><B>Комментарии</B>
+  </TR>
+  <TR bgcolor=#C0C0C0>
+    <TD>
+    <TD>
+    <TD>
+    <TD width=20>
+    <TD>
+    <TD>
+    <TD>
+    <TD>
+    <TD>
+    <TD>
+  </TR>
+*
+  :>"/tmp/fwtraf.trafmake_body.$$"
+  local yyyymmdd=`date +%Y%m%d`
+  local   yyyymm=`date +%Y%m`
+  local     yyyy=`date +%Y`
+  cd "$IPDBDIR"
+  for ip in $1; do
+    [ -a "$ip/fwtraf_counter" ] || continue
+    local   tr_d=`summa "$yyyymmdd" "$ip/fwtraf_counter"`
+    local   tr_m=`summa "$yyyymm"   "$ip/fwtraf_counter"`
+    local   tr_y=`summa "$yyyy"     "$ip/fwtraf_counter"`
+    local   name=`tail 2>/dev/null -n1 "$ip/fwtraf_name"  |sed -e "s/${N}${BLANK1}//"`
+    local access=`tail 2>/dev/null -n1 "$ip/fwtraf_access"|sed -e "s/${N}${BLANK1}//"`
+    local   desc=`tail 2>/dev/null -n1 "$ip/fwtraf_desc"  |sed -e "s/${N}${BLANK1}//"`
+    local    cmd=`echo "$access"|awk '{print $1}'`
+    local  ports=`echo "$access"|awk '{print $2}'`
+    local     wa=`echo "$access"|awk '{print $3}'`
+    local  limit=`echo "$access"|awk '{print $4}'`
+    local  title=' '; [[ "$access" > ' ' ]] && \
+    {
+      case "$cmd" in
+        a) title="${ports//all/Все}"          ;;
+        d) title="Закрыты: ${ports//all/все}" ;;
+      esac
+      case "$ports" in
+        *web*|all|!*) case "$wa" in
+                        0) title="$title. Web-доступ: полный"     ;;
+                        *) title="$title. Web-доступ: $wa группа" ;;
+                      esac
+                      ;;
+      esac
+      [[ "$limit" == [0-9]* ]] && title="$title. Скорость: $limit пакет./сек."
+    }
+    echo>>"/tmp/fwtraf.trafmake_body.$$" "$tr_d $tr_m $tr_y $ip %$name %${title// /%} %${desc// /%}"
+  done
+  # Одеваем тело в HTML.
+  sort -rnk3<"/tmp/fwtraf.trafmake_body.$$" \
+  |awk '{if ($3>"")
+           {
+              CONVFMT="%0.f";
+              printf "<TR%s title=\"%s\">\n"                               , c=c?"":" bgcolor=#E0E0E0", $6;
+              printf "  <TD align=right><B>%s</B>\n"                       , n+=1;
+              printf "  <TD>\n";
+  if ($5>"%") printf "  <TD><A href=../free-sa-ip/index.php?ip=%s>%s</A>\n", $4, $4;
+  else        printf "  <TD>%s\n"                                          , $4;
+              printf "  <TD>\n";
+              printf "  <TD>%s\n"                                          , $5;
+              printf "  <TD align=right>%s\n"                              , $1/1048576;
+              printf "  <TD align=right>%s\n"                              , $2/1048576;
+              printf "  <TD align=right>%s\n"                              , $3/1048576;
+              printf "  <TD>\n";
+              printf "  <TD>%s\n"                                          , $7;
+              printf "</TR>\n";
+           }
+        }' \
+  |sed -e 's/\<EXT_IN\>/весь/g;
+           s/\<EXT_OUT\>/весь/g;
+           s/\<EXT_IN_WEB\>/- web/g;
+           s/\<EXT_OUT_WEB\>/- web/g;
+           s/\<EXT_IN_FTP\>/- ftp/g;
+           s/\<EXT_OUT_FTP\>/- ftp/g;
+           s/\<EXT_IN_EML\>/- email/g;
+           s/\<EXT_OUT_EML\>/- email/g;
+           s/\<EXT_IN_XXX\>/- прочий/g;
+           s/\<EXT_OUT_XXX\>/- прочий/g;
+           s/%/ /g;' \
+  >>"$REPORTFILE"
+  echo>>"$REPORTFILE" '</TABLE>'
+  echo>>"$REPORTFILE" '<BR>'
+  rm -f "/tmp/fwtraf.trafmake_body.$$"
+}
+trafmake()  # () - Создает отчет о трафике с начала суток/месяца/года по текущее время в $REPORTFILE.
+{
+
+  echo >"$REPORTFILE" '<HTML><HEAD><META HTTP-EQUIV="Content-Type" Content="text/html; Charset=koi8-r"></HEAD>'
+  echo>>"$REPORTFILE" '<BODY><STYLE>a{color:#000000;text-decoration:none;}</STYLE>'
+  echo>>"$REPORTFILE" "<B>$(env LC_ALL=ru_RU.KOI-8R date +'%e %b %Y. %A, %T')</B><P>"
+  trafmake_body 'EXT_IN*'  'Суммарный входящий'
+  trafmake_body 'EXT_OUT*' 'Суммарный исходящий'
+  trafmake_body '*.*'      'Входящий'
+  echo>>"$REPORTFILE" '</BODY></HTML>'
+  # Создаем индексный файл.
+  cd "$REPORTDIR"
+  printf>'index.htm' '<HTML><HEAD><TITLE>FwTraf</TITLE></HEAD><BODY>\n'
+  for file in ????-??-??.htm; do
+    [[ ${file//*-/} == '01.htm' ]] && printf>>'index.htm' '<HR>\n'
+    printf>>'index.htm' "<A href=$file>${file//.htm/}</A>\n"
+  done
+  printf>>'index.htm' '</BODY></HTML>\n'
+}
+trafsend()  # (REPEML) - Отправляет отчет о трафике на адрес $REPEML.
+{
+  [ "$1" ] && sendmail $1<<*
+From: <$HOSTNAME>
+To: <$1>
+Subject: FWTraf Report
+MIME-Version: 1.0
+Content-Type: text/html;
+        charset="koi8-r"
+Content-Transfer-Encoding: quoted-printable
+
+`cat 2>/dev/null "$REPORTFILE"`
+*
+}
+status()  # () - Показывает статус.
+{
+  local    all_users=`egrep '^[ \t]*a[ \t]+[0-9\.]+[ \t]+[A-Za-z0-9_-]+[ \t]+.*\<all\>'                          "$CONFIGFILE"|wc -l`
+  local       _users=`egrep '^[ \t]*a[ \t]+[0-9\.]+[ \t]+[A-Za-z0-9_-]+[ \t]+.*\!'                               "$CONFIGFILE"|wc -l`
+  local    web_users=`egrep '^[ \t]*a[ \t]+[0-9\.]+[ \t]+[A-Za-z0-9_-]+[ \t]+.*[^\!]\<(web|http|https|80|443)\>' "$CONFIGFILE"|wc -l`
+  local   _web_users=`egrep '^[ \t]*a[ \t]+[0-9\.]+[ \t]+[A-Za-z0-9_-]+[ \t]+.*\!\<(web|http|https|80|443)\>'    "$CONFIGFILE"|wc -l`
+  local    ftp_users=`egrep '^[ \t]*a[ \t]+[0-9\.]+[ \t]+[A-Za-z0-9_-]+[ \t]+.*[^\!]\<(ftp|21)\>'                "$CONFIGFILE"|wc -l`
+  local   _ftp_users=`egrep '^[ \t]*a[ \t]+[0-9\.]+[ \t]+[A-Za-z0-9_-]+[ \t]+.*\!\<(ftp|21)\>'                   "$CONFIGFILE"|wc -l`
+  local   smtp_users=`egrep '^[ \t]*a[ \t]+[0-9\.]+[ \t]+[A-Za-z0-9_-]+[ \t]+.*[^\!]\<(smtp|25)\>'               "$CONFIGFILE"|wc -l`
+  local  _smtp_users=`egrep '^[ \t]*a[ \t]+[0-9\.]+[ \t]+[A-Za-z0-9_-]+[ \t]+.*\!\<(smtp|25)\>'                  "$CONFIGFILE"|wc -l`
+  local   pop3_users=`egrep '^[ \t]*a[ \t]+[0-9\.]+[ \t]+[A-Za-z0-9_-]+[ \t]+.*[^\!]\<(pop3|110)\>'              "$CONFIGFILE"|wc -l`
+  local  _pop3_users=`egrep '^[ \t]*a[ \t]+[0-9\.]+[ \t]+[A-Za-z0-9_-]+[ \t]+.*\!\<(pop3|110)\>'                 "$CONFIGFILE"|wc -l`
+  local   imap_users=`egrep '^[ \t]*a[ \t]+[0-9\.]+[ \t]+[A-Za-z0-9_-]+[ \t]+.*[^\!]\<(imap|143)\>'              "$CONFIGFILE"|wc -l`
+  local  _imap_users=`egrep '^[ \t]*a[ \t]+[0-9\.]+[ \t]+[A-Za-z0-9_-]+[ \t]+.*\!\<(imap|143)\>'                 "$CONFIGFILE"|wc -l`
+  local    icq_users=`egrep '^[ \t]*a[ \t]+[0-9\.]+[ \t]+[A-Za-z0-9_-]+[ \t]+.*[^\!]\<(icq|5190)\>'              "$CONFIGFILE"|wc -l`
+  local   _icq_users=`egrep '^[ \t]*a[ \t]+[0-9\.]+[ \t]+[A-Za-z0-9_-]+[ \t]+.*\!\<(icq|5190)\>'                 "$CONFIGFILE"|wc -l`
+  local dns_records1=`egrep '^[ \t]*[ad][ \t]+10\.*'                                                             "$CONFIGFILE"|wc -l`
+  local dns_records2=`egrep '^[ \t]*[ad][ \t]+172\.16\.*'                                                        "$CONFIGFILE"|wc -l`
+  local dns_records3=`egrep '^[ \t]*[ad][ \t]+192\.168\.*'                                                       "$CONFIGFILE"|wc -l`
+  local ipdbdir_size=`du -s -l -m ${IPDBDIR%%/}|awk '{print $1}'`
+  echo
+  echo "              Внешний интерфейс: $IF_EXT"
+  echo "Пользователей с полным доступом: $all_users"
+  echo "              WEB-пользователей: $((web_users  + all_users + _users - _web_users ))"
+  echo "              FTP-пользователей: $((ftp_users  + all_users + _users - _ftp_users ))"
+  echo "             SMTP-пользователей: $((smtp_users + all_users + _users - _smtp_users))"
+  echo "             POP3-пользователей: $((pop3_users + all_users + _users - _pop3_users))"
+  echo "             IMAP-пользователей: $((imap_users + all_users + _users - _imap_users))"
+  echo "              ICQ-пользователей: $((icq_users  + all_users + _users - _icq_users ))"
+  echo "                  Записей в DNS: $((dns_records1 + dns_records2 + dns_records3   ))"
+  echo "                    Размер базы: $ipdbdir_size Мб"
+  echo
+  local warning=`cat 2>/dev/null '/var/log/messages'|grep -a 'ip_conntrack: table full'|tail -n1`
+  if [ "$warning" ]; then
+    printf "WARNING: $warning\a\n\n"
+    printf 'Run the command "fwtraf topconntrack" to view details.\n\n'
+  fi
+}
+topconnects()  # () - Показывает IP, превышающие лимиты подключений к серверу на порт.
+{
+  cat 2>/dev/null "$MESSAGES" \
+  |grep -a 'fwtraf_' \
+  |awk '{print $9,$18,$19}' \
+  |sed -e 's/SRC=//;s/SPT=[0-9]\+//;s/DPT=//;s/WINDOW=[0-9]\+//' \
+  |sort -gr \
+  |uniq -c \
+  |sort -gr \
+  |head -n20 \
+  |while read top ip port; do
+     local desc=`tail 2>/dev/null -n1 "$IPDBDIR/$ip/fwtraf_desc"|sed -e "s/${N}${BLANK1}//"`
+     if [ -z "$desc" ]; then
+       desc=`dig +short -x $ip|head -n1`
+       desc=${desc//;;*/}
+       desc=${desc%.}
+     fi
+     printf '%-7s %-7s %-15s  #%s\n' "$top" "[$port]" "$ip" " $desc"
+   done
+  echo
+}
+toptraffic()  # () - Показывает счётчики трафика файервола.
+{
+  iptables -t mangle -L _into -v -x -n \
+  |while read pkts bytes target prot opt in out src dst; do
+     [ "$target" == "ACCEPT" -a "$bytes" != '0' ] && echo "$bytes ${dst/\/*}"
+   done \
+  |sort -gr \
+  |head -n20 \
+  |while read bytes ip; do
+     local desc=`tail 2>/dev/null -n1 "$IPDBDIR/$ip/fwtraf_desc"|sed -e "s/${N}${BLANK1}//"`
+     printf '%-8s %-15s %s\n' "$((bytes/1048576))" "$ip" "$desc"
+   done
+}
+topconntrack()
+{
+  # Состояние    Время ожидания
+  # -----------  --------------
+  # NONE         30 минут
+  # ESTABLISHED  5 дней
+  # SYN_SENT     2 минуты
+  # SYN_RECV     60 секунд
+  # FIN_WAIT     2 минуты
+  # TIME_WAIT    2 минуты
+  # CLOSE        10 секунд
+  # CLOSE_WAIT   12 часов
+  # LAST_ACK     30 секунд
+  # LISTEN       2 минуты
+
+  local tmpfile="/tmp/fwtraf_topconntrack.$$"
+  echo
+  echo "Maximal connections count: `cat 2>/dev/null /proc/sys/net/ipv4/ip_conntrack_max`"
+  echo "Current connections count: `cat 2>/dev/null /proc/net/ip_conntrack|wc -l`"
+  echo
+  cat 2>/dev/null '/proc/net/ip_conntrack'>"$tmpfile"
+  echo 'Top protocols:'
+  echo
+  cat 2>/dev/null "$tmpfile" \
+  |awk '{print $1}' \
+  |sort \
+  |uniq -c \
+  |sort -gr
+  echo
+  echo 'Top state:'
+  echo
+  cat 2>/dev/null "$tmpfile" \
+  |egrep -a ' (NONE|ESTABLISHED|SYN_SENT|SYN_RECV|FIN_WAIT|TIME_WAIT|CLOSE|CLOSE_WAIT|LAST_ACK|LISTEN) ' \
+  |awk '{print $4}' \
+  |sort \
+  |uniq -c \
+  |sort -gr
+  echo
+  echo 'Top source IP (tcp):'
+  echo
+  cat 2>/dev/null "$tmpfile" \
+  |grep -a 'tcp' \
+  |awk '{print $5}' \
+  |sort \
+  |uniq -c \
+  |sort -gr \
+  |head -n 20 \
+  |sed -e 's/src=//g'
+  echo
+  echo 'Top destination IP (tcp):'
+  echo
+  cat 2>/dev/null "$tmpfile" \
+  |grep -a 'tcp' \
+  |awk '{print $6}' \
+  |sort \
+  |uniq -c \
+  |sort -gr \
+  |head -n 20 \
+  |sed -e 's/dst=//g'
+  echo
+  echo 'Top detination port (tcp):'
+  echo
+  cat 2>/dev/null "$tmpfile" \
+  |grep -a 'tcp' \
+  |awk '{print $8}' \
+  |sort \
+  |uniq -c \
+  |sort -gr \
+  |head -n 20 \
+  |sed -e 's/dport=//g'
+  echo
+  rm -f "$tmpfile"
+}
+backup()  # () - Сохраняет скрипт, конфигурацию, логи и отчеты в архив.
+{
+  lock_check # Проверяем, не запущен ли скрипт уже.
+  lock_run   # Устанавливаем блокировку запуска.
+  mkdir -p '/backup'
+  tar czf "/backup/fwtraf_${HOSTNAME}_$(date +%Y%m%d).tgz" "$0" "$CONFIGDIR" "$IPDBDIR" "$REPORTDIR" '/etc/cron.d/fwtraf' /bin/phoss* /bin/nbtscan*
+  lock_unset # Удаляем блокировку запуска.
+}
+restore()  # () - Восстанавливает все из архива.
+{
+  [ -a "$1" ] || { printf 'ERROR: backup file not found\a\n'; exit 1; }
+  lock_check # Проверяем, не запущен ли скрипт уже.
+  lock_run   # Устанавливаем блокировку запуска.
+  tar xzf "$1" -C /
+  lock_unset # Удаляем блокировку запуска.
+}
+ipdbfind()  # (SUBSTR,[IP_FIELD]) - Ищет все строки, совп. с заданной подстрокой в БД.
+{
+ [[ "$@" < '!' ]] && { printf 'ERROR: substring not specified\a\n'; exit 1; }
+ cat 2>/dev/null "$CONFIGFILE"|grep -ai "$1"|sed -e "s/^$BLANK1//g; s/$BLANK1/ /g"
+ echo
+ cat 2>/dev/null "$DHCPD_CONF"|grep -ai "$1"|sed -e "s/^$BLANK1//g; s/$BLANK1/ /g"
+ echo
+ grep 2>/dev/null -air "$1" "$IPDBDIR$2" \
+ |sort -k1 -r \
+ |sed -e 's/^\/var\/log\/ipdb\/\(.*\)\/\(.*\):\([0-9]\{4\}\)\([0-9][0-9]\)\([0-9][0-9]\)\([0-9][0-9]\)\([0-9][0-9]\) \(.*\)/\3-\4-\5 \6:\7 \1 \2 \8/'
+ echo
+}
+ipdbdel()  # (SUBSTR) - Удаляет все строки, совп. с заданной подстрокой из БД.
+{
+ [[ "$@" < '!' ]] && { printf 'ERROR: substring not specified\a\n'; exit 1; }
+ grep -air "$@" "$IPDBDIR" \
+ |cut -d':' -f1 \
+ |sort \
+ |uniq \
+ |while read file other; do
+    cat 2>/dev/null "$file" \
+    |grep -aiv "$@" \
+    >"/tmp/fwtraf.ipdbdel.$$"
+    move_file "/tmp/fwtraf.ipdbdel.$$" "$file"
+  done
+}
+ipdbclear()  # () - Очищает ip-базу данных от старых данных (время выполнения ~1,5 мин).
+{
+  local cutdate=`date -d '-12 month' +%Y%m%d0000` # Дата, до которой удаляются данные.
+  for file in $IPDBDIR/*/{fwtraf,nbtscan,phoss}_*; do
+    cat 2>/dev/null "$file" \
+    |egrep -av '^[0-9]+ 0$' \
+    |awk -v cdate=$cutdate '{if ($1>cdate) printf "%s\n",$0}' \
+    >"/tmp/fwtraf.ipdbclear.$$"
+    if [[ "`ls 2>/dev/null -s /tmp/fwtraf.ipdbclear.$$`" == '0 '* ]]; then
+      rm -f     "/tmp/fwtraf.ipdbclear.$$" "$file"
+    else
+      move_file "/tmp/fwtraf.ipdbclear.$$" "$file"
+    fi
+  done
+}
+ipmove()  # (IP_SRC,IP_DST) - Удаляет каталог IP_DST и переименовывает каталог IP_SRC в IP_DST.
+{
+ [[ "$IPDBDIR" < '/#' ]] && { printf 'ERROR: IPDBDIR not valid\a\n'; exit 1; }
+ ip_or_net_valid "$1"    || { printf 'ERROR: ip_src not valid\a\n';  exit 1; }
+ ip_or_net_valid "$2"    || { printf 'ERROR: ip_dst not valid\a\n';  exit 1; }
+ if [ -d "$IPDBDIR/$1" ]; then
+   [ -d "$IPDBDIR/$2" ] && rm -fr "$IPDBDIR/$2"
+   mkdir -p "$IPDBDIR/$2"
+   cp 2>/dev/null -fR --reply=yes $IPDBDIR/$1/* $IPDBDIR/$2/
+   [ -d "$IPDBDIR/$2" ] && rm -fr "$IPDBDIR/$1"
+ else
+   printf "ERROR: \"$IPDBDIR/$1\" not exist\a\n"; exit 1
+ fi
+}
+help()  # () - Выводит помощь.
+{
+  clear
+  cat<<*
+----------------------------------
+УПРАВЛЕНИЕ FIREWALL / УЧЕТ ТРАФИКА
+----------------------------------
+
+Использование: fwtraf [команда]
+
+Команды:
+
+                      fwaccept - разрешить все пакеты, отключить SNAT
+                      fwsimple - уст. простые правила для всех локальных сетей
+                   fwsingle ip - уст. простые правила для одного локального IP
+                      fwnormal - уст. правила для нормальной работы
+                        fwsave - сохр. тек. правила
+                        fwconf - редакт. конфиг. файл
+             fwview ["substr"] - просм. тек. цепочки iptables
+                       fwviewb - просм. правила, уст. при загрузке
+                       fwviewi - просм. тек. команды iptables
+                      fwviewio - просм. предыд. команды iptables
+                     dginet_on - вкл. Интернет пользователям с гр. дост. "$DG_FGRP"
+                    dginet_off - выкл. Интернет пользователям с гр. дост. "$DG_FGRP"
+                      trafmake - создать отчет о трафике
+              trafsend "email" - отослать отчет о трафике
+ ipdbfind "substr" [/ip/field] - искать все строки в БД, совп. с п/строкой
+              ipdbdel "substr" - удалить все строки из БД, совп. с п/строкой
+                     ipdbclear - очистить БД от данных годичной давности
+          ipmove ip_src ip_dst - переименовать ip_src в ip_dst
+                        backup - сделать резервную копию
+          restore "backupfile" - восстановить резервную копию
+                          lock - заблокировать выполнение (выполняется авт.)
+                        unlock - разблокировать выполнение (опасно)
+                        status - показать статус
+                   topconnects - показать IP, превышающ. лимиты подкл. к серверу
+                    toptraffic - показать счётчики трафика файервола
+                  topconntrack - показать статистику таблицы отслеживанияй соединений
+
+*
+exit 1
+}
+
+
+################################################################################################
+# НАЧАЛО ПРОГРАММЫ
+################################################################################################
+
+mkdir -p "$CONFIGDIR" "$IPDBDIR" "$REPORTDIR" # Создаем каталоги.
+
+if [ -a "$CONFIGFILE" ]; then # Если существует $CONFIGFILE
+  rm -f "$CONFIGFILE.tmp"
+  cp -af "$CONFIGFILE" "$CONFIGFILE.tmp"
+  CONFIGFILE=$CONFIGFILE.tmp
+  ENABLE_D=''; ENABLE_IEC=''; ENABLE_A=''; . $CONFIGFILE # Подключаем $CONFIGFILE 1 раз - импортируем переменные.
+else
+  printf "ERROR: configuration file \"$CONFIGFILE\" not found\a\n"; exit 1
+fi
+
+# Определяем внешний интерфейс.
+if [ "$EXTIF" ]; then
+  IF_EXT=$EXTIF
+else
+  IF_EXT=`route -n|awk '{if ($1=="0.0.0.0" && $3=="0.0.0.0") print $8}'`
+  [ "$IF_EXT" ] || \
+  IF_EXT=`route -n|awk '{if ($2=="0.0.0.0"        \
+                         &&  $1!~/0\.0\.0\.0/     \
+                         &&  $1!~/^10\./          \
+                         &&  $1!~/^169\.254\./    \
+                         &&  $1!~/^172\.1[6-9]\./ \
+                         &&  $1!~/^172\.2[0-9]\./ \
+                         &&  $1!~/^172\.31\./     \
+                         &&  $1!~/^192\.168\./    \
+                         &&  $1 ~/[0-9]+/         ) print $8}'|head -n1`
+fi
+
+       IF_LO='lo'                                                                                      # Петлевой интерфейс.
+     IFs_INT="! $IF_EXT"                                                                               # Внутренние интерфейсы.
+       IP_LO='127.0.0.1'                                                                               # IP-адрес петлевого интерфейса.
+      IP_EXT=`ifconfig|grep -A1 "^${IF_EXT//+/[0-9]\+} "|sed -n 's/inet addr://p'|awk 'END{print $1}'` # IP-адрес внешнего интерфейса (поддержка int+).
+#     IP_EXT=`ifconfig $IF_EXT|sed -n 's/inet addr://p'|awk '{print $1}'`                              # IP-адрес внешнего интерфейса.
+     IPs_INT=`ifconfig|grep -a 'inet addr'|cut -d: -f2|cut -d' ' -f1|grep -av "\<$IP_EXT\>"`           # IP-адреса внутренних интерфейсов.
+
+case "$WEBPROXY" in SQUID)WEBPORT=3128;; DGSQUID)WEBPORT=8080;; *)WEBPORT=80;; esac # Определяем WEB-порт.
+
+NICE=`nice 2>/dev/null` # Компенсируем низкий приоритет.
+if [[ "$NICE" == -* ]]; then
+  NICE="nice -n ${NICE/-/+}"
+else
+  NICE=''
+fi
+
+case "$1" in
+  fwaccept    ) fwaccept             ;;
+  fwsimple    ) fwsimple             ;;
+  fwsingle    ) fwsingle "$2"        ;;
+  fwnormal    ) fwnormal             ;;
+  fwsave      ) fwsave               ;;
+
+  dginet_on   ) dginet 'on'          ;;
+  dginet_off  ) dginet 'off'         ;;
+
+  fwconf      ) fwconf               ;;
+  fwview      ) fwview '-v -n' "$2"  ;;
+  fwviewb     ) fwviewb              ;;
+  fwviewi     ) fwviewi              ;;
+  fwviewio    ) fwviewio             ;;
+
+  trafhourly  ) trafhourly           ;;
+  trafdaily   ) trafdaily            ;;
+  trafmonthly ) trafmonthly          ;;
+  trafyearly  ) trafyearly           ;;
+  trafmake    ) trafmake             ;;
+  trafsend    ) trafsend "$2"        ;;
+
+  ipdbfind    ) ipdbfind "$2" "$3"   ;;
+  ipdbdel     ) ipdbdel  "$2"        ;;
+  ipdbclear   ) ipdbclear            ;;
+  ipmove      ) ipmove   "$2" "$3"   ;;
+
+  backup      ) backup               ;;
+  restore     ) restore  "$2"        ;;
+
+  lock        ) lock_check; lock_set ;;
+  unlock      ) lock_unset           ;;
+
+  status      ) status               ;;
+  topconnects ) topconnects          ;;
+  toptraffic  ) toptraffic           ;;
+  topconntrack) topconntrack         ;;
+
+  *           ) help                 ;;
+esac

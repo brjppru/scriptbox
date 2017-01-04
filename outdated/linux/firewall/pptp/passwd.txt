@@ -1,0 +1,6 @@
+# Secrets for authentication using CHAP
+# client        server  secret                  IP addresses
+
+user pptpd password *
+user2 pptpd password2 192.168.11.251
+

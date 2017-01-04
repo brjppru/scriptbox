@@ -1,0 +1,6 @@
+<!--#include virtual="/cgi-bin/ssi/header.cgi" -->
+<!--#include virtual="/cgi-bin/ssi/menu-up.cgi?menu=server" -->
+<!--#include virtual="/server/content.txt" -->
+<!--#include virtual="/cgi-bin/ssi/menu-dn.cgi?menu=server" -->
+
+

@@ -1,0 +1,45 @@
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+From:    Jean-Francois Dockes <jean-francois.dockes@wanadoo.fr>
+To:      Kenneth D. Merry <ken@kdm.org>
+Date:    Saturday, June 16, 2001, 2:05:26 PM
+Subject: CD speed?
+Files:   <none>
+--====----====----====----====----====----====----====----====----====----===--
+Kenneth D. Merry writes:
+ > On Sat, Jun 16, 2001 at 02:44:01 +0800, Roman Y. Bogdanov wrote:
+ > >   I have plextor px-40 SCSI II CDROM.
+ > >   Can I use camcontrol for change speed setting of this cdrom?
+ > [skip]
+ > My guess is the speed is set in a mode page somewhere, so if you really
+ > want to set it, you can try hunting around in the mode pages.  (See the
+ > camcontrol(8) man page for details.)
+
+I think that plextor uses (nonstandard?) mode select page code 0x31 for
+setting the speed. The page is like:
+
+byte0  0x31
+byte1  0x02
+byte2  speedfactor
+byte3  Rsvd|DisAv|DisWt|SpdMode
+
+byte 3 is probably best left to 0. (DisAv: disable avoid vibration, DisWt:
+disable waiting, SpdMode affects speed handling during error recovery)
+
+Speedfactor is what you want to play with. 0 is normally 1X, 0xff max
+speed.
+
+Values between 0 and 0xff increase the speed in ways that depend on the
+drive model.
+
+This probably works also with some other brands.
+
+Also, this normally only affects READ, not PLAY :)
+
+
+JF
+
+To Unsubscribe: send mail to majordomo@FreeBSD.org
+with "unsubscribe freebsd-scsi" in the body of the message
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+

@@ -1,0 +1,208 @@
+#
+# brj@livecd, kernel config file. http://brj.pp.ru/
+#
+
+machine		i386
+cpu		I686_CPU
+ident		brjlivecd
+maxusers	0
+
+options         INCLUDE_CONFIG_FILE     # Include this file in kernel
+
+# ------------------------------------------------------------------------->
+# Описание файловых систем, загрузчика и т.д.
+# ------------------------------------------------------------------------->
+
+options         CPU_ENABLE_SSE		#Enable SSE
+options 	INET			#InterNETworking
+options 	FFS			#Berkeley Fast Filesystem
+options 	FFS_ROOT		#FFS usable as root device [keep this!]
+options 	SOFTUPDATES		#Enable FFS soft updates support
+options 	UFS_DIRHASH		#Improve performance on big directories
+options 	MFS			#Memory Filesystem
+options 	MD_ROOT			#MD is a potential root device
+options 	NFS			#Network Filesystem
+options 	NFS_ROOT		#NFS usable as root device, NFS required
+options 	MSDOSFS			#MSDOS Filesystem
+options 	CD9660			#ISO 9660 Filesystem
+options 	CD9660_ROOT		#CD-ROM usable as root, CD9660 required
+options 	PROCFS			#Process filesystem
+options 	COMPAT_43		#Compatible with BSD 4.3 [KEEP THIS!]
+options 	SCSI_DELAY=15000	#Delay (in ms) before probing SCSI
+options 	UCONSOLE		#Allow users to grab the console
+#options 	USERCONFIG		#boot -c editor
+#options 	VISUAL_USERCONFIG	#visual boot -c editor
+options 	KTRACE			#ktrace(1) support
+options 	SYSVSHM			#SYSV-style shared memory
+options 	SYSVMSG			#SYSV-style message queues
+options 	SYSVSEM			#SYSV-style semaphores
+options 	P1003_1B		#Posix P1003_1B real-time extensions
+options 	KBD_INSTALL_CDEV	#Install a CDEV entry in /dev
+options         UNION			#Union filesystem
+options         EXT2FS			#Filesystem of Linux fame
+options         NTFS			#NT File System
+options         USER_LDT		#Allow user-level control of i386 ldt
+options 	_KPOSIX_PRIORITY_SCHEDULING
+
+options         ROOTDEVNAME=\"cd9660:acd0\"
+
+# ------------------------------------------------------------------------->
+# Шины
+# ------------------------------------------------------------------------->
+
+device		isa
+device		pci
+options         DEVICE_POLLING
+
+# ------------------------------------------------------------------------->
+# Устройства
+# ------------------------------------------------------------------------->
+
+# Floppy drives
+device		fdc0	at isa? port IO_FD1 irq 6 drq 2
+device		fd0	at fdc0 drive 0
+
+# ATA and ATAPI devices
+device		ata0	at isa? port IO_WD1 irq 14
+device		ata1	at isa? port IO_WD2 irq 15
+device		ata
+device		atadisk			# ATA disk drives
+device		atapicd			# ATAPI CDROM drives
+options 	ATA_STATIC_ID		# Static device numbering
+
+# atkbdc0 controls both the keyboard and the PS/2 mouse
+device		atkbdc0	at isa? port IO_KBD
+device		atkbd0	at atkbdc? irq 1
+device		psm0	at atkbdc? irq 12
+options         PSM_HOOKRESUME          # Hook the system resume event
+options         PSM_RESETAFTERSUSPEND   # Reset the device at the resume event
+
+# Firewire support
+device          firewire        # Firewire bus code
+device          sbp             # SCSI over Firewire (Requires scbus and da)
+
+# Floating point support - do not disable.
+device		npx0	at nexus? port IO_NPX irq 13
+
+# Power management support
+device		apm0
+
+# PCCARD (PCMCIA) support
+device		card
+device		pcic0	at isa? irq 0 port 0x3e0 iomem 0xd0000
+options         PCIC_RESUME_RESET       # reset after resume
+
+# Serial (COM) ports
+device		sio0	at isa? port IO_COM1 flags 0x10 irq 4
+
+# Parallel port
+device		ppc0	at isa? irq 7 flags 0x40
+device		ppbus		# Parallel port bus (required)
+device		lpt		# Printer
+device		plip		# TCP/IP over parallel
+device		ppi		# Parallel port interface device
+
+# SCSI peripherals                                                       
+device          scbus           # SCSI bus (required)
+device          da              # Direct Access (disks)
+device          sa              # Sequential Access (tape etc)
+device          cd              # CD
+device          pass            # Passthrough device (direct SCSI access)
+
+# PCI Ethernet NICs.
+device          miibus          # MII bus support
+device          dc              # DEC/Intel 21143 and various workalikes
+device          xl              # 3Com 3c90x (``Boomerang'', ``Cyclone'')
+device          rl              # RealTek 8129/8139
+device          fxp             # Intel EtherExpress PRO/100B (82557, 82558)
+device          sis             # Silicon Integrated Systems SiS 900/SiS 7016
+
+# USB support
+device		uhci		# UHCI PCI->USB interface
+device		ohci		# OHCI PCI->USB interface
+device		usb		# USB Bus (required)
+device		ugen		# Generic
+device		uhid		# "Human Interface Devices"
+device		ukbd		# Keyboard
+device		umass		# Disks/Mass storage - Requires scbus and da
+device		ums		# Mouse
+
+# Sound Support
+device          pcm         	# PCM audio through various sound cards.
+pseudo-device   speaker		# Super-mega-beeper (-;
+
+# ------------------------------------------------------------------------->
+# Консоль
+# ------------------------------------------------------------------------->
+
+device		vga0	at isa?
+device		sc0	at isa? flags 0x100
+
+device          agp             	# Support several AGP chipsets
+option          VESA                    # To include support for VESA video mode
+options         SC_PIXEL_MODE           # Add support for the raster text mode
+options         SC_ALT_MOUSE_IMAGE      # Simplified mouse cursor in text mode
+options         SC_DISABLE_DDBKEY       # Disable `debug' key
+options         SC_DISABLE_REBOOT       # Disable reboot key sequence
+options         SC_HISTORY_SIZE=200     # Number of history buffer lines
+options         SC_MOUSE_CHAR=0x3       # Char code for text mode mouse cursor
+options         SC_TWOBUTTON_MOUSE	# Right button of the mouse to paste text
+options 	SC_DFLT_FONT
+makeoptions 	SC_DFLT_FONT=koi8-r
+
+# ------------------------------------------------------------------------->
+# Псевдо устройства
+# ------------------------------------------------------------------------->
+
+# Pseudo devices - the number indicates how many units to allocate.
+pseudo-device	loop		# Network loopback
+pseudo-device	ether		# Ethernet support
+pseudo-device	sl	1	# Kernel SLIP
+pseudo-device	ppp	3	# Kernel PPP
+pseudo-device	tun	3	# Packet tunnel.
+pseudo-device	pty		# Pseudo-ttys (telnet etc)
+pseudo-device	md		# Memory "disks"
+pseudo-device   vn      15      # Vnode driver (turns a file into a device)
+pseudo-device	splash		# Splash screen at start up!
+pseudo-device	bpf		# Berkeley packet filter
+
+# ------------------------------------------------------------------------->
+# Файрвол ipfw2
+# ------------------------------------------------------------------------->
+
+options         IPFIREWALL              # Firewall
+options         IPFIREWALL_VERBOSE      # Print information about
+options         IPFIREWALL_FORWARD      # Enable transparent proxy support
+options         RANDOM_IP_ID		# ID field in IP packets to be randomized
+options         IPSTEALTH		# Support stealth forwarding
+options         IPDIVERT		# Divert IP sockets
+options         DUMMYNET		# Bandwidth limiter
+options         IPFW2			# FreeBSD STABLE uses ipfw2
+
+# ------------------------------------------------------------------------->
+# SMBFS support
+# ------------------------------------------------------------------------->
+
+options         NETSMB			# SMB/CIFS requester
+options         LIBMCHAIN		# mbuf management library
+options         SMBFS			# SMB/CIFS filesystem
+options         LIBICONV		# Kernel side iconv library
+options         NETSMBCRYPTO		# Encrypted password support for SMB
+
+# ------------------------------------------------------------------------->
+# SMBUS
+# ------------------------------------------------------------------------->
+
+device 		iicbus
+device 		iicbb
+device          smbus           # Bus support, required for smb below.
+device          intpm
+device          alpm
+device          ichsmb
+device          viapm
+device          amdpm
+device          smb
+
+# ------------------------------------------------------------------------->
+# THE END
+# ------------------------------------------------------------------------->

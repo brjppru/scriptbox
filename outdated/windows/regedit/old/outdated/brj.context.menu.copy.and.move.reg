@@ -1,0 +1,28 @@
+REGEDIT4
+
+; (c) tuned by roman y. bogdanov, http://brj.pp.ru/
+
+[HKEY_CLASSES_ROOT\AllFilesystemObjects\shellex\ContextMenuHandlers\Copy To]
+@="{C2FBB630-2971-11d1-A18C-00C04FD75D13}"
+
+[HKEY_CLASSES_ROOT\AllFilesystemObjects\shellex\ContextMenuHandlers\Move To]
+@="{C2FBB631-2971-11d1-A18C-00C04FD75D13}"
+
+[HKEY_LOCAL_MACHINE\Software\CLASSES\AllFilesystemObjects\shellex\ContextMenuHandlers\Copy To]
+@="{C2FBB630-2971-11d1-A18C-00C04FD75D13}"
+
+[HKEY_LOCAL_MACHINE\Software\CLASSES\AllFilesystemObjects\shellex\ContextMenuHandlers\Move To]
+@="{C2FBB631-2971-11d1-A18C-00C04FD75D13}"
+
+
+[HKEY_CLASSES_ROOT\CLSID\{C2FBB630-2971-11d1-A18C-00C04FD75D13}]
+"flags"=dword:00000001
+
+[HKEY_CLASSES_ROOT\CLSID\{C2FBB631-2971-11d1-A18C-00C04FD75D13}]
+"flags"=dword:00000001
+
+[HKEY_LOCAL_MACHINE\Software\CLASSES\CLSID\{C2FBB630-2971-11d1-A18C-00C04FD75D13}]
+"flags"=dword:00000001
+
+[HKEY_LOCAL_MACHINE\Software\CLASSES\CLSID\{C2FBB631-2971-11d1-A18C-00C04FD75D13}]
+"flags"=dword:00000001

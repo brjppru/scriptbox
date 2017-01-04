@@ -1,0 +1,4 @@
+0	Users can sign in and access Office content by using either Microsoft account ID or organization ID.
+1	Users can sign in only by using their Microsoft account only.
+2	Users can sign in only by using their organization ID only.
+3	None allowed – disabled user sign in totally.

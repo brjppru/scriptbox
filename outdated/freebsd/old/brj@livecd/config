@@ -1,0 +1,38 @@
+# ------------------------------------------------------------------------->
+# brj@livecd найcтройки, где и что живет и куда это деть (-;
+# ------------------------------------------------------------------------->
+
+DIALOG=${DIALOG=/usr/bin/dialog}
+
+# Номер релиза дисрибутива brj@livecd
+
+RELEASE="0.0.1-PRERC"
+
+# Описание директорий, файлов и каталогов
+
+LIVEDIR=/usr/local/brj@livecd
+TEMPLIVE=${LIVEDIR}/temp
+CHROOTDIR=${LIVEDIR}/live-root
+
+HACKDIR=${LIVEDIR}/hack
+HACKSEL=${TEMPLIVE}/hacksel.sh
+HACKSELECTED=${TEMPLIVE}/hacks
+
+PACKAGEDIR=${LIVEDIR}/packages
+PKGSEL=${TEMPLIVE}/pkgsel.sh
+PKGSELECTED=${TEMPLIVE}/packages
+
+KERNELDIR=/usr/src/sys/i386/conf
+COMPILEDIR=/usr/src/sys/compile/brjlivecd
+
+BRJLIVECDISO=${LIVEDIR}/brj@livecd-${RELEASE}.iso
+
+# Опции для записи CD
+
+CDRW=/dev/acd0c
+MKISOFS=/usr/local/bin/mkisofs
+
+PREPARER="Roman Y. Bogdanov / brj@vzletka.net"
+PUBLISHER="brj / http://brj.pp.ru/"
+APPLICATION="brj@livecd ${RELEASE}"
+VOLUME_ID="brj@livecd ${RELEASE}"

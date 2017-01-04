@@ -1,0 +1,13 @@
+<!--#include virtual="/cgi-bin/ssi/header.cgi" -->
+
+<table border=0>
+    <tr valign=top>
+    <td width=49%>
+    <div align=justify class=t>
+    <b>DOWN-NAPSTER! παζοσξωκ Ι ξεαδωλχατξωκ!</b><br><br>
+
+<!--#include virtual="/cgi-bin/ssi/stat.cgi" -->
+
+    <br><br><b>μιγεξϊιρ!</b> ϊαδυνακτεσψ ο ξιφε ξαπισαξξον, δςυϊψρ! σπασιβο.
+
+<!--#include virtual="/content.txt" -->

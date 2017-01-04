@@ -1,0 +1,7 @@
+php_flag register_globals off
+php_flag display_errors on
+php_value error_reporting 2047
+php_value auto_prepend_file /usr/local/www/clients/d/data/_inc/prepend.inc.php
+php_value auto_append_file /usr/local/www/clients/d/data/_inc/tail.inc.php
+
+ErrorDocument 404 /_404/index.php

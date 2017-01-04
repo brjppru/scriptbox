@@ -1,0 +1,9 @@
+http://download.geo.drweb.com/pub/drweb/livecd/drweb-livecd-602.iso
+http://rescuedisk.kaspersky-labs.com/rescuedisk/updatable/kav_rescue_10.iso
+http://www.hdt-project.org/raw-attachment/wiki/hdt-0.5.0/hdt-0.5.2.iso
+http://www.memtest.org/download/4.20/memtest86+-4.20.iso.zip
+http://mirror.myip.be/pub/ubcd/ubcd521.iso
+http://antisms.com/AntiSMS.iso
+http://esetsupport.ru/eset_sysrescue.iso
+ZACRONIS.ISO -> ZverDVD_2013.3.ISO
+

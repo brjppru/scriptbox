@@ -1,0 +1,112 @@
+
+<p>Вы попали на отличную стартовую страницу, на которой расположены 
+ссылки на наиболее полезные ресурсы: поисковые машины интернета, 
+доступ в почтовые ящики бесплатных почтовых сервисов и ссылки на 
+сайты...</p>
+
+<p>Вы знаете интересную ссылку? Увидели интересный сайт, о котором 
+знают немногие? Не носите в себе этот тяжкий груз, поделитесь хорошей 
+новостью с народом! Все новости, вопросы и замечания принимаются по 
+<a href="mailto:brj@vzletka.net?subject=moya.vzletka.net">этому</a> адресу 
+электронной почты. </p>
+
+<h3>ПОЧТА</h3>
+
+<p>В этой части сайта вы можете осуществить доступ к бесплатным почтовым 
+ящикам, крупных бесплатных почтовых сервисов. Выберете имя домена, введите 
+ваш логин и пароль и страница переадресует вас прямо в ваш ящик электронной 
+почты.</p>
+
+<form method=post action=http://win.mail.ru/cgi-bin/auth>
+Домен: <select name=Domain class=in1>
+<option value="mail.ru" selected>@mail.ru</option>
+<option value="inbox.ru">@inbox.ru</option>
+<option value="bk.ru">@bk.ru</option>
+<option value="list.ru">@list.ru</option></select>
+Имя: <input class=in1 type=text name=Login size=14>
+Пароль: <input type=password name=Password size=7 class=in1>
+<input type=submit value="Войти" class=in1 name=submit>
+</form>
+ 
+<p>У вас нет бесплатного ящика электронной почты? Тогда 
+<a href=http://www.mail.ru/>воспользуйтесь</a> этой ссылкой, и он у вас будет.</p>
+
+<H3>Поиск на yandex.ru</H3>
+
+<p>В этой части сайта вы можете осуществить поиск с помощью поисковой системы <a href=http://www.yandex.ru/>yandex</a>. 
+Введите ваш запрос, и страница переадресует вас прямо к результатам поиска.</p>
+
+<FORM action=http://www.yandex.ru/yandsearch method=get name=web>
+<INPUT name=rpt type=hidden value=rad> 
+<INPUT maxLength=160 name=text size=50>&nbsp;&nbsp;
+<INPUT type=submit value=Найти!></FORM>
+
+<H3>Красноярск</H3>
+
+        <a href="http://www.yarsk.ru/info_transport.htm">Автобусы, поезда, самолеты - расписание</a><br>
+	<a href="http://www.price.krasnoyarsk.ru/">Прайсы компьютерных фирм</a><br>
+	<a href="http://www.yarsk.ru/">Все новости</a><br>
+	<a href="http://www.celler.ru/">Сотовая связь</a><br>
+	<a href="http://isp.krasnoyarsk.ru/">Интернет в Красноярске</a><br>
+        <a href="http://theatre.krasnoyarsk.ru/">Театры Красноярска</a><br>
+        <a href="http://kgs.ru/afisha.shtml">Афиша Красноярска</a><br>
+
+<h3>Масс-медия</h3>
+	<a href="http://www2.gismeteo.ru/weather/towns/29574.htm">Самая популярная новость - погода<a/><br>
+	<a href="http://www.lenta.ru">Популярнейший Российский новостной-портал<a/><br>
+	<a href="http://www.gazeta.ru">Новостное интернет-издание<a/><br>
+	<a href="http://www.expert.ru">Интернет версия известного экономического еженедельника<a/><br>
+	<a href="http://www.rbc.ru">Известнейший российский экономический портал<a/><br>
+	<a href="http://www.utro.ru">Ежедневная e-газета<a/><br>
+	<a href="http://www.mn.ru">Москау ньювс - интернет версия<a/><br>
+	<a href="http://www.komok.ru">чтиво от газеты "koMok"<a/><br>
+
+<h3>Интернет-покупки (с доставкой по Красноярску)</h3>
+
+	<a href="http://www.bolero.ru">Книги, музыка, видео, софт и подарки<a/><br>
+	<a href="http://www.ozon.ru">Книги, видео и аудио материалы<a/><br>
+	<a href="http://www.megashop.ru">Компьютерное и околокомпьютерное железо<a/><br>
+	<a href="http://www.foto.ru">Широчайший выбор цифровых фотокамер<a/><br>
+
+<h3>Развлекалово</h3>
+
+	<a href="http://anekdotov.net">Анекдоты и не только<a/><br>
+	<a href="http://fomenko.ru">Портал развлечений - как говорится все-в-одном<a/><br>
+	<a href="http://omen.ru">Знакомства и масса других развлекательных проектов от РОЛ<a/><br>
+	<a href="http://www.ameno.ru/daly/">Гороскоп на сегодня<a/><br>
+	<a href="http://probuem.ru/">В помощь Потребителю<a/><br>
+	<a href="http://www.sports.ru/">Спортивный портал<a/><br>
+	<a href="http://interweb.spb.ru/present/">Интернет-открытки<a/><br>
+	<a href="http://cards.yandex.ru/">Открытки на каждый день<a/><br>
+	<a href="http://www.games.ru/">Компьютерные игры<a/><br>
+
+<h3>Студентам</h3>
+	<a href="http://www.referatov.net/">Известнейший рефератный портал<a/><br>
+	<a href="http://www.referat.com/">Поиск рефератов, "кряков", mp3 и картинок<a/><br>
+
+<h3>"ЖЕЛЕЗО"</H3>
+
+	<a href="http://www.ixbt.com/">IXBT @ Полная информацию о высоких технологиях</a><br>
+        <a href="http://www.3dnews.ru/">3DNews @ Daily Digital Digest</a><br>
+
+<H3>Поиск MP3</H3>
+
+  <a href="http://musicw.4mg.com/russian/a.htm">Мир музыки</a><br>
+  <a href="http://www.partymix.lv/">Живые сеты с вечеринок</a><br>
+  <a href="http://mp3.leader.lv/">Музыкальные новости</a><br>
+  <a href="http://www.myziki.net" target="_blank">www.музыки.нет</a><br>
+  <a href="http://mp3zzz.rt.org.ru/">Обнови себе музыку</a><br>
+  <a href="http://www.djsound.ru/">Все о DJинге в России</a><br>
+  <a href="http://technodrom.permonline.ru">Russian Clubbing Network</a><br>
+  <a href="http://rmp.ru">Российский Музыкальный Портал</a><br>
+  <a href="http://www.mp3.ru/">www.mp3.ru</a><br>
+  <a href="http://www.delit.net">Навигатор в мире музыки</a><br>
+  <a href="http://www.mp3hi-fi.com/russian/">Куча MP3</a><br>
+  <a href="http://www.tranceaddict.com">Огромная куча "трансы"</a><br>
+  <a href="http://www.mp3raid.com">RAID MP3 архив</a><br>
+  <a href="http://www.istra.ru/%7Emihailk/">Огромная база HARDCORE музыки</a><br>
+
+<H3>Вопросы ?</H3>
+
+<p>Любые вопросы или замечания принимаются по <a href="mailto:brj@vzletka.net?subject=moya.vzletka.net">этому</a> адресу.</p>
+

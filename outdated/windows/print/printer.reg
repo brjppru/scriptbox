@@ -1,0 +1,12 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Print\Monitors\Standard TCP/IP Port\Ports\IP_192.168.0.76]
+"Protocol"=dword:00000001
+"Version"=dword:00000001
+"HostName"=""
+"IPAddress"="192.168.0.76"
+"HWAddress"=""
+"PortNumber"=dword:0000238c
+"SNMP Community"="public"
+"SNMP Enabled"=dword:00000001
+"SNMP Index"=dword:00000001

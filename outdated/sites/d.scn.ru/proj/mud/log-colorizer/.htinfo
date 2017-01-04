@@ -1,0 +1,8 @@
+ru.title : log-colorizer
+en.title : log-colorizer
+
+ru.name : log-colorizer
+en.name : log-colorizer
+
+ru.desc : скрипт для конвертирования текста с ANSI-цветами в HTML
+en.desc : ANSI-text to HTML convering perl script

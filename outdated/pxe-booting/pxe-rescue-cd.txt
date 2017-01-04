@@ -1,0 +1,93 @@
+====== PXE rescue ======
+
+Читать:
+
+  *   http://www.syslinux.org/wiki/index.php/SYSLINUX#KERNEL_file
+  *   http://www.syslinux.org/wiki/index.php/SYSLINUX#LOCALBOOT_type_.5BISOLINUX.2C_PXELINUX.5D
+
+
+===== dnsmasq =====
+
+<code bash>
+# pxe
+
+enable-tftp
+tftp-root=/pxe
+dhcp-boot=pxelinux.com
+</code>
+
+
+===== pxe root =====
+
+Структура каталога
+
+<code bash>
+[brj@pxe] /root# ls -laR /pxe
+total 9684
+drwxr-xr-x   5 root  wheel      512 Apr  8 11:57 ./
+drwxr-xr-x  21 root  wheel     1024 Oct 18 10:57 ../
+drwxrwxrwx   2 root  wheel      512 Apr  8 12:47 iso/
+-rw-r--r--   1 root  wheel  6152360 Apr  6  2012 320hd.img
+-rw-r--r--   1 root  wheel  2905354 Jun  8  2012 hp-2550-Q_11_57.swi
+-rw-r--r--   1 root  wheel   286042 Apr  4 21:46 background.png
+-rwxr-xr-x   1 root  wheel    22908 Jan 29 00:55 chain.c32*
+-rwxr-xr-x   1 root  wheel   115784 Jan 29 00:55 ldlinux.c32*
+-rwxr-xr-x   1 root  wheel   184268 Jan 29 00:55 libcom32.c32*
+-rwxr-xr-x   1 root  wheel    24812 Jan 29 00:55 libutil.c32*
+-rwxr-xr-x   1 root  wheel    26140 Jan 29 00:56 memdisk*
+-rwxr-xr-x   1 root  wheel    12144 Jan 29 00:55 pxechn.c32*
+drwxr-xr-x   2 root  wheel      512 Apr  8 12:46 pxelinux.cfg/
+-rwxr-xr-x   1 root  wheel    37664 Jan 29 00:55 pxelinux.com*
+-rwxr-xr-x   1 root  wheel    26800 Jan 29 00:55 vesamenu.c32*
+
+/pxe/iso:
+
+-rw-r--r--  1 root  wheel  138342400 May  1  2011 acronis.iso
+-rw-r--r--  1 root  wheel  702953472 Feb 29  2012 alkid.live.cd.iso
+-rw-r--r--  1 root  wheel   52596736 Apr  7 21:37 antisms.iso
+-rw-r--r--  1 root  wheel  250519552 Apr  8 03:03 drweb.iso
+-rw-r--r--  1 root  wheel  204574720 Apr  1 18:47 eset_sysrescue.iso
+-rw-r--r--  1 root  wheel    1339392 Sep 11  2012 hdt-0.5.2.iso
+-rw-r--r--  1 root  wheel  317685760 Apr  7 14:33 kav_rescue_10.iso
+-rwxr-xr-x  1 root  wheel    1839104 Jan 23  2011 memtest.iso*
+-rw-r--r--  1 root  wheel  509814784 Mar  4 11:30 ubcd521.iso
+
+/pxe/pxelinux.cfg:
+
+-rw-r--r--  1 root  wheel  1729 Apr  8 12:46 default
+-rw-r--r--  1 root  wheel   309 Apr  8 11:47 graphics.conf
+</code>
+
+===== Загрузочное меню PXE =====
+
+  * https://www.kernel.org/pub/linux/utils/boot/syslinux/syslinux-5.01.zip
+  * Копируем из syslinux-5.01.zip в /pxe следующие файлы
+  * memdisk, chain.c32, ldlinux.c32, libcom32.c32, libutil.c32, pxechn.c32, vesamenu.c32, pxelinux.0
+  * переименовываем pxelinux.0 в pxelinux.com
+
+===== Пишем меню =====
+
+онлайн генератор хэшей www.insidepro.com/hashes.php?lang=rus -> нам нужна строка MD5(Unix)
+
+===== ISO =====
+
+  * http://download.geo.drweb.com/pub/drweb/livecd/drweb-livecd-602.iso
+  * http://rescuedisk.kaspersky-labs.com/rescuedisk/updatable/kav_rescue_10.iso
+  * http://www.hdt-project.org/raw-attachment/wiki/hdt-0.5.0/hdt-0.5.2.iso
+  * http://www.memtest.org/download/4.20/memtest86+-4.20.iso.zip
+  * http://mirror.myip.be/pub/ubcd/ubcd521.iso
+  * http://antisms.com/AntiSMS.iso
+  * http://esetsupport.ru/eset_sysrescue.iso
+  * ZACRONIS.ISO из ZverDVD_2013.3.ISO
+  * http://rutracker.org/forum/viewtopic.php?t=2827014
+===== А где брать то все? =====
+
+На гитхабе.
+
+<note tip>НЕТ ВРЕМЕНИ ОБЪЯСНЯТЬ</note>
+
+"Назад в будущее" смотрел? Где док говорил Марти -> "нет времени объяснять, садись в машину"?
+
+Не можешь на гитхабе - возьми файлы [[http://turbobit.net/cwj61mey1q9m.html|вот тут]]
+
+{{tag>pxe boot menu syslinx memdisk chain.c32 ldlinux.c32 libcom32.c32 libutil.c32 pxechn.c32 vesamenu.c32 pxelinux.0 dnsmasq}}

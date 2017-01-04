@@ -1,0 +1,3 @@
+Internet Explorer 9 does not provide a policy to disable hardware acceleration (GPU rendering). If necessary, you can disable hardware acceleration using Group Policy preferences. Set the registry value UseSWRender in the key HKEY_CURRENT_USER\Software\Microsoft\Internet Explorer\Main. To learn more about Group Policy preferences, see Managing Browser Settings with Group Policy Tools.
+http://technet.microsoft.com/en-us/library/gg699401.aspx
+

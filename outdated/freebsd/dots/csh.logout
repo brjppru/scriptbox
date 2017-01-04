@@ -1,0 +1,7 @@
+#
+# brj@csh.logout file, http://brj.pp.ru/
+#
+
+if ( `tty` =~ /dev/{console,ttyv[0-9]} ) then
+    clear
+endif

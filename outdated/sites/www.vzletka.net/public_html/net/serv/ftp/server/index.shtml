@@ -1,0 +1,9 @@
+<!--#include virtual="/cgi-bin/ssi/begin.cgi?title=Настройка%20FTP%20сервера%20Serv-U" -->
+
+<!--#include virtual="/cgi-bin/ssi/menu-selector.cgi?menu=net" -->
+
+<!--#include virtual="/cgi-bin/ssi/close-menu.cgi" -->
+
+<!--#include virtual="/net/serv/ftp/server/content.txt" -->
+
+<!--#include virtual="/cgi-bin/ssi/end.cgi" -->

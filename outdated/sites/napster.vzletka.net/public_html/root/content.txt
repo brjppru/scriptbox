@@ -1,0 +1,82 @@
+<table cellspacing=0 cellpadding=0 border=0 width=100%>
+<td class=b2><span class=r><img src=/o.gif width=9 height=27 align=absmiddle></span><br><img src=/o.gif width=200 height=3></td>
+<td><img src=/o.gif width=7 height=19></td>
+<td width=100%>
+
+	<table cellspacing=0 cellpadding=0 border=0 width=100%>
+	<tr><td><img src=/o.gif width=9 height=30></td>
+	<td width=100%><div class=y>Необходимые условности для становления дауном</div></td>
+        </tr></table>
+</td></tr>
+</table>
+
+<img src=/o.gif height=3><br>
+
+<table cellspacing=0 cellpadding=0 border=0 width=100% height=55%>
+<tr><td valign=top width=100%>
+
+	<table cellspacing=0 cellpadding=0 border=0 width=100%>
+	<tr><td class=b0><img src=/o.gif width=200 height=5></td>
+	<td><img src=/o.gif width=7 height=5></td>
+	<td width=100% class=b0><img src=/o.gif height=5></td></tr><tr valign=top>
+	<td><img src=/o.gif height=3><br>
+
+	<table cellspacing=0 cellpadding=0 border=0 width=200>
+	<tr><td class=b1><img src=/o.gif width=9 height=30></td>
+	<td width=100% class=b1><div class=y>дown-соответствие</div></td>
+	</tr></table><img src=/o.gif height=3></td>
+
+	<td><img src=/o.gif width=7></td>
+	<td>
+
+	<table cellspacing=3 cellpadding=0 border=0 width=400>
+	<tr valign=top><td><img src=/o.gif width=400 height=1><div align=justify class=t>
+	Недели за две, начиная так с 15 чисел января 2004 года, дядяй бырджем путем хронического 
+	недосыпа, неумеренного потребления кофе и блоков сигарет была создана
+	эта служба. Даун-напстер сервер разрабатывался мной как 
+	повторная, но более правильная реализация
+	<a href=http://fs.vzletka.net/>поисковой машины</a> по FTP серверам 
+	сети <a href=http://www.vzletka.net/>vzletka.net</a>, которая будет 
+	использовать типичную клиент-серверную архитектуру с небольшими 
+	вставками P2P.
+
+	</div><br><div align=justify class=t>Теперь пользователь, если решит 
+	участвовать в файлообменной системе, сам предоставляет информацию о 
+	себе (список файлов в обменном фонде). Это намного удобнее и быстрее, 
+	чем "втупую" индексировать сотни пользовательских FTP серверов.
+
+	</div><br><div align=justify class=t>
+	Неоценимую для меня поддержку, тестирование, генерацию умных 
+	советов, отладку, правку километров исходного текста осуществляли 
+	дядя kvs с дядей <a href=http://rulcom.vzletka.net/>rulcom</a>. Дядя <a href=http://www.kr.ru/>gravis</a> 
+	помог написать гипермегасложные скрипты на языке perl, а тетя <a href=http://www.livejournal.com/users/krissja/>krissja</a>
+	нарисовала мужика за гиганапстер-сервером при входе на сайт. 
+	Орфографию написания сочетания букв проверил дядя <a href=http://www.livejournal.com/users/borzhonov/>juice</a>.
+	
+	</div><br><div align=justify class=t>Вместо "спасиббы" вы можете подумать о нас 
+	и пожелать в астрале нам немного щастья и удачи, а также рассказать об 
+	этой системе троим своим друзьям. Этой благодарности нам будет достаточно.
+	
+	</div><br><div align=justify class=t>Ну, и как типа самый законопослушный 
+	пользователь сети, я обязан предупредить, что все трэки, 
+	представленные вам сервисом даун-напстер, должны прослушиваться 
+	исключительно в гордом одиночестве и для ознакомления. 
+	Все права на музыку - в руках их официальных владельцев. 
+	Если вам что-то понравилось - сходите и купите лицензионные компакты 
+	или кассеты.
+	
+	</div><br><div align=justify class=t>Подчеркиваю, <b>что все песни - только 
+	для ознакомления</b>. Если вы заюзаете mp3 к себе в папки, но не приобретете 
+	мегафактурный CD диск, то вы нарушите закон об Интеллектуальной Собственности, подлежите 
+	уголовному преследованию и, не дай Бог, меня подведете под монастырь!
+	
+	</div><br><div align=justify class=t>Задумайтесь о вышенаписанном, друзья! Спасибо.
+	
+	</div></td></tr></table>
+
+	<br>
+
+	</td></tr><tr>
+
+	</tr></table>
+    </td></tr></table>

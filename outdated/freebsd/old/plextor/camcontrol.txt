@@ -1,0 +1,28 @@
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+From:    Jean-Francois Dockes <jean-francois.dockes@wanadoo.fr>
+To:      Roman Y. Bogdanov <peps37@ktk.ru>
+Date:    Monday, September 17, 2001, 10:57:32 PM
+Subject: Need help?
+Files:   <none>
+--====----====----====----====----====----====----====----====----====----===--
+Roman Y. Bogdanov writes:
+ >  Ok. Unfortunately at this moment I too lame in SCSI )-;
+ >  Can you give me full command string camcontrol with all parametr's?
+
+I guess that you could try something like:
+
+ camcontrol cmd cd0 -v -c "15 10 0 0 8 0" -o 8 "0 0 0 0 31 2 ff 0"
+
+The 'ff' near the end would stand for 'maximum speed'. 0 would mean 1x,
+etc... (see plextor doc). 
+
+I'm not completely sure how camcontrol parses
+it's arguments, so, if it doesn't work as expected, you could try to add
+'0x' before each value.
+
+Also, I have no Plextor reader at hand, so I couldn't actually try it...
+
+JF
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+

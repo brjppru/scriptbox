@@ -1,0 +1,87 @@
+#
+# brj@pxe booter
+#
+
+DEFAULT vesamenu.c32
+PROMPT 0
+timeout 80
+TOTALTIMEOUT 9000
+
+MENU TITLE brj bvt pxe boot menu
+MENU INCLUDE pxelinux.cfg/graphics.conf
+MENU AUTOBOOT Starting Local System in 8 seconds
+
+# Boot local HDD (default)
+LABEL bootlocal
+menu label Boot Local HDD
+menu default
+localboot 0x80
+# if it doesn't work 
+#kernel chain.c32
+#append hd0
+
+# Вход в по паролю boot, алгоритм MD5
+# $1$N7URnrIc$Jci1NDareUqQDHa/gYAOI/
+
+label drweb
+menu label Dr. Web live CD
+menu PASSWD $1$N7URnrIc$Jci1NDareUqQDHa/gYAOI/
+kernel memdisk
+append iso raw initrd=iso/drweb.iso
+
+label kav
+menu label Kastersky Live CD
+menu PASSWD $1$N7URnrIc$Jci1NDareUqQDHa/gYAOI/
+kernel memdisk
+append iso raw initrd=iso\kav_rescue_10.iso
+
+label antisms
+menu label AntiSMS CD
+menu PASSWD $1$N7URnrIc$Jci1NDareUqQDHa/gYAOI/
+kernel memdisk
+append iso raw initrd=iso\antisms.iso
+
+label eset
+menu label ESET NOD32 rescue CD
+menu PASSWD $1$N7URnrIc$Jci1NDareUqQDHa/gYAOI/
+kernel memdisk
+append iso raw initrd=iso\eset_sysrescue.iso
+
+label memtest
+menu label Memory testX86 CD
+menu PASSWD $1$N7URnrIc$Jci1NDareUqQDHa/gYAOI/
+kernel memdisk
+append iso raw initrd=iso\memtest.iso
+
+label ubcd
+menu label Ultimate Boot CD
+menu PASSWD $1$N7URnrIc$Jci1NDareUqQDHa/gYAOI/
+kernel memdisk
+append iso raw initrd=iso\ubcd521.iso
+
+label hdt
+menu label HDT CD
+menu PASSWD $1$N7URnrIc$Jci1NDareUqQDHa/gYAOI/
+kernel memdisk
+append iso raw initrd=iso\hdt-0.5.2.iso
+
+label acronis
+menu label Acronis ZVER CD
+menu PASSWD $1$N7URnrIc$Jci1NDareUqQDHa/gYAOI/
+kernel memdisk
+append iso raw initrd=iso\acronis.iso
+
+label alkid
+menu label brj.allkid from ZVER CD
+menu PASSWD $1$N7URnrIc$Jci1NDareUqQDHa/gYAOI/
+kernel memdisk
+append iso raw initrd=iso\brj.allkid.2013.3.iso
+
+LABEL Abort
+MENU LABEL Exit
+KERNEL abortpxe.0
+DEFAULT vesamenu.c32
+PROMPT 0
+
+MENU TITLE Antivirus and tools
+MENU INCLUDE pxelinux.cfg/graphics.conf

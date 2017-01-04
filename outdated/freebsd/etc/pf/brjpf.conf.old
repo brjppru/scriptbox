@@ -1,0 +1,232 @@
+#
+# brj@packet filter config, http://brj.pp.ru/
+# 
+
+# ------------------------------------------------------------------------->
+# Interfaces, IP and gates
+# ------------------------------------------------------------------------->
+
+# interfaces
+sovintel	= "xl0"
+trustlocal	= "fxp0"
+
+# internet uplinks
+sovintel_ip	= "80.255.130.133"
+sovintel_gw	= "80.255.130.134"
+
+#baza_ip		= "195.112.250.24"
+#bash_ip		= "195.112.250.27"
+
+# tunnels for remote office's
+#bashsi		= "gif0"
+
+# comm server in DMZ
+#comm		= "192.168.18.4"
+
+# tables
+table <rfc1918>   const { 192.168.0.0/16, 172.16.0.0/12, 10.0.0.0/8 }
+table <brjlocal>  const { 192.168.0.192/32 }
+
+badports	= "{135,137,138,139,369,445,520,631,5000}"
+
+# ------------------------------------------------------------------------->
+# Achinks branch IP's
+# ------------------------------------------------------------------------->
+
+achbr_ip1="62.33.179.237"
+achbr_ip2="80.255.134.170"
+
+# ------------------------------------------------------------------------->
+# atm server + atm clients
+# ------------------------------------------------------------------------->
+
+atmserver	= "10.18.0.31"
+
+atm634_ip	= "80.255.129.134"
+atm646_ip	= "80.255.129.8"
+
+# ------------------------------------------------------------------------->
+# Public TCP/UDP services
+# ------------------------------------------------------------------------->
+
+tcp_serve	= "smtp domain www auth"
+udp_serve	= "domain"
+icmp_serve	= "0,3,4,8,11"
+
+# ------------------------------------------------------------------------->
+# Mail server in DMZ
+# ------------------------------------------------------------------------->
+
+#mail_rdr	= "25"
+#mailhost_rdr	= "192.168.18.4"
+
+# ------------------------------------------------------------------------->
+# Normalize everything, max-mss is needed due to mpd's poor MSS handling
+# ------------------------------------------------------------------------->
+
+set optimization aggressive
+set block-policy return 
+
+scrub in  on { $sovintel } all max-mss 1440 fragment reassemble
+scrub out on { $sovintel } all max-mss 1440 fragment reassemble random-id
+
+# ------------------------------------------------------------------------->
+# NAT for brj
+# ------------------------------------------------------------------------->
+
+# Redirect achinks branch to internal FTP server 192.168.0.220
+rdr on $sovintel proto tcp from { $achbr_ip1, $achbr_ip2 } to any port 21 -> 192.168.0.220
+rdr on $sovintel proto tcp from { $achbr_ip1, $achbr_ip2 } to any port 49152:65535 -> 192.168.0.220 port 49152:65535
+
+# Nat lorr to transparent proxy
+#rdr inet proto tcp from $lorr_ip   to any port 80 -> 127.0.0.1 port 3129
+
+#nat on $sovintel from <brjlocal> to any port 80 -> ($sovintel:0)
+
+# nat brjlocal + lorr to: https, webmoney, irc, icq, ssh, and gmail and quake3
+#nat on $sovintel from <brjlocal> to any port { 47901,443,3389,2802,6667,6668,6669,5190,22,995,27960 } -> ($sovintel:0)
+#nat on $tronplus from <brjlocal> to any port { 47901,443,3389,2802,6667,6668,6669,5190,22,995,27960 } -> ($tronplus:0)
+#nat on $sovintel from $lorr_ip   to any port { 5190,443,6667,6668,6669,22,995,27960 } -> ($sovintel:0)
+#nat on $tronplus from $lorr_ip   to any port { 5190,443,6667,6668,6669,22,995,27960 } -> ($tronplus:0)
+
+# nat icmp from brjlocal to any
+nat on $sovintel inet proto icmp from <brjlocal> to any -> ($sovintel:0)
+nat on $sovintel from 192.168.0.99 -> ($sovintel:0)
+nat on $sovintel from 192.168.0.192 -> ($sovintel:0)
+
+# Redirect tcp services, from outside to internal network
+#nat on $sovintel from <brjlocal> to any port { 44417,4661,4242,4662,4711,1008,4665,4672,3000 } -> ($sovintel:0)
+#rdr pass on $sovintel proto tcp from ($sovintel:network) to port { 44417,29174, 65005 } -> 192.168.18.237
+#rdr on $sovintel proto tcp to port { 44417,29174, 65005} tag sovintel -> 192.168.18.237
+
+# lta.internet pass to lta.ms.local over rdp
+
+#rdr pass on $sovintel proto tcp from 80.91.192.50 to port 3389 -> 192.168.18.71
+#rdr on      $tronplus proto tcp from 80.91.192.50 to port 3389 tag tronplus -> 192.168.18.71
+
+# atm #634 | sport-master
+
+#rdr on      $trustlocal from any to 10.38.10.202 -> 80.255.129.8
+
+#nat on  $sovintel proto tcp from 80.255.129.8 to port 1804 -> 10.38.10.202
+#nat on  $trustlocal proto tcp from any to 10.38.10.202 -> 80.255.129.8
+
+# ------------------------------------------------------------------------->
+# NAT for vmware pay client's
+# ------------------------------------------------------------------------->
+
+#nat on $sovintel from $vmwhursa to $ursabank -> ($sovintel:0)
+#nat on $tronplus from $vmwhursa to $ursabank -> ($tronplus:0)
+
+
+# ------------------------------------------------------------------------->
+# NAT for metallservis
+# ------------------------------------------------------------------------->
+
+# Транслировать внутренние адреса в (основной) адрес внешнего интерфейса.
+#nat on $tronplus from !(self) -> ($tronplus:0)
+#nat on $sovintel from !(self) -> ($sovintel:0)
+
+#nat on $tronplus from $comm -> ($tronplus:0)
+
+# ------------------------------------------------------------------------->
+# ICMP, TCP&UDP services pass-out on multihomed
+# ------------------------------------------------------------------------->
+
+# Redirect tcp services, from outside to internal network
+#rdr pass on $sovintel proto tcp from ($sovintel:network) to port { $mail_rdr } -> $mailhost_rdr
+
+# Redirect mail server, from outside to internal network
+#rdr on $sovintel proto tcp to port { $mail_rdr } tag sovintel -> $mailhost_rdr
+
+# ------------------------------------------------------------------------->
+# And begin firewall
+# ------------------------------------------------------------------------->
+
+# Skip and pass $mslocal, $bash and lo0
+set  skip on  { lo0 $trustlocal }
+pass quick on { lo0 $trustlocal }
+
+# Antispoof
+antispoof quick for { $trustlocal }
+
+# Block fake network on upstream
+#block drop in  quick on $sovintel from <rfc1918> to any
+#block drop out quick on $sovintel from any to <rfc1918>
+
+# Block badports, nmap on upstream
+block in quick on { $sovintel } proto { udp, tcp } from any to any port $badports
+block in quick on { $sovintel } inet proto tcp from any to any flags FUP/FUP
+block drop in quick on { $sovintel } from any os nmap
+
+# Block all incoming. Return RST for tcp connection
+block in on { $sovintel }
+block return-rst in on { $sovintel } proto tcp
+
+# GRE for baza < > work
+#pass in  on $sovintel inet proto gre from $baza_ip to $sovintel_ip
+#pass out on $sovintel inet proto gre from $sovintel_ip to $baza_ip
+
+# ------------------------------------------------------------------------->
+# ICMP, TCP&UDP services on multihomed
+# ------------------------------------------------------------------------->
+
+# Reply-to and pass ESP ipsec from tronplus to bash
+#pass in  reply-to ($tronplus $tronplus_gw) proto esp from $bash_ip to $tronplus_ip
+#pass out route-to ($tronplus $tronplus_gw) proto esp from $tronplus_ip to $bash_ip
+
+# Reply-to and pass ESP ipsec from sovintel to bash
+#pass in  reply-to ($sovintel $sovintel_gw) proto esp from $bash_ip to $sovintel_ip
+#pass out route-to ($sovintel $sovintel_gw) proto esp from $sovintel_ip to $bash_ip
+
+# Pass in ESP ipsec for atm634
+pass in  on $sovintel proto esp from $atm634_ip to $sovintel_ip
+pass out on $sovintel proto esp from $sovintel_ip to $atm634_ip
+
+# Pass in ESP ipsec for atm646
+pass in  on $sovintel proto esp from $atm646_ip to $sovintel_ip
+pass out on $sovintel proto esp from $sovintel_ip to $atm646_ip
+
+# Pass out ESP ipsec
+#pass out on $sovintel route-to ($sovintel $sovintel_gw) proto esp from $sovintel_ip to $bash_ip
+#pass out on $tronplus route-to ($tronplus $tronplus_gw) proto esp from $tronplus_ip to $bash_ip
+
+# Pass out from source route
+pass out route-to ($sovintel $sovintel_gw) from ($sovintel) to !(self:network) keep state
+#pass out route-to ($tronplus $tronplus_gw) from ($tronplus) to !(self:network) keep state
+
+# Reply-to tagged packet's
+pass in reply-to ($sovintel $sovintel_gw) proto tcp flags S/SA tagged sovintel keep state
+#pass in reply-to ($tronplus $tronplus_gw) proto tcp flags S/SA tagged tronplus keep state
+
+# ------------------------------------------------------------------------->
+# sovintel
+# ------------------------------------------------------------------------->
+
+pass in on $sovintel reply-to ($sovintel $sovintel_gw) inet proto icmp icmp-type { $icmp_serve } keep state
+pass in on $sovintel inet proto icmp from ($sovintel:network) icmp-type { $icmp_serve } keep state
+
+#pass in on $sovintel reply-to ($sovintel $sovintel_gw) proto tcp to port { $tcp_serve } flags S/SA keep state
+#pass in on $sovintel proto tcp from ($sovintel:network) to port { $tcp_serve } flags S/SA keep state
+
+#pass in on $sovintel reply-to ($sovintel $sovintel_gw) proto udp to port { $udp_serve } keep state
+#pass in on $sovintel proto udp from ($sovintel:network) to port { $udp_serve } keep state
+
+# ipsec bash - ESP bash_ip <> sovintel
+#pass in  on $sovintel inet proto esp from $bash_ip     to $sovintel_ip  tag sovintel keep state
+#pass out on $sovintel inet proto esp from $sovintel_ip to $bash_ip      tag sovintel keep state
+
+#pass in on $sovintel reply-to ($sovintel $sovintel_gw) proto tcp to port ssh flags S/SA keep state
+#pass in on $sovintel proto tcp from <sshaccess> to port ssh flags S/SA keep state (max-src-conn 5, max-src-conn-rate 5/60, overload <badgays> flush)
+
+# baza
+#pass in on $sovintel inet proto tcp from $baza_ip to $sovintel_ip port { 22,1723 } tag sovintel flags S/SA keep state
+#pass in on $sovintel inet proto tcp from { 82.146.60.244, 195.112.250.27, 195.112.250.24,193.201.61.146 }  to { $sovintel_ip } port 22 flags S/SA keep state
+
+# Allow remote ssh connect from ATM's
+pass in on $sovintel inet proto tcp from $atm634_ip to $sovintel_ip port 22 tag sovintel flags S/SA keep state
+pass in on $sovintel inet proto tcp from $atm646_ip to $sovintel_ip port 22 tag sovintel flags S/SA keep state
+
+# ------------------------------------------------------------------------->
+# The end
+# ------------------------------------------------------------------------->

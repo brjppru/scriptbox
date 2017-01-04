@@ -1,0 +1,14 @@
+
+1. fdisk
+2. newfs
+3. install world
+4. install kernel
+5. install etc
+6. patch /etc for config
+7. do ldconfig
+
+sudo chroot /sata /sbin/ldconfig -m /usr/lib/compat
+sudo chroot /sata /sbin/ldconfig -m /usr/lib
+sudo chroot /sata /sbin/ldconfig -m /lib
+
+8. chroot /sata /bin/csh

@@ -1,0 +1,9 @@
+<!--#include virtual="/cgi-bin/ssi/begin.cgi?title=Разрешения%20и%20Лицензии" -->
+
+<!--#include virtual="/cgi-bin/ssi/menu-selector.cgi?menu=about" -->
+
+<!--#include virtual="/cgi-bin/ssi/close-menu.cgi" -->
+
+<!--#include virtual="/about/license/content.txt" -->
+
+<!--#include virtual="/cgi-bin/ssi/end.cgi" -->

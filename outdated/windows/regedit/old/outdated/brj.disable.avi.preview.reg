@@ -1,0 +1,9 @@
+REGEDIT4
+
+; (c) tuned by roman y. bogdanov, http://brj.pp.ru/
+
+;Отключить предпросмотр фильмов в Проводнике (ускоряет работу и позволяет перемещать и удалять файлы)
+[-HKEY_CLASSES_ROOT\.avi\ShellEx]
+[-HKEY_CLASSES_ROOT\.mpg\ShellEx]
+[-HKEY_CLASSES_ROOT\.mpe\ShellEx]
+[-HKEY_CLASSES_ROOT\.mpeg\ShellEx]

@@ -1,0 +1,9 @@
+<!--#include virtual="/cgi-bin/ssi/begin.cgi?title=Пресс-релиз" -->
+
+<!--#include virtual="/cgi-bin/ssi/menu-selector.cgi?menu=about" -->
+
+<!--#include virtual="/cgi-bin/ssi/close-menu.cgi" -->
+
+<!--#include virtual="/about/pr/28.12.2002/content.txt" -->
+
+<!--#include virtual="/cgi-bin/ssi/end.cgi" -->

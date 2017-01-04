@@ -1,0 +1,259 @@
+<!--
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+              П Р И В Е Т  К У Л Х А К Е Р (-;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-->
+<HTML>
+  <HEAD>
+  
+   <TITLE>www.vzletka.net - home</TITLE>
+   <META http-equiv=content-type content="text/html; ">
+
+  </HEAD>
+
+<BODY bgColor="#FFFFFF" link="#0055CC" alink="#FF0000" vlink="#990099" text="#000000" leftMargin="0" topMargin="0" marginheight="0" marginwidth="0">
+
+<style>
+a.menu		{color: #000000;}
+a.menu:hover	{color: #CC0000;}
+</style>
+
+<!-- start header -->
+
+<br>
+
+<TABLE cellSpacing="0" cellPadding="0" width="100%" bgColor="#ffffff" border="0">
+  <TBODY>
+  <TR>
+    <TD><IMG SRC="/images/logo.gif" border="0"></TD>
+  </TR>
+</TBODY>
+</TABLE>
+
+<br>
+
+<!-- start navigation -->
+
+<TABLE cellSpacing="0" cellPadding="0" width="100%" bgColor="#eeeeee" border="0">
+  <TBODY>
+  
+  <TR bgColor="#506DBF">
+     <TD>&nbsp;</TD><TD>&nbsp;</TD><TD>&nbsp;</TD><TD>&nbsp;</TD><TD>&nbsp;</TD>
+  </TR>
+
+  <TR valign="top">
+    <TD>&nbsp;</TD>
+    <TD align="left">
+
+      <B>О компании</b><br><hr size="1" width="70%" style="color:#000000; width: 70%; height:1px; border-style:none; align=left">
+
+      <A href="/about/news/" class="menu">Новости</A><BR>
+      <A href="/about/" class="menu">Основные сведения</A><BR>
+      <A href="/about/license/" class="menu">Лицензии</A><BR>
+      <A href="/about/pr/" class="menu">Пресс-релиз</A><BR>
+      <A href="/about/jobs/" class="menu">Вакансии</A><BR>
+      <A href="/about/contact/" class="menu">Наши координаты</A><BR>
+
+    </TD>
+
+    <TD align="left">
+
+      <B>Сеть</b><br><hr size="1" width="70%" style="color:#000000; width: 70%; height:1px; border-style:none; align=left">
+
+      <A href="/net/" class="menu">Наш узел ПД</A><BR>
+      <A href="/net/ap/" class="menu">География подключений</A><BR>
+      <A href="/net/join/" class="menu">Заявка на подключение</a><br>
+      <A href="/net/serv/" class="menu">Как настроить</A><BR>
+      <A href="/net/card/" class="menu">Сетевые карты</A><BR>
+
+    </TD>
+
+    <TD align="left">
+
+      <B>Услуги</b><br><hr size="1" width="70%" style="color:#000000; width: 70%; height:1px; border-style:none; align=left">
+
+      <A href="/service/internet/" class="menu">Доступ в Интернет</A><BR>
+      <A href="/service/price/voip/" class="menu">IP Телефония</A><BR>
+      <A href="/service/vpn/" class="menu">IP VPN</A><BR>
+      <A href="/service/price/" class="menu">Цены</A><BR>
+      <A href="/service/pay/" class="menu">Как оплатить</A><BR>
+
+    </TD>
+
+    <TD align="left">
+
+      <B>Пользователю</b><br><hr size="1" width="70%" style="color:#000000; width: 70%; height:1px; border-style:none; align=left">
+
+      <A href="http://cabinet.vzletka.net/" class="menu">Личный Кабинет</A><BR>
+      <A href="http://fs.vzletka.net/" class="menu">FTP поиск</A><BR>
+      <A href="ftp://ftp.vzletka.net/" class="menu"target=_blank>ftp.vzletka.net</A><BR>
+      <A href="http://forum.vzletka.net/" class="menu">Форум сети</A><BR>
+      <A href="/client/chat/" class="menu">Сетевой ЧАТ</A><BR>
+      <A href="/client/faq/" class="menu">Вопросы и Ответы</A><BR>
+      <A href="/client/links/" class="menu">Полезные ссылки</A><BR>
+      <A href="http://games.vzletka.net/" class="menu">Игры</A><BR>
+
+    </TD>
+ </TR>   
+
+  <TR>
+     <TD>&nbsp;</TD><TD>&nbsp;</TD><TD>&nbsp;</TD><TD>&nbsp;</TD><TD>&nbsp;</TD>
+  </TR>
+
+
+</TBODY>
+</TABLE>
+
+<br>
+
+<!-- end navigation -->
+
+<TABLE cellSpacing="0" cellPadding="0" width="98%" bgColor="#ffffff" border="0">
+  <TBODY>
+  <TR>
+    <TD vAlign=top align="right">
+      <!-- start footer -->
+
+      <TABLE cellSpacing="0" cellPadding="0" width="100%" bgColor="#ffffff" border="0">
+        <TBODY>
+        <TR>
+          <TD width="5%">&nbsp;</TD>
+	  <TD>
+          &copy 2002 <A href="http://www.vzletka.net/">vzletka.net</A> | 
+          <A href="/about/contact/">Наши координаты</A>
+          </TD>
+        </TR>
+	<TR>
+          <TD width="5%">&nbsp;</TD>
+	  <TD></TD>
+	</TR>
+	</TBODY>
+	</TABLE>
+
+	<!-- end footer -->
+
+    </TD>          
+    <TD vAlign="top" width="50%">
+
+<!-- start news -->
+
+      <TABLE cellSpacing="0" cellPadding="0" width="100%" bgColor="#ffffff" border="0">
+        <TBODY>
+        <TR>
+          <TD vAlign="top" align="left"><B>НОВОСТИ</b><br><hr size="1" width="94%" style="color:#000000; width: 94%; height:1px; border-style:none; align=left"></TD></TR>
+        <TR>
+          <TD vAlign="top">
+
+           <!---#include virtual="/cgi-bin/news/news.cgi" -->
+           <!--#include virtual="/news/newsdata.txt" -->
+
+          </TD>
+          <TD>&nbsp;</TD></TR>
+        <TR>
+          <TD>&nbsp;</TD></TR>
+        </TBODY>
+        </TABLE>
+<!-- end news -->
+
+     </TD>
+    </TR>
+</TBODY>
+</TABLE>
+
+</BODY>
+</HTML>

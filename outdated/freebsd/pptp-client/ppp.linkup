@@ -1,0 +1,4 @@
+VPN:                                                 
+        !bg /bin/sh -c "/etc/ppp/restarter.sh now"
+	
+	

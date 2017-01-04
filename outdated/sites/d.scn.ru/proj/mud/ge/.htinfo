@@ -1,0 +1,8 @@
+ru.title : ge-скрипт
+en.title : ge-script
+
+ru.name : ge-скрипт
+en.name : ge-script
+
+ru.desc : скрипт для создания меню чаров, ведения логов для MUD-клиентов jmc и mmc
+en.desc : char-menu and logging script for jmc and mmc MUD-clients

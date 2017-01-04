@@ -1,0 +1,3 @@
+<h3>Новости</h3>
+
+<!--#include virtual="/news/newsdata.txt" -->

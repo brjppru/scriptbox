@@ -1,0 +1,9 @@
+<!--#include virtual="/cgi-bin/ssi/begin.cgi?title=Ваша%20стартовая%20страница%20в%20интернете!" -->
+
+<!--#include virtual="/cgi-bin/ssi/menu-selector.cgi?menu=client" -->
+
+<!--#include virtual="/cgi-bin/ssi/close-menu.cgi" -->
+
+<!--#include virtual="/client/links/content.txt" -->
+
+<!--#include virtual="/cgi-bin/ssi/end.cgi" -->

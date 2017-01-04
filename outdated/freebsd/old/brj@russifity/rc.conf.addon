@@ -1,0 +1,11 @@
+
+# brj@mobile russifity script
+
+keyrate="fast"
+keymap="ru.koi8-r"
+keychange="61 [K"
+scrnmap="koi8-r2cp866"
+font8x16="cp866-8x16"
+font8x14="cp866-8x14"
+font8x8="cp866-8x8"
+

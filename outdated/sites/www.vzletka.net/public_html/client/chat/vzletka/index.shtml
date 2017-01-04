@@ -1,0 +1,9 @@
+<!--#include virtual="/cgi-bin/ssi/begin.cgi?title=Правила%20канала%20vzletka" -->
+
+<!--#include virtual="/cgi-bin/ssi/menu-selector.cgi?menu=client" -->
+
+<!--#include virtual="/cgi-bin/ssi/close-menu.cgi" -->
+
+<!--#include virtual="/client/chat/vzletka/content.txt" -->
+
+<!--#include virtual="/cgi-bin/ssi/end.cgi" -->

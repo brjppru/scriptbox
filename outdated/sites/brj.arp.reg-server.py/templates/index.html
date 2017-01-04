@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" type="text/css" href="static/kube.min.css" />
+</head>
+<body style="padding-top: 20px;">
+    <div id="page">
+        <div class="row">
+            <div class="half centered">
+                <h1>Вы не зарегистрированы в сети</h1>
+                <ul style="list-style: none">
+                    <li>Ваш MAC адрес: {{mac}}</li>
+                    <li>Ваш IP адрес: {{ip}}</li>
+                </ul>
+                <form method="post" action="" class="forms columnar">
+                    <ul>
+                        <li>
+                            <label for="name" class="bold">Ваше имя</label>
+                            <input type="text" name="name" id="name" />
+                            {{errors.name}}
+                        </li>
+                        <li>
+                            <label for="phone" class="bold">Ваш номер телефона</label>
+                            <input type="text" name="phone" id="phone" />
+                            {{errors.phone}}
+                        </li>
+                        <li class="push">
+                            <input type="submit" name="send" class="btn btn-round" value="Регистрация" />
+                        </li>
+                    </ul>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

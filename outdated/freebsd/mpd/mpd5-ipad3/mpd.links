@@ -1,0 +1,17 @@
+pptp0:
+ set link type pptp
+ set pptp disable windowing
+ set pptp enable always-ack
+ set pptp disable originate
+pptp1:
+ set link type pptp
+ set pptp disable windowing
+ set pptp enable always-ack
+ set pptp disable originate
+pptp2:
+ set link type pptp
+ set pptp disable windowing
+ set pptp enable always-ack
+ set pptp disable originate
+
+

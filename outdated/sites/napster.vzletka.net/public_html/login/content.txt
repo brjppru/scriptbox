@@ -1,0 +1,37 @@
+	<table cellspacing=0 cellpadding=0 border=0 width=100%>
+	<tr>
+		<td class=b2><span class=r><img src=/o.gif width=9 height=27 align=absmiddle></span><br><img src=/o.gif width=200 height=3></td>
+		<td><img src=/o.gif width=7 height=30></td>
+		<td width=100%><table cellspacing=0 cellpadding=0 border=0 width=100%><tr class=b0>
+		<td colspan=3><img src=/o.gif height=1></td></tr><tr>
+		<td><img src=/o.gif width=9 height=30></td>
+		<td width=100% class=y>введите осторожно своё админское имя и тайный ключ-пароль</td></tr>
+		</table></td></tr></table>
+
+		<img src=/o.gif height=3><br>
+
+		<table cellspacing=0 cellpadding=0 border=0 width=100%>
+		<tr><td class=b0><img src=/o.gif width=200 height=5></td>
+		<td><img src=/o.gif width=7 height=5></td>
+		<td width=100% class=b0><img src=/o.gif height=5></td></tr></table>
+		
+		<img src=/o.gif height=3><br>
+
+		<table cellspacing=0 cellpadding=0 border=0 width=100% height=50%>
+		<tr><td align=center valign=bottom><img src=/o.gif width=200><br><a href=/login/ class=s nowrap>&nbsp;напомнить мылом ключ-пароль&nbsp;</a></td>
+		<td><img src=/o.gif width=7></td>
+		<td width=100% class=b2><form action=/login/ method=get target=_top>
+		<table cellspacing=5 cellpadding=0 border=0 width=100%>
+		<tr><td width=30%></td><td></td>
+		<td><input type=text name=username size=25 maxlength=40 value="" class=f></td>
+		<td width=70%></td></tr><tr>
+		<td width=30%></td>
+		<td></td>
+		<td><input type=password name=password size=25 maxlength=25 class=f></td>
+		<td width=70%></td></tr><tr>
+		<td width=30%></td>
+		<td></td>
+		<td align=right valign=top nowrap class=w><input type=checkbox name=autologin>авто<input type=submit name=login value=ENTER class=fs></td>
+		<td width=70%></td></tr>
+		</table></form></td>
+	</tr></table>

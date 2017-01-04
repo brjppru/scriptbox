@@ -1,0 +1,11 @@
+#
+# dot.logout -- csh .logout file
+#
+# 2002  Benedikt Meurer  <bmeurer@unix-ag.org>
+#
+
+# clear screen, if we logged into console/vt
+if ( `tty` =~ /dev/{console,ttyE[0-9]} ) then
+	clear
+endif
+

@@ -1,0 +1,311 @@
+
+<h1>Даешь ЛВС! или<BR>Не так страшна Ethernet, как ее спецификации...</h1>
+
+<center></center><br>
+<H4 class=RIGHT>Материал предоставлен <A HREF="http://www.itc-ua.com/testlab.phtml">Тестовой лабораторией ITC</A></H4>
+
+<H3>Методика</H3>
+<P>Так как на всех четырех ПК поочередно устанавливались одинаковые сетевые карты, нас, естественно, интересовало создание по возможности разных условий для их функционирования. В конечном итоге мы остановились на той конфигурации, которую можно видеть на схеме стенда &#151; два &laquo;длинных&raquo; сегмента по 75 и 90 метров, одно &laquo;идеальное подключение&raquo; (коммуникационный кабель от компьютера напрямую включен в концентратор) и одно короткое &laquo;неудобное&raquo; соединение через небольшой отрезок перегнутого кабеля. Забегая вперед, отметим, что наши предположения во многом подтвердились &#151; некоторые модели сетевых карт действительно вели себя по-разному в зависимости от длины сегмента, на которой им приходилось работать. Сервер был &laquo;отнесен&raquo; от концентратора на 15 метров, что вполне соответствует максимальному из реально встречающихся вариантов (в рамках разумного).
+<P>Быть может, некоторые удивятся тому, что мы выбрали в качестве устройства, объединяющего абонентов сети, именно концентратор, а не коммутатор. Ответ довольно прост: дело в том, что для создания нагрузки собственно на предмет тестов, т. е. на сетевые карты, коммутатор в сети из четырех клиентов и одного сервера просто-напросто непригоден. Фактически мы специально усложнили задачу, увеличив количество коллизий в сети до того максимального уровня, который вообще реально было получить, с целью выявить слабые места в работе сетевых контроллеров. В случае же использования коммутатора все тесты фактически превратились бы... в исследование производительности его самого. Несколько слов о концентраторе. Как ни странно, мы остановили свой выбор на довольно простой и дешевой модели LG, сделанной на базе чипов Realtek. Произошло это по двум причинам: во-первых, компании уровня Intel, 3Com или Cisco сейчас практически отказались от выпуска концентраторов, а во-вторых, проведенные в рабочем порядке тесты с использованием других моделей (3Com Office Connect и CompuShack 5DT Desktop) показали, что никакого влияния на результаты тестов замена именно этого устройства в нашем случае не оказывала.
+<P>Тесты включали в себя исследование производительности с помощью популярного (насколько вообще можно говорить о популярности подобного ПО) пакета eTestingLabs NetBench 7.02 (модифицированный скрипт NIC_nb702, в котором были оставлены размеры пакетов 512, 4K, 16K и 64K), измерения загрузки CPU штатной утилитой Windows 2000 Performance Monitor во время копирования файла объемом 512 MB с одного из клиентов на сервер, а также измерения скорости &laquo;встречного&raquo; копирования двух файлов объемом 1 GB между двумя клиентами, соединенными crossover-кабелем (проверка корректности и результативности функционирования полнодуплексного режима).
+
+<H4 class=center><EM>Характеристики адаптеров Fast Ethernet</EM></H4>
+
+<TABLE border=1 ALIGN="CENTER" WIDTH=90%>
+  <TR>
+    <Th><SMALL>Производитель</SMALL></Th>
+    <Th><SMALL>Модель</SMALL></Th>
+    <Th><SMALL>Светодиодные индикаторы</SMALL></Th>
+    <Th><SMALL>Wake-On-LAN</SMALL></Th>
+    <Th><SMALL>IC Boot ROM</SMALL></Th>
+    <Th><SMALL>Сетевой чип</SMALL></Th>
+    <Th><SMALL>Ориентировочная цена, $</SMALL></Th>
+    <Th><SMALL>Гарантия, лет</SMALL></Th>
+	</TR>
+  <TR ALIGN="CENTER">
+    <TD><SMALL>3Com</SMALL></TD>
+    <TD><SMALL>3C905CX-TX-M</SMALL></TD>
+    <TD><SMALL>10-100/Link/Activity</SMALL></TD>
+    <TD><SMALL>Разъем/кабель в комплекте</SMALL></TD>
+    <TD><SMALL>Предустановлена</SMALL></TD>
+    <TD><SMALL>3Com 920-ST06</SMALL></TD>
+    <TD><SMALL>43</SMALL></TD>
+    <TD><SMALL>5</SMALL></TD></TR>
+  <TR ALIGN="CENTER">
+    <TD><SMALL>&nbsp;</SMALL></TD>
+    <TD><SMALL>Home Connect 3C450</SMALL></TD>
+    <TD><SMALL>10-100/Link/Activity</SMALL></TD>
+    <TD><SMALL>Не поддерживается</SMALL></TD>
+    <TD><SMALL>Не поддерживается</SMALL></TD>
+    <TD><SMALL>3Com/Lucent 40-04834</SMALL></TD>
+    <TD><SMALL>22</SMALL></TD>
+    <TD><SMALL>1</SMALL></TD></TR>
+  <TR ALIGN="CENTER">
+    <TD><SMALL>Allied Telesyn</SMALL></TD>
+    <TD><SMALL>AT-2500TX</SMALL></TD>
+    <TD><SMALL>10-100/Activity</SMALL></TD>
+    <TD><SMALL>Поддерживается</SMALL></TD>
+    <TD><SMALL>Кроватка</SMALL></TD>
+    <TD><SMALL>Realtek RTL8139C</SMALL></TD>
+    <TD><SMALL>13</SMALL></TD>
+    <TD><SMALL>1</SMALL></TD></TR>
+  <TR ALIGN="CENTER">
+    <TD><SMALL>ASUS</SMALL></TD>
+    <TD><SMALL>PCI-L3C920</SMALL></TD>
+    <TD><SMALL>Link/Activity</SMALL></TD>
+    <TD><SMALL>Не поддерживается</SMALL></TD>
+    <TD><SMALL>Кроватка</SMALL></TD>
+    <TD><SMALL>3Com 920-ST03</SMALL></TD>
+    <TD><SMALL>32</SMALL></TD>
+    <TD><SMALL>1</SMALL></TD></TR>
+  <TR ALIGN="CENTER">
+    <TD rowSpan=2><SMALL>CompuShack</SMALL></TD>
+    <TD><SMALL>Fastline II PCI UTP DEC-Chip</SMALL></TD>
+    <TD><SMALL>Link-FDX/Coll/SPD-100/Act</SMALL></TD>
+    <TD><SMALL>Разъем/кабель в комплекте</SMALL></TD>
+    <TD><SMALL>Кроватка</SMALL></TD>
+    <TD><SMALL>Intel (DEC) 21143-PD</SMALL></TD>
+    <TD><SMALL>33,6</SMALL></TD>
+    <TD><SMALL>3</SMALL></TD></TR>
+  <TR ALIGN="CENTER">
+    <TD><SMALL>Fastline PCI UTP Realtek-Chip</SMALL></TD>
+    <TD><SMALL>Link/Activity</SMALL></TD>
+    <TD><SMALL>Разъем/кабель в комплекте</SMALL></TD>
+    <TD><SMALL>Кроватка</SMALL></TD>
+    <TD><SMALL>Realtek RTL8139C</SMALL></TD>
+    <TD><SMALL>11,2</SMALL></TD>
+    <TD><SMALL>3</SMALL></TD></TR>
+  <TR ALIGN="CENTER">
+    <TD rowSpan=2><SMALL>D-Link</SMALL></TD>
+    <TD><SMALL>DFE-528TX</SMALL></TD>
+    <TD><SMALL>Link/Activity</SMALL></TD>
+    <TD><SMALL>Не поддерживается</SMALL></TD>
+    <TD><SMALL>Не поддерживается</SMALL></TD>
+    <TD><SMALL>D-Link DL10038C</SMALL></TD>
+    <TD><SMALL>13,6</SMALL></TD>
+    <TD><SMALL>Пожизн.</SMALL></TD></TR>
+  <TR ALIGN="CENTER">
+    <TD><SMALL>DFE-550TX</SMALL></TD>
+    <TD><SMALL>Link/100/FDX</SMALL></TD>
+    <TD><SMALL>Разъем/кабель в комплекте</SMALL></TD>
+    <TD><SMALL>Кроватка</SMALL></TD>
+    <TD><SMALL>D-Link DL10050B</SMALL></TD>
+    <TD><SMALL>22,3</SMALL></TD>
+    <TD><SMALL>Пожизн.</SMALL></TD></TR>
+  <TR ALIGN="CENTER">
+    <TD rowSpan=3><SMALL>Intel</SMALL></TD>
+    <TD><SMALL>InBusiness 10/100</SMALL></TD>
+    <TD><SMALL>Link/Activity/100Tx</SMALL></TD>
+    <TD><SMALL>Не поддерживается</SMALL></TD>
+    <TD><SMALL>Не поддерживается</SMALL></TD>
+    <TD><SMALL>Intel GD82559</SMALL></TD>
+    <TD><SMALL>25</SMALL></TD>
+    <TD><SMALL>1</SMALL></TD></TR>
+  <TR ALIGN="CENTER">
+    <TD><SMALL>Pro/100 M Desktop Adapter</SMALL></TD>
+    <TD><SMALL>Link/Activity/100Tx</SMALL></TD>
+    <TD><SMALL>Не поддерживается</SMALL></TD>
+    <TD><SMALL>Предустановлена</SMALL></TD>
+    <TD><SMALL>Intel 82551QM</SMALL></TD>
+    <TD><SMALL>29</SMALL></TD>
+    <TD><SMALL>Пожизн.</SMALL></TD></TR>
+  <TR ALIGN="CENTER">
+    <TD><SMALL>Pro/100 S Desktop Adapter</SMALL></TD>
+    <TD><SMALL>Link/Activity/100Tx</SMALL></TD>
+    <TD><SMALL>Разъем/кабель в комплекте</SMALL></TD>
+    <TD><SMALL>Предустановлена</SMALL></TD>
+    <TD><SMALL>Intel 82550EY</SMALL></TD>
+    <TD><SMALL>31</SMALL></TD>
+    <TD><SMALL>Пожизн.</SMALL></TD></TR>
+  <TR ALIGN="CENTER">
+    <TD><SMALL>Lantech</SMALL></TD>
+    <TD><SMALL>FastLink/TX</SMALL></TD>
+    <TD><SMALL>10/100/FDX/Activity</SMALL></TD>
+    <TD><SMALL>Разъем/кабель в комплекте</SMALL></TD>
+    <TD><SMALL>Кроватка</SMALL></TD>
+    <TD><SMALL>Intel (DEC) 21143-PD</SMALL></TD>
+    <TD><SMALL>27</SMALL></TD>
+    <TD><SMALL>2</SMALL></TD></TR>
+  <TR ALIGN="CENTER">
+    <TD><SMALL>&nbsp;</SMALL></TD>
+    <TD><SMALL>FastNet/TX</SMALL></TD>
+    <TD><SMALL>Link/Activity/FDX</SMALL></TD>
+    <TD><SMALL>Не поддерживается</SMALL></TD>
+    <TD><SMALL>Кроватка</SMALL></TD>
+    <TD><SMALL>Realtek RTL8139D</SMALL></TD>
+    <TD><SMALL>6,5</SMALL></TD>
+    <TD><SMALL>2</SMALL></TD></TR>
+  <TR ALIGN="CENTER">
+    <TD><SMALL>LG</SMALL></TD>
+    <TD><SMALL>LNIC-10/100Aw</SMALL></TD>
+    <TD><SMALL>Link/Activity</SMALL></TD>
+    <TD><SMALL>Разъем/кабель в комплекте</SMALL></TD>
+    <TD><SMALL>Кроватка</SMALL></TD>
+    <TD><SMALL>Realtek RTL8139D</SMALL></TD>
+    <TD><SMALL>6,2</SMALL></TD>
+    <TD><SMALL>1</SMALL></TD></TR>
+  <TR ALIGN="CENTER">
+    <TD><SMALL>Planet</SMALL></TD>
+    <TD><SMALL>ENW-9504</SMALL></TD>
+    <TD><SMALL>10-100/Activity</SMALL></TD>
+    <TD><SMALL>Не поддерживается</SMALL></TD>
+    <TD><SMALL>Не поддерживается</SMALL></TD>
+    <TD><SMALL>Realtek RTL8139D</SMALL></TD>
+    <TD><SMALL>9,5</SMALL></TD>
+    <TD><SMALL>3</SMALL></TD></TR>
+  <TR ALIGN="CENTER">
+    <TD><SMALL>SMC</SMALL></TD>
+    <TD><SMALL>EtherPower II 10/100</SMALL></TD>
+    <TD><SMALL>Link/FDX/Tx/Rx</SMALL></TD>
+    <TD><SMALL>Разъем/кабель в комплекте</SMALL></TD>
+    <TD><SMALL>Кроватка</SMALL></TD>
+    <TD><SMALL>SMC 83С172ABQF</SMALL></TD>
+    <TD><SMALL>42</SMALL></TD>
+    <TD><SMALL>5</SMALL></TD></TR>
+  <TR ALIGN="CENTER">
+    <TD><SMALL>Surecom</SMALL></TD>
+    <TD><SMALL>EP-320X-R</SMALL></TD>
+    <TD><SMALL>Link/Activity</SMALL></TD>
+    <TD><SMALL>Не поддерживается</SMALL></TD>
+    <TD><SMALL>Кроватка</SMALL></TD>
+    <TD><SMALL>Realtek RTL8139C</SMALL></TD>
+    <TD><SMALL>9</SMALL></TD>
+    <TD><SMALL>2</SMALL></TD></TR>
+  <TR ALIGN="CENTER">
+    <TD><SMALL>&nbsp;</SMALL></TD>
+    <TD><SMALL>EP-320X-S</SMALL></TD>
+    <TD><SMALL>Link/Activity</SMALL></TD>
+    <TD><SMALL>Не поддерживается</SMALL></TD>
+    <TD><SMALL>Кроватка</SMALL></TD>
+    <TD><SMALL>Myson MTD803A</SMALL></TD>
+    <TD><SMALL>8</SMALL></TD>
+    <TD><SMALL>2</SMALL></TD></TR>
+	</TABLE>
+
+<br><br>
+
+<H3>Результаты тестов</H3>
+<P>
+Для начала объясним, почему несмотря на тестирование сетевых карт в диаграммах можно видеть лишь наименования чипов.
+Дело в том, что несмотря на вполне &laquo;честное&raquo; с нашей стороны поведение, выражавшееся в использовании не
+&laquo;generic&raquo;-драйверов от производителей чипов, а последних доступных версий от производителей карт &#151; никакой разницы в быстродействии между картами, сделанными на базе одних и тех же микросхем, мы не обнаружили.
+<BR><BR>
+<CENTER>
+<IMG SRC="images/lan-roundup-oct2k2/ethernet_card.gif" WIDTH=450 HEIGHT=370 BORDER=0 ALT="">
+<BR><EM>Типичная &laquo;одночиповая&raquo; сетевая карта</EM>
+</CENTER>
+<P>
+Результаты тестов в NetBench приводятся в ограниченном объеме по одной причине &#151; во всех остальных случаях они были попросту... совершенно одинаковыми. Лишь тест с размером пакета 16K выявил некоторые особенности в функционировании нашей тестовой сети, а именно разница в результатах, продемонстрированных сетевыми картами, нас и интересовала более всего. Зато данный подтест с лихвой окупил наши ожидания &#151; средняя пропускная способность каждого из четырех клиентов отличалась иногда в несколько раз! Собрав воедино все &laquo;отличившиеся&raquo; чипы и попытавшись найти какую-то зависимость, мы обратили внимание на то, что наиболее показательные результаты принадлежат сетевым контроллерам Intel и 3Com, и это сразу навело нас на одну очевидную мысль...
+<P>
+Как одна, так и другая компания не удосуживается простым копированием давно всем известной &laquo;образцово-показательной схемы классического сетевого чипа&raquo;:
+<BR><BR>
+<CENTER>
+<IMG SRC="images/lan-roundup-oct2k2/ethernet_chip.gif" WIDTH=450 HEIGHT=279 BORDER=0 ALT="">
+<BR><EM>Ethernet чип. Курсовая работа, III курс :).</EM>
+</CENTER>
+<P>
+Дополнительно они используют так называемые &laquo;адаптивные технологии&raquo;, позволяющие регулировать объем передаваемой в сети информации и величину задержки с тем, чтобы максимально полно использовать возможности конкретного окружения и достигать наибольшей общей пропускной способности сети. Похоже, в нашем случае карты, расположенные на &laquo;неудобных&raquo; (или, корректности ради, оговоримся &#151; сочтенных неудобными согласно заложенному алгоритму анализа) сегментах, &laquo;добровольно уступали&raquo; часть полосы своим собратьям, находящимся в лучших условиях. Следует заметить, что выигрыша в общем объеме передаваемых данных это все же не принесло &#151; если сложить все значения пропускной способности по каждому из клиентов, их сумма будет примерно такой же, как в случае с более &laquo;прямолинейными&raquo; картами. В целом же мы пока воздержимся от оценки этой особенности некоторых сетевых чипов на уровне &laquo;хорошо/плохо&raquo;, ибо в зависимости от конкретных условий функционирования сети и решаемых в ней задач она легко может изменяться в каждом конкретном случае на диаметрально противоположную.
+<BR><BR>
+<CENTER>
+<IMG SRC="images/lan-roundup-oct2k2/diagr_1.gif" WIDTH=450 HEIGHT=450 BORDER=0 ALT=""><BR><BR>
+<IMG SRC="images/lan-roundup-oct2k2/diagr_2.gif" WIDTH=450 HEIGHT=450 BORDER=0 ALT=""><BR><BR>
+<IMG SRC="images/lan-roundup-oct2k2/diagr_3.gif" WIDTH=600 HEIGHT=866 BORDER=0 ALT=""><BR><BR>
+<IMG SRC="images/lan-roundup-oct2k2/diagr_4.gif" WIDTH=600 HEIGHT=868 BORDER=0 ALT="">
+</CENTER>
+
+<H3>Чипы</H3>
+<P>
+<STRONG>3Com 920-ST06/03</STRONG>. &laquo;Умный&raquo; чип, явно поддерживающий технологии адаптации к условиям конкретного кабельного окружения (про &laquo;неоднозначность&raquo; такого подхода уже достаточно было сказано выше). Демонстрирует самую низкую загрузку центрального процессора и достойную поддержку режима полнодуплексной связи. Классический пример хорошего, но недешевого решения.
+<BR><BR>
+<CENTER>
+<IMG SRC="images/lan-roundup-oct2k2/3com_3c905cx-tx-m.jpg" WIDTH=400 HEIGHT=359 BORDER=0 ALT="">
+<BR><EM>3Com 3C905CX-TX-M</EM>
+<BR><BR>
+<IMG SRC="images/lan-roundup-oct2k2/asus_pci-l3c920.jpg" WIDTH=400 HEIGHT=252 BORDER=0 ALT="">
+<BR><EM>ASUS PCI-L3C920</EM>
+</CENTER>
+<P>
+<STRONG>3Com/Lucent 40-04834</STRONG>. Также очень невысокая нагрузка на процессор и достойная поддержка полнодуплексного режима, но несколько более &laquo;умеренный&raquo; интеллект &#151; что, впрочем, иногда может быть и полезным. Зато и стоимость такого решения ниже в два раза, чем у более нового.
+<BR><BR>
+<CENTER>
+<IMG SRC="images/lan-roundup-oct2k2/3com_home_connect_3c450.jpg" WIDTH=400 HEIGHT=360 BORDER=0 ALT="">
+<BR><EM>3Com Home Connect 3C450</EM>
+</CENTER>
+<P>
+<STRONG>D-Link DL10050B</STRONG>. А вот это уже классический пример простого, но добротного чипа &#151; никаких попыток учета особенностей конкретной линии, но в то же время полноценный дуплекс и самая низкая среди &laquo;брэндов второго уровня&raquo; нагрузка на CPU. Условно этот чип с учетом цены карты на его основе можно назвать упрощенным аналогом 3Com/Lucent 40-04834, равным ему практически во всем, но не обладающим адаптационными свойствами и с более высокой нагрузкой на CPU.
+<BR><BR>
+<CENTER>
+<IMG SRC="images/lan-roundup-oct2k2/d-link_dfe-550tx.jpg" WIDTH=400 HEIGHT=361 BORDER=0 ALT="">
+<BR><EM>D-Link DFE-550TX</EM>
+</CENTER>
+<P>
+<STRONG>Intel (DEC) 21143-PD</STRONG>. Весьма неоднозначный чип, впрочем &#151; при его возрасте... Некие &laquo;зачаточные&raquo; адаптационные свойства, но неожиданно высокая загрузка процессора и полный провал в тесте на поддержку режима Full Duplex. Стоит при этом упомянуть одну особенность, которую мы заметили при проведении тестов: карта от CompuShack по крайней мере смогла закончить тест на &laquo;встречное копирование&raquo;, хоть и с худшим результатом, а вот Lantech FastLink/TX в середине теста начала просто... регулярно &laquo;терять&raquo; сеть! Словом, с одной стороны, в системах на основе концентраторов, где поддержка полнодуплексного режима не требуется, карты на 21143-PD вполне могут применяться, с другой же &#151; вряд ли это решение можно назвать оптимальным.
+<BR><BR>
+<CENTER>
+<IMG SRC="images/lan-roundup-oct2k2/compushack_fastline_ii_pci_utp_dec-chip.jpg" WIDTH=400 HEIGHT=347 BORDER=0 ALT="">
+<BR><EM>CompuShack Fastline II PCI UTP DEC-Chip</EM>
+<BR><BR>
+<IMG SRC="images/lan-roundup-oct2k2/lantech_fastlink-tx.jpg" WIDTH=400 HEIGHT=337 BORDER=0 ALT="">
+<BR><EM>Lantech FastLink/TX</EM>
+</CENTER>
+<P>
+<STRONG>Intel 82550EY</STRONG>. Еще один вариант &laquo;сверхинтеллектуального&raquo; устройства, отличившийся нелюбовью к длинным сегментам. Поддержка full duplex на высоте, загрузка CPU весьма невысока. По совокупности свойств &#151; ближайший конкурент 3Com 920-ST06/03, но с гораздо более демократичной ценой. Что интересно &#151; уже был однажды случай, когда одна из независимых западных тестовых лабораторий провела сравнительное исследование производительности сетевых чипов Intel и 3Com, после чего обе компании, по-своему трактуя одни и те же цифры... объявили, что по результатам этих тестов их чип лучше, чем у конкурента!
+<BR><BR>
+<CENTER>
+<IMG SRC="images/lan-roundup-oct2k2/intel_inbusinnes_&_pro-100.jpg" WIDTH=400 HEIGHT=356 BORDER=0 ALT="">
+<BR><EM>Intel Pro/100S Desktop Adapter<BR>
+(PCB у Pro/100 M и InBusiness 10/100 аналогична)</EM>
+</CENTER>
+<P>
+<STRONG>Intel 82551QM</STRONG> (карта Intel Pro/100 M). Все сказанное выше об Intel 82550EY может быть повторено и в данном случае, но с одной оговоркой &#151; этот чип &laquo;не полюбил&raquo; уже другой сегмент нашей тестовой сети. Честно говоря, пока что мы решили просто привести это как факт, как говорится, &laquo;as is&raquo;, поскольку поведение и предпочтения чипов, поддерживающих адаптационные технологии, вполне заслуживают отдельного исследования.
+<P>
+<STRONG>Intel GD82559</STRONG> (карта InBusiness 10/100). Этому самому дешевому сетевому решению от Intel явно чуть-чуть &laquo;убавили сообразительность&raquo;, впрочем, сохранив все другие положительные свойства чипов этой компании. И даже нагрузка на CPU упала, а поддержка полнодуплексного режима наоборот &#151; лучшая среди всех участников! Вполне удачное решение для &laquo;рядовой&raquo; машины, как нам кажется.
+<P>
+<STRONG>Myson MTD803A</STRONG>. По дешевизне продукты на базе этого чипа явно конкурируют с основанными на базе микросхем Realtek &#151; и, в общем-то, довольно успешно. Самая низкая среди дешевых чипов нагрузка на процессор, одинаковое с RTL8139C качество поддержки полнодуплексного режима. Однако в последнем чип Myson все же уступает новой версии Realtek &#151; RTL8139D.
+<BR><BR>
+<CENTER>
+<IMG SRC="images/lan-roundup-oct2k2/surecom_ep320xs.jpg" WIDTH=400 HEIGHT=365 BORDER=0 ALT="">
+<BR><EM>Surecom EP-320X-S</EM>
+</CENTER>
+<P>
+<STRONG>Realtek RTL8139C / D-Link DL10038C</STRONG>. Мы объединили эти чипы вместе, так как хоть формально они и разные, но проявили себя совершенно одинаково. При первом же взгляде на результаты тестов на загрузку CPU и поддержку Full Duplex, мы, не сговариваясь, произнесли одно и то же: &laquo;Realtek себе не изменил&raquo;. Вспомнив классиков советской литературы Ильфа и Петрова, можно, перефразировав их изречение, сказать, что &laquo;полный дуплекс у этого чипа... какой-то неполный&raquo;. Впрочем &#151; работают ведь... И стоят недорого.
+<BR><BR>
+<CENTER>
+<IMG SRC="images/lan-roundup-oct2k2/allied_telesyn_at-2500tx.jpg" WIDTH=400 HEIGHT=366 BORDER=0 ALT="">
+<BR><EM>Allied Telesyn AT-2500TX</EM>
+<BR><BR>
+<IMG SRC="images/lan-roundup-oct2k2/compushack_fastline_pci_utp_realtek-chip.jpg" WIDTH=400 HEIGHT=356 BORDER=0 ALT="">
+<BR><EM>CompuShack Fastline PCI UTP Realtek-Chip</EM>
+<BR><BR>
+<IMG SRC="images/lan-roundup-oct2k2/d-link_dfe-528tx.jpg" WIDTH=400 HEIGHT=367 BORDER=0 ALT="">
+<BR><EM>D-Link DFE-528TX</EM>
+<BR><BR>
+<IMG SRC="images/lan-roundup-oct2k2/surecom_ep320xr.jpg" WIDTH=400 HEIGHT=364 BORDER=0 ALT="">
+<BR><EM>Surecom EP-320X-R</EM>
+</CENTER>
+<P>
+<STRONG>Realtek RTL8139D</STRONG>. Вкратце можно просто констатировать, что с точки зрения результатов тестов этот чип является тем же RTL8139C, которому немного &laquo;подлечили&raquo; поддержку полнодуплексного режима, причем инженерам Realtek не хватило совсем немного, чтобы &laquo;дотянуться&raquo; до плотной когорты более именитых конкурентов. Однако высокая загрузка центрального процессора &#151; вечная &laquo;болячка&raquo; чипов этой компании, осталась без изменений.
+<BR><BR>
+<CENTER>
+<IMG SRC="images/lan-roundup-oct2k2/lantech_fastnet-tx.jpg" WIDTH=400 HEIGHT=365 BORDER=0 ALT="">
+<BR><EM>Lantech FastNet/TX</EM>
+<BR><BR>
+<IMG SRC="images/lan-roundup-oct2k2/lg_lnic-10-100aw.jpg" WIDTH=400 HEIGHT=359 BORDER=0 ALT="">
+<BR><EM>LG LNIC-10/100Aw</EM>
+<BR><BR>
+<IMG SRC="images/lan-roundup-oct2k2/planet_enw9504.jpg" WIDTH=400 HEIGHT=353 BORDER=0 ALT="">
+<BR><EM>Planet ENW-9504</EM>
+</CENTER>
+<P>
+<STRONG>SMC 83С172ABQF</STRONG> (карта SMC EtherPower II 10/100). Низкая загрузка CPU, высокая скорость полнодуплексного режима, но с увеличением длины сегмента наблюдается некоторое снижение скорости. В целом &#151; добротный и довольно старый сетевой чип без особых претензий, честно выполняющий свою работу. Вот только цену за подобного класса решение хотелось бы видеть немного другой...
+<BR><BR>
+<CENTER>
+<IMG SRC="images/lan-roundup-oct2k2/snc_etherpower_ii_10-100.jpg" WIDTH=400 HEIGHT=365 BORDER=0 ALT="">
+<BR><EM>SMC EtherPower II 10/100</EM>
+</CENTER>
+
+<H2>Заключение</H2>
+<P>
+Что ж, надеемся, что этот материал придется по душе &laquo;начинающим администраторам и просто интересующимся&raquo; &#151; мы постарались органично совместить в нем как теоретические аспекты, так и практические советы, да и результаты тестирования наиболее распространенных на рынке сетевых контроллеров десктопного уровня не будут лишними для &laquo;юноши, размышляющего делать сеть из чего&raquo;. В целом же стоит заметить, что, безусловно, за кадром осталось не то что &laquo;не меньше&raquo;, а даже во много раз больше, чем можно найти в этом материале. Неудивительно &#151; про то, как правильно спроектировать и настроить сеть, пишутся толстые книжки и монографии, а у нас в распоряжении был лишь десяток с небольшим страниц еженедельника. Поэтому не стоит, наверное, рассматривать данную статью как универсальное самодостаточное пособие или, Боже упаси, учебник. Той информации, которая в ней имеется, пожалуй, может хватить только для того, чтобы понять несколько простых истин: во-первых &#151; &laquo;не боги горшки обжигают&raquo;, и кое-что вполне реально научиться делать самостоятельно, во-вторых &#151; перед тем, как это &laquo;кое-что&raquo; делать, желательно все же получить хотя бы базовый набор знаний о предмете, ну и в-третьих &#151; даже получив этот базовый набор, останавливаться на достигнутом явно не стоит. Невозможно &laquo;знать, что такое ЛВС&raquo;, ее можно только изучать. Сколько? Да хоть всю жизнь!
+
+<H4 class=center>[ <A HREF="http://www.ixbt.com/comm/lan-roundup-oct2k2-screenshots.shtml">Скриншоты с окон настроек драйверов карт, принимавших участие в тестировании</A> ]</H4>

@@ -1,0 +1,8 @@
+REGEDIT4
+
+; (c) tuned by roman y. bogdanov, http://brj.pp.ru/
+
+[HKEY_CURRENT_USER\Software\Widcomm\BTConfig\Services\0002]
+@=""
+"Authentication"=dword:00000000
+"Authorisation"=dword:00000000

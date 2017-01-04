@@ -1,0 +1,9 @@
+<!--#include virtual="/cgi-bin/ssi/begin.cgi?title=Цены" -->
+
+<!--#include virtual="/cgi-bin/ssi/menu-selector.cgi?menu=service" -->
+
+<!--#include virtual="/cgi-bin/ssi/close-menu.cgi" -->
+
+<!--#include virtual="/service/price/content.txt" -->
+
+<!--#include virtual="/cgi-bin/ssi/end.cgi" -->

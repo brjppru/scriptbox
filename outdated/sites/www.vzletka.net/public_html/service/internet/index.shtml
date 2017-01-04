@@ -1,0 +1,9 @@
+<!--#include virtual="/cgi-bin/ssi/begin.cgi?title=Услуги%20по%20предоставлению%20доступа%20в%20Интернет" -->
+
+<!--#include virtual="/cgi-bin/ssi/menu-selector.cgi?menu=service" -->
+
+<!--#include virtual="/cgi-bin/ssi/close-menu.cgi" -->
+
+<!--#include virtual="/service/internet/content.txt" -->
+
+<!--#include virtual="/cgi-bin/ssi/end.cgi" -->

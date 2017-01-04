@@ -1,0 +1,9 @@
+<!--#include virtual="/cgi-bin/ssi/begin.cgi?title=Как%20настроить" -->
+
+<!--#include virtual="/cgi-bin/ssi/menu-selector.cgi?menu=net" -->
+
+<!--#include virtual="/cgi-bin/ssi/close-menu.cgi" -->
+
+<!--#include virtual="/net/serv/content.txt" -->
+
+<!--#include virtual="/cgi-bin/ssi/end.cgi" -->

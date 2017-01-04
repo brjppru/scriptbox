@@ -1,0 +1,11 @@
+mpdsrv="`cat "$workdir/$ipsrv" | grep used | awk '{print ($3)}' `"        
+maxloadsrv="`cat "$workdir/$ipsrv" | grep used | awk '{print ($5)}' | tr -d "\015\032" `" 
+
+if [ "$loadsrv" -lt "$prcload" ]                                                     
+        then
+        echo "$name IN A $ipsrv" >> $conf
+        else
+        echo ";$name IN A $ipsrv" >> $conf
+        fi
+
+

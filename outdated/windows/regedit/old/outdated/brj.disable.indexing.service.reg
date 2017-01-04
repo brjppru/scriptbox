@@ -1,0 +1,7 @@
+REGEDIT4
+
+; (c) tuned by roman y. bogdanov, http://brj.pp.ru/
+
+;Отключить индексирование
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\CiSvc]
+"Start"=dword:00000004
