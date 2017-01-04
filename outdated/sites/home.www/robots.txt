@@ -1,0 +1,4 @@
+User-agent: *
+Host: home.brj.pp.ru
+
+Sitemap: https://home.brj.pp.ru/sitemap.xml

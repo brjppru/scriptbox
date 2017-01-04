@@ -1,0 +1,35 @@
+body {
+padding-top: 5px;
+font-size: 12px;
+padding: 20px;
+}
+.box img {
+-webkit-border-radius: 6px;
+-moz-border-radius: 6px;
+border-radius: 6px;
+}
+.box {
+	display: inline-block;
+	vertical-align: top;
+	margin-bottom: 12px;
+	border: none;
+	background: #ededed;
+}
+.box .in {
+	padding: 8px;
+}
+.well {
+border: none !important;
+}
+img {
+width: 100%;
+}
+h1 {
+	font-size: 21px;
+}
+h2 {
+	font-size: 18px;
+}
+h3 {
+	font-size: 16px;
+}
