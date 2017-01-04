@@ -1,0 +1,101 @@
+#!/bin/bash
+
+#======================================================================
+# Title: blist.sh
+# Description: Script to download blocklist rules for Transmission
+# Author: Ragnarok (http://crunchbang.org/forums/profile.php?id=13069)
+# Date: 2013-09-08
+# Version: 1.0
+# Usage: $ bash blist.sh
+# Dependencies: bash, coreutils, gzip, wget
+#======================================================================
+
+#===== EDIT THIS IF YOU KNOW WHAT YOU'RE DOING =====#
+
+# Where will we store the temporary files while working with them?
+tmpfiledir="/tmp"
+# Where will the blocklists end up being saved?
+blocklistdir="/var/lib/transmission-daemon/info/blocklists/blocklist.txt"
+
+#===== END OF MANUAL EDITS =====#
+
+delete_blocklist() {
+	echo "Deleting the old blocklist file if it exists..."
+	if [ -f "$blocklistdir" ]; then
+		rm -f $blocklistdir
+	fi
+}
+
+download_new_blocklists() {
+	echo "Downloading new blocklists..."
+	wget  http://list.iblocklist.com/?list=dufcxgnbjsdwmwctgfuj -O $tmpfiledir/bl-pedophiles.gz
+	wget  http://list.iblocklist.com/?list=ydxerpxkpcfqjaybcssw -O $tmpfiledir/bl-level1.gz
+	wget  http://list.iblocklist.com/?list=gyisgnzbhppbvsphucsw -O $tmpfiledir/bl-level2.gz
+	wget  http://list.iblocklist.com/?list=uwnukjqktoggdknzrhgh -O $tmpfiledir/bl-level3.gz
+	wget  http://list.iblocklist.com/?list=imlmncgrkbnacgcwfjvh -O $tmpfiledir/bl-edu.gz
+	wget  http://list.iblocklist.com/?list=plkehquoahljmyxjixpu -O $tmpfiledir/bl-rangetest.gz
+	wget  http://list.iblocklist.com/?list=gihxqmhyunbxhbmgqrla -O $tmpfiledir/bl-bogon.gz
+	wget  http://list.iblocklist.com/?list=dgxtneitpuvgqqcpfulq -O $tmpfiledir/bl-ads.gz
+	wget  http://list.iblocklist.com/?list=llvtlsjyoyiczbkjsxpf -O $tmpfiledir/bl-spyware.gz
+	wget  http://list.iblocklist.com/?list=xoebmbyexwuiogmbyprb -O $tmpfiledir/bl-proxy.gz
+	wget  http://list.iblocklist.com/?list=cwworuawihqvocglcoss -O $tmpfiledir/bl-badpeers.gz
+	wget  http://list.iblocklist.com/?list=xshktygkujudfnjfioro -O $tmpfiledir/bl-microsoft.gz
+	wget  http://list.iblocklist.com/?list=mcvxsnihddgutbjfbghy -O $tmpfiledir/bl-spider.gz
+	wget  http://list.iblocklist.com/?list=usrcshglbiilevmyfhse -O $tmpfiledir/bl-hijacked.gz
+	wget  http://list.iblocklist.com/?list=xpbqleszmajjesnzddhv -O $tmpfiledir/bl-dshield.gz
+	wget  http://list.iblocklist.com/?list=ficutxiwawokxlcyoeye -O $tmpfiledir/bl-forumspam.gz
+	wget  http://list.iblocklist.com/?list=ghlzqtqxnzctvvajwwag -O $tmpfiledir/bl-webexploit.gz
+	wget  http://list.iblocklist.com/?list=bcoepfyewziejvcqyhqo -O $tmpfiledir/bl-ianareserved.gz
+	wget  http://list.iblocklist.com/?list=cslpybexmxyuacbyuvib -O $tmpfiledir/bl-ianaprivate.gz
+	wget  http://list.iblocklist.com/?list=pwqnlynprfgtjbgqoizj -O $tmpfiledir/bl-ianamulticast.gz
+	wget  http://list.iblocklist.com/?list=jhaoawihmfxgnvmaqffp -O $tmpfiledir/bl-fornonlancomputers.gz
+	wget  http://list.iblocklist.com/?list=mtxmiireqmjzazcsoiem -O $tmpfiledir/bl-exclusions.gz
+	wget  http://list.iblocklist.com/?list=zbdlwrqkabxbcppvrnos -O $tmpfiledir/bl-drop.gz
+	wget  http://list.iblocklist.com/?list=ynkdjqsjyfmilsgbogqf -O $tmpfiledir/bl-zeus.gz
+	wget  http://list.iblocklist.com/?list=erqajhwrxiuvjxqrrwfj -O $tmpfiledir/bl-palevo.gz
+	wget  http://list.iblocklist.com/?list=npkuuhuxcsllnhoamkvm -O $tmpfiledir/bl-malicious.gz
+	wget  http://list.iblocklist.com/?list=pbqcylkejciyhmwttify -O $tmpfiledir/bl-malc0de.gz
+	wget  http://list.iblocklist.com/?list=zhogegszwduurnvsyhdf -O $tmpfiledir/bl-adservers.gz
+	wget  http://list.iblocklist.com/?list=lujdnbasfaaixitgmxpp -O $tmpfiledir/bl-bogon2.gz
+	wget  http://list.iblocklist.com/?list=czvaehmjpsnwwttrdoyl -O $tmpfiledir/bl-cruzitwebattacks.gz
+}
+
+merge_lists() {
+	echo "Merging blocklists into one massive blocklist..."
+	cat ${tmpfiledir}/bl-*.gz > ${blocklistdir}.gz
+}
+
+unzip_blocklist() {
+	if [ -f "${blocklistdir}.gz" ]; then
+		echo "Unzipping the blocklist..."
+		gunzip ${blocklistdir}.gz
+	else
+		echo -e "Unable to find ${blocklistdir}.gz --- Exiting"
+		remove_temp
+		exit 1
+	fi
+}
+
+clean_blocklist () {
+    echo -e "Cleaning up the blocklist (removing blank lines, comments, etc.)"
+    sed -i -e '/^\#/d' -e '/^$/d' $blocklistdir
+    echo "Sorting the blocklist alphabetically..."
+    sort $blocklistdir > ${tmpfiledir}/blocklist.txt.tmp && mv -f ${tmpfiledir}/blocklist.txt.tmp $blocklistdir
+}
+
+clean_temp() {
+	echo "Cleaning up your tmp folder..."
+	rm -f ${tmpfiledir}/bl-*.gz
+}
+
+delete_blocklist
+download_new_blocklists
+merge_lists
+unzip_blocklist
+clean_blocklist
+clean_temp
+service transmission-daemon reload
+
+echo "All done. Thank you for using this blocklist updater from: www.rickylford.com"
+
+exit 0

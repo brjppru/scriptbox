@@ -1,0 +1,270 @@
+====== DNS: что такое dig? ======
+
+Начинаю писать серию заметок о DNS. Начну с dig. dig - обычная утилита для запросов информации с серверов DNS. Использование:
+
+<code># dig www.ru
+
+; <<>> DiG 9.3.2 <<>> www.ru
+;; global options: printcmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 1937
+;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 2, ADDITIONAL: 0
+</code>
+
+Здесь dig рассказывает о себе и информацию, которую он принял от DNS серверов. Вывод этой информации можно отключить, воспользовавшись ключом +[no]comments.
+
+<code>; QUESTION SECTION:
+;www.ru. IN A
+</code>
+
+Информация, которую мы запрашиваем. Вывод этой информации можно отключить, воспользовавшись ключом +[no]question.
+
+<code>;; ANSWER SECTION:
+www.ru. 74716 IN A 194.87.0.50
+</code>
+
+Ответ. www.ru имеет адрес 194.87.0.50. Вывод этой информации тоже можно отключить, воспользовавшись ключом +[no]answer. В самом конце заметки покажу, зачем это понадобиться.
+
+<code>;; AUTHORITY SECTION:
+www.ru. 74716 IN NS ns.demos.su.
+www.ru. 74716 IN NS ns1.demos.net.
+</code>
+
+Authority секция. Говорит нам о том, что www.ru обслуживают два DNS сервера. Вывод этой информации можно отключить, воспользовавшись ключом +[no]authority.
+
+<code>;; Query time: 26 msec
+;; SERVER: 127.0.0.1#53(127.0.0.1)
+;; WHEN: Sat Nov 18 16:58:25 2006
+;; MSG SIZE rcvd: 92
+</code>
+
+Статистика. Вывод этой информации можно отключить, воспользовавшись ключом +[no]stats.
+
+Dig может выполнять запросы A, NS, MX, TXT и ANY. Запросим адрес www.ru:
+
+<code># dig www.ru A +noall +answer
+www.ru. 72669 IN A 194.87.0.50
+</code>
+
+Запросим список NS серверов:
+
+<code>
+# dig www.ru NS +noall +answer
+www.ru. 72619 IN NS ns.demos.su.
+www.ru. 72619 IN NS ns1.demos.net.
+</code>
+
+Запросим список MX серверов:
+
+<code>
+# dig www.ru MX +noall +answer
+www.ru. 86400 IN MX 5 hq.demos.ru.
+</code>
+
+Теперь запросим всё вместе.
+
+<code>
+# dig www.ru ANY +noall +answer
+www.ru. 86364 IN MX 5 hq.demos.ru.
+www.ru. 72554 IN NS ns1.demos.net.
+www.ru. 72554 IN NS ns.demos.su.
+www.ru. 72554 IN A 194.87.0.50
+</code>
+
+Быстрый ответ.
+
+<code>
+# dig www.ru +short
+194.87.0.50
+</code>
+
+Быстрый ответ для MX.
+
+<code>
+# dig www.ru mx +short
+5 hq.demos.ru.
+</code>
+
+Мало информации? Воспользуемся ключом +noall.
+
+<code>
+# dig +nocmd www.ru mx +noall +answer
+www.ru. 84367 IN MX 5 hq.demos.ru.
+</code>
+
+Запросим SOA записи для зоны .ru используя ключ +multiline
+
+<code>
+# dig +nocmd ru any +multiline +noall +answer
+
+ru. 0 IN SOA ns.ripn.net. hostmaster.ripn.net. (
+4011206 ; serial
+7200 ; refresh (2 hours)
+900 ; retry (15 minutes)
+2592000 ; expire (4 weeks 2 days)
+3600 ; minimum (1 hour)
+)
+ru. 345600 IN NS ns.ripn.net.
+ru. 345600 IN NS ns1.relcom.ru.
+ru. 345600 IN NS ns2.nic.fr.
+ru. 345600 IN NS ns2.ripn.net.
+ru. 345600 IN NS ns5.msk-ix.net.
+ru. 345600 IN NS ns9.ripn.net.
+ru. 345600 IN NS sunic.sunet.se.
+ru. 345600 IN NS auth60.ns.uu.net.
+</code>
+
+Смотрим PTR запись. Из IP адреса в имя.
+
+<code>
+# dig -x 194.87.0.50 +short
+www.ru.
+</code>
+
+Отправляем запрос другому DNS серверу.
+
+<code>
+# dig @ns1.demos.net www.ru ANY +short
+5 hq.demos.ru.
+194.87.0.50
+ns.demos.su.
+ns1.demos.net.
+ns.demos.su. ncc.demos.net. 2004121602 28800 7200 604800 86400
+</code>
+
+Запрашиваем много адресов по списку.
+
+<code>dig -f /home/brj/my-ip-list.txt</code>
+
+Tracing
+
+<code>
+# dig www.ru +trace +short
+NS C.ROOT-SERVERS.NET. from server 127.0.0.1 in 0 ms.
+NS D.ROOT-SERVERS.NET. from server 127.0.0.1 in 0 ms.
+NS E.ROOT-SERVERS.NET. from server 127.0.0.1 in 0 ms.
+NS F.ROOT-SERVERS.NET. from server 127.0.0.1 in 0 ms.
+NS G.ROOT-SERVERS.NET. from server 127.0.0.1 in 0 ms.
+NS H.ROOT-SERVERS.NET. from server 127.0.0.1 in 0 ms.
+NS I.ROOT-SERVERS.NET. from server 127.0.0.1 in 0 ms.
+NS J.ROOT-SERVERS.NET. from server 127.0.0.1 in 0 ms.
+NS K.ROOT-SERVERS.NET. from server 127.0.0.1 in 0 ms.
+NS L.ROOT-SERVERS.NET. from server 127.0.0.1 in 0 ms.
+NS M.ROOT-SERVERS.NET. from server 127.0.0.1 in 0 ms.
+NS A.ROOT-SERVERS.NET. from server 127.0.0.1 in 0 ms.
+NS B.ROOT-SERVERS.NET. from server 127.0.0.1 in 0 ms.
+A 194.87.0.50 from server ns1.demos.net in 79 ms.
+</code>
+
+Смотрим SOA информацию.
+
+<code>
+# dig www.ru +nssearch
+SOA ns.demos.su. ncc.demos.net. 2004121602 28800 7200 604800 86400 from server ns.demos.su in 79 ms.
+SOA ns.demos.su. ncc.demos.net. 2004121602 28800 7200 604800 86400 from server ns1.demos.net in 81 ms.
+</code>
+
+TTL и Кеш.
+
+<code>
+# dig +nocmd www.ru MX +noall +answer
+www.ru. 83662 IN MX 5 hq.demos.ru.
+</code>
+
+и через несколько секунд.
+
+<code>
+# dig +nocmd www.ru MX +noall +answer
+www.ru. 83156 IN MX 5 hq.demos.ru.
+</code>
+
+Ещё с помощью DIG можно "вытаскивать" зоны. Многие администраторы закрыли эту функцию. Помню что у ktk.ru запросы на передачу зоны были открыты. Пробуем.
+
+<code>
+# dig @ns.ktk.ru ktk.ru axfr +noanswer
+
+; <<>> DiG 9.3.2 <<>> @ns.ktk.ru ktk.ru axfr +noanswer
+; (1 server found)
+;; global options: printcmd
+;; Query time: 48 msec
+;; SERVER: 80.253.225.3#53(80.253.225.3)
+;; WHEN: Sat Nov 18 18:21:49 2006
+;; XFR size: 735 records (messages 1)
+</code>
+
+====== DNSMASQ.conf ======
+
+<code>
+$ cat /etc/resolv.conf
+# vzletka.net resolver on unbound 
+nameserver 89.105.128.72
+nameserver 89.105.128.73
+nameserver 89.105.128.74
+# opendns resolver
+nameserver 208.67.222.222
+nameserver 208.67.220.220
+</code>
+
+<code bash>
+#
+# brj@dnsmasq.conf, http://brj.pp.ru/
+#
+
+bogus-priv              # Never forward addresses in the non-routed address spaces
+no-poll                 # dont track changes
+domain-needed           # Never forward plain names
+no-negcache             # disable negative caching
+local=/c3.local/        # queries in these from /etc/hosts or DHCP only
+expand-hosts            # automatically added to simple names
+domain=c3.local         # Set the domain for dnsmasq
+user=nobody             # run user
+resolv-file=/tmp/resolv.conf
+interface=br0           # intrface
+
+# dhcpd
+dhcp-ignore=#known
+dhcp-leasefile=/tmp/dnsmasq.log          # leases file
+dhcp-range=lan,192.168.1.2,192.168.1.254,86400
+dhcp-authoritative                       # authoritative is rock
+dhcp-option=lan,1,255.255.255.0          # subnet mark
+dhcp-option=lan,2,25200                  # UTC +7:00
+dhcp-option=lan,3,192.168.1.1            # default g/w for LAN client
+dhcp-option=lan,7,192.168.1.33           # central syslog server
+dhcp-option=lan,15,c3.local              # my domain name
+dhcp-option=lan,19,0                     # option ip-forwarding off
+dhcp-option=lan,44,192.168.1.33          # set netbios-over-TCP/IP nameserver(s) aka WINS server(s)
+dhcp-option=lan,45,192.168.1.33          # netbios datagram distribution server
+dhcp-option=lan,46,8                     # netbios node type
+
+# host declaring
+dhcp-host=lan,00:00:A5:AF:07:B1,192.168.1.133,30m                         # brj hp nx7400
+dhcp-host=lan,00:15:af:88:23:63,00:1f:c6:49:bc:1b,192.168.1.134,15m       # brj asus eeepc lan + wlan
+#
+dhcp-host=lan,00:1a:6b:91:63:92,192.168.1.60,15m                        # guest:eten 500+ misha sadovskiy
+</code>
+
+and here we go:
+
+<code log>
+Feb 10 23:22:17 gate.c3.local dnsmasq[131]: started, version 2.47 cachesize 150
+Feb 10 23:22:17 gate.c3.local dnsmasq[131]: compile time options: no-IPv6 GNU-getopt no-DBus no-I18N TFTP
+Feb 10 23:22:17 gate.c3.local dnsmasq[131]: DHCP, IP range 192.168.1.2 -- 192.168.1.254, lease time 1d
+Feb 10 23:22:17 gate.c3.local dnsmasq[131]: using local addresses only for domain c3.local
+Feb 10 23:22:17 gate.c3.local dnsmasq[131]: read /etc/hosts - 11 addresses
+Feb 10 23:22:17 gate.c3.local dnsmasq[131]: using nameserver 208.67.220.220#53
+Feb 10 23:22:17 gate.c3.local dnsmasq[131]: using nameserver 208.67.222.222#53
+Feb 10 23:22:17 gate.c3.local dnsmasq[131]: using nameserver 89.105.128.74#53
+Feb 10 23:22:17 gate.c3.local dnsmasq[131]: using nameserver 89.105.128.73#53
+Feb 10 23:22:17 gate.c3.local dnsmasq[131]: using nameserver 89.105.128.72#53
+Feb 10 23:22:17 gate.c3.local dnsmasq[131]: using local addresses only for domain c3.local
+</code>
+
+and add tftp bootup:
+
+<code log>
+dhcp-boot=pxelinux.0,slug,192.168.0.77
+enable-tftp
+tftp-root=/var/lib/tftpboot
+</code>
+
+and <code log>mkdir -p /var/lib/tftpboot</code> and put on it.  

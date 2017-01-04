@@ -1,0 +1,3 @@
+#/bin/sh
+gcc ./getstat.c -O2 -march=i686 -o getstat.cgi
+gcc ./sqlog.c -O2 -march=i686 -o sqlog.cgi

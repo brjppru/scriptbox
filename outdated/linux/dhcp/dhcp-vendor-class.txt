@@ -1,0 +1,31 @@
+subnet 192.168.1.0 netmask 255.255.255.0 {
+        option domain-name "example.ru";
+
+        # IP Phones
+        if ( option vendor-class-identifier = "ccp.avaya.com" or
+                        option vendor-class-identifier = "ATA186" or
+                        substring (option vendor-class-identifier, 0, 28) = "Cisco Systems, Inc. IP Phone" ) {
+                option routers             192.168.1.10;
+                option domain-name-servers 192.168.1.10;
+                option tftp-server-name   "192.168.1.12";
+        }
+        # PC boot from network
+        elsif ( substring (option vendor-class-identifier, 0, 9) = "PXEClient" ) {
+                option routers  192.168.1.1;
+                next-server     192.168.1.1;
+                option domain-name-servers 192.168.1.53, 192.168.1.54;
+                filename        "pxelinux/pxelinux.0";
+                option root-path "192.168.1.16:/diskless/8.3-STABLE-20130215/";
+        }
+        # all other
+        else {
+                option routers 192.168.1.1;
+                option domain-name-servers 192.168.1.53, 192.168.1.54;
+        }
+
+        ...
+
+}
+
+
+Нужные значения vendor-class-identifier можно посмотреть через tcpdump (option 60).

@@ -1,0 +1,14 @@
+#!/usr/bin/perl -w
+
+open(OUTFILE,">/var/log/bate.rw.out") or die("Couldn't open readwrite.out");      
+                                                                                
+print OUTFILE $0, "_";                                                          
+                                                                                
+foreach $argument (@ARGV){                                                                               
+  print OUTFILE $argument, "_";                                           
+}                                                                               
+print OUTFILE "\n";                                                             
+while (<STDIN>) {                                                                               
+    print OUTFILE $_;                                                       
+}                                                                               
+close(OUTFILE);     

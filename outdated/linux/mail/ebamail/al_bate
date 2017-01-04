@@ -1,0 +1,137 @@
+#!/usr/bin/perl -wT
+
+use strict;
+use vars qw($warn_placed @rm_files $has_yahoo);
+use MIME::Parser;
+$ENV{PATH}="";
+my $restricted="(\\.com\"|\\.exe\"|\\.scr\"|\\.vb[se]*\"|\\.hta\"|\\.js[e]*\"".
+        "|\\.lnk\"|\\.pif\"|\\.ws\"|\\.bat\")";
+
+my $MAILER="/usr/libexec/mail.local";
+#my $MAILER="/etc/mail/ebamail/rw";
+
+my $logfile="/var/log/al_bate.log";
+my $NOTICEFILE="/etc/mail/ebamail/notice";
+my $NOTICEBACK="/etc/mail/ebamail/notice.back";
+my $YAHOONOTICE="/etc/mail/ebamail/yahoo.notice";
+my $YAHOONOTICEBACK="/etc/mail/ebamail/yahoo.notice.back";
+
+$warn_placed=0;
+$has_yahoo=0;
+open STDOUT,">>$logfile";
+open STDERR,">>$logfile";
+my ($notice,$notice_back,$yahoo_notice,$yahoo_notice_back)=ReadNotices();
+
+
+my $data=join"",<STDIN>;
+my $p=new MIME::Parser; $p->output_to_core(1); $p->tmp_to_core(1);
+my $msg=$p->parse_data($data);
+
+my $att=undef; my $i=0;
+if($msg->is_multipart){
+  my @held=grep {CheckParts($i++,$_)} $msg->parts;
+  $msg->parts(\@held);
+} else {
+  my $body=$msg->bodyhandle;
+  my @lines=$body->as_lines;
+  if (grep {/^begin \d+ .+?\.yahoo\.com/} @lines) {
+    $has_yahoo++;
+    my $io=$body->open("w") || warn "open body: $!" && goto err;
+    $io->print($yahoo_notice);
+    $io->close;
+    err:
+  }
+}
+
+my $user= ($ARGV[0]=~/^([\w.-]+)$/) ? $1 : "root";
+open(MAILER,"|$MAILER $user");
+$msg->print(\*MAILER);
+close MAILER;
+
+SendWarnMail($msg->head->get("To"),$msg->head->get("From")) 
+        if ($warn_placed || $has_yahoo);
+close STDOUT;
+close STDERR;
+
+sub CheckParts {
+  my ($partnum,$part)=(shift,shift);
+  my $disp=$part->head->get("Content-Disposition");
+  if($disp){
+    my ($type,$filename)=split(";",$disp);
+    $filename=~s/^(.+?)filename=(.*?)$/$2/s;
+    $filename=~s/(\n|\s)$//gs;
+    if ($filename=~/$restricted/) {
+      push @rm_files,$filename;
+      PlaceWarning($filename,$notice);
+      $warn_placed++;
+      return 0;
+    } else {
+      return 1;
+    }
+  }
+  return 1;
+};
+
+sub PlaceWarning {
+  my ($filename)=(shift);
+  my $part=$msg->parts(0);
+  my $io; my @msg0_body=@{$part->body()};
+  if ($io = $part->open("w")) {
+    foreach (@msg0_body) { $io->print($_) }
+    $io->print($notice) unless $warn_placed;
+    $io->print("$filename\n");
+    $io->close;
+  }
+};
+sub SendWarnMail {
+ my ($to_email,$sender)=(shift,shift);
+ $to_email=~s/(\r|\n)//gs;
+ $sender=~s/(\r|\n)//gs;
+ my $from='security@sibttk.ru';
+ my $subj="Your e-mail to `$to_email' has been altered by mailserver";
+ my $body= $has_yahoo ? $yahoo_notice : $notice_back.${\(join "\n",@rm_files)};
+    open (MAIL, "|/usr/sbin/sendmail -t");
+    print MAIL "To: $sender\n";
+    print MAIL "From: $from\n";
+    print MAIL "Subject: $subj\n\n";
+    print MAIL $body;
+    close(MAIL);
+};
+sub ReadNotices {
+  my ($notice,$notice_back)=("","");
+  if (open (NOTICE, $NOTICEFILE)) {
+    $notice=join "",<NOTICE>; close (NOTICE);
+  } else { # A default notice, in case there isn't a valid notice file 
+    $notice="This message has been altered to remove potentially ".
+	    "malicious content.\n\n".
+	    "Please contact your network administrator for ".
+	    "more information.\n".
+            "Filenames of removed attaches:\n";
+  }
+  if (open (NOTICE, $NOTICEBACK)) {
+    $notice_back=join "",<NOTICE>; close (NOTICE);
+  } else { # A default notice, in case there isn't a valid notice file 
+    $notice_back="Your message has been altered to remove potentially ".
+	    "malicious content.\n\n".
+	    "Please contact your network administrator for ".
+	    "more information.\n".
+            "Filenames of removed attaches:\n";
+  }
+  if (open (NOTICE, $YAHOONOTICE)) {
+    $yahoo_notice=join "",<NOTICE>; close (NOTICE);
+  } else { # A default notice, in case there isn't a valid notice file 
+    $yahoo_notice="\nThis email message has been altered to remove potentially".
+    " malicious content.\n  This message seemed to contain I-Worm.Myparty ".
+    "(http://www.viruslist.com/viruslist.html?id=66386).\n".
+    "  If you have any questions, please contact your network administrator.\n"
+  }
+  if (open (NOTICE, $YAHOONOTICEBACK)) {
+    $yahoo_notice_back=join "",<NOTICE>; close (NOTICE);
+  } else { # A default notice, in case there isn't a valid notice file 
+    $yahoo_notice_back="\nYour email message has been altered to remove potentially".
+    " malicious content.\n  This message seemed to contain I-Worm.Myparty ".
+    "(http://www.viruslist.com/viruslist.html?id=66386).\n".
+    "  If you have any questions, please contact your network administrator.\n"
+  }
+  return ($notice,$notice_back,$yahoo_notice,$yahoo_notice_back);
+};

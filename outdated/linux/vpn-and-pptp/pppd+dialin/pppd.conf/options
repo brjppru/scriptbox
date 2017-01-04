@@ -1,0 +1,6 @@
+lock
+#passive
+name kramz
+ms-dns 192.168.9.9
+noauth
+

@@ -1,0 +1,18 @@
+
+----------  Wed 06 Aug 03, GoldED+/1.1.5/FreeBSD 4.3 (compiled by dm 18/12/2002)  (Dec 18 2002 22:12:01)
+! 17:55:31  Detected 6 unfree'd memory allocations.
+: 17:55:31  Ptr (0x81de69c,40) at [geline.cpp,2655].
+: 17:55:31  20 DD 16 08  40 DD 16 08  60 DD 16 08  80 DD 16 08   Ý..@Ý..`Ý..€Ý..
+: 17:55:31  Ptr (0x81fa01c,4123) at [getpls.cpp,832].
+: 17:55:31  48 65 6C 6C  6F 20 65 76  65 72 79 62  6F 64 79 2E  Hello everybody.
+: 17:55:31  Ptr (0x81fd01c,1054) at [gepost.cpp,87].
+: 17:55:31  00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00  ................
+: 17:55:31  Ptr (0x81f801c,6584) at [gepost.cpp,703].
+: 17:55:31  00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00  ................
+: 17:55:31  Ptr (0x81f601c,6584) at [gepost.cpp,702].
+: 17:55:31  00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00  ................
+: 17:55:31  Ptr (0x81f401c,6584) at [gepost.cpp,701].
+: 17:55:31  00 00 00 00  3E 02 00 00  00 00 00 00  00 00 00 00  ....>...........
++ 17:55:31  Info: The memory should have been free'd before exit.
++ 17:55:31  Info: This indicates a potentially serious bug.
++ 17:55:31  Advice: Report to the Author immediately.

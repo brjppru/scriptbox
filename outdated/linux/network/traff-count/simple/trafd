@@ -1,0 +1,107 @@
+#!/usr/bin/perl 
+
+#All defines here !!!
+
+$root_path="/var/traffic";
+
+$year=`date +%Y`;
+$month=`date +%m`;
+$day=`date +%d`;
+$hour=`date +%H`;
+chomp($year); chomp($month); chomp($day); chomp($hour);
+
+$log_path="$root_path/$year";
+	if(! -d $log_path) { 
+		mkdir $log_path,0755;
+	}
+
+$log_generic="$log_path/$month.log";
+
+$log_path="$log_path/$month";
+	if(! -d $log_path) {                           
+                mkdir $log_path,0755;                      
+        }
+$log_monthly=$log_path;
+
+$log_file="$log_path/$hour.tmp";
+
+$OFFSET=11; #Preread data from $log_file
+#defines ended
+
+
+
+#print "$log_path\n";
+#print "TIME: $hour  $day/$month/$year\n";
+
+system("ipfw -N show > $log_file");
+system("ipfw -q zero");
+
+collect_data($log_file);
+unlink($log_file);
+
+
+
+
+#This collect data from $log_file to @hosts_data
+sub collect_data{
+
+my(@buf);
+my($pop3,$in,$out);
+my($sum_in,$sum_out);
+
+$sum_in=0;
+$sum_out=0;
+
+open(DATA, $_[0]) || die "Can't get $log_file";
+
+$time=`date +%M`; chomp($time);
+
+
+#We should preread some rules that not touching with accounting
+	for($i=0;$i<$OFFSET;$i++) {
+		<DATA>;
+	}
+
+  	while(defined($line=<DATA>)){
+#               print "$line";
+                chomp($line);
+                @buf=split(/\b\s+/,$line);
+                $host=$buf[8];
+		@buf=split(/\./,$host);
+		$user=$buf[0];
+		if($user eq "any") {
+			$user="TOTAL";
+			open(LOG,">>$log_path/$user.log");
+			print LOG "$day:$hour:$time $sum_in $sum_out \n";
+			close LOG;
+			return;
+		}
+#		print "$host $user\n";
+		#IN
+                $in=get_size_line($line);
+		$sum_in+=$in;
+                #OUT
+                $line=<DATA>;
+                $out=get_size_line($line);
+		$sum_out+=$out;
+
+		open(LOG,">>$log_path/$user.log");
+		print LOG "$day:$hour:$time $in $out \n";
+		close LOG;
+	}
+		$user="TOTAL";
+#		print $user;
+		open(LOG,">>$log_path/$user.log");
+		print LOG "$day:$hour:$time $sum_in $sum_out \n";
+		close LOG;
+
+
+}
+
+sub get_size_line{
+        my(@buf,$size);
+        @buf=split(/\b\s+/,$_[0]);
+                $size=$buf[2];
+        return $size/2;
+}       
+

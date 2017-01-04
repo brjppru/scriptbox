@@ -1,0 +1,2 @@
+pptp:
+    !bg /etc/ppp/security/mac.analyze USER INTERFACE HISADDR PEER_ENDDISC PROCESSID

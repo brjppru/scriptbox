@@ -1,0 +1,37 @@
+====== Apache ======
+
+
+http://wiki.apache.org/httpd/NameBasedSSLVHostsWithSNI
+
+==== NameBasedSSLVHostsWithSNI ====
+
+<code bash>
+
+# Ensure that Apache listens on port 443
+Listen 443
+    
+# Listen for virtual host requests on all IP addresses
+NameVirtualHost *:443
+
+# Go ahead and accept connections for these vhosts
+# from non-SNI clients
+SSLStrictSNIVHostCheck off
+
+<VirtualHost *:443>
+   ServerName blabla.ru
+   DocumentRoot /www/
+   ErrorLog     /var/log/error.log
+   CustomLog    /var/log/access.log combined
+
+   SSLEngine on
+   SSLProtocol all -SSLv2
+   SSLCipherSuite ALL:!ADH:!EXPORT:!SSLv2:RC4+RSA:+HIGH:+MEDIUM
+
+   SSLCertificateFile /site/.ssl/ssl.crt
+   SSLCertificateKeyFile /site/.ssl/ssl.key
+   SSLCertificateChainFile /site/.ssl/sub.class1.server.ca.pem
+   SSLCACertificateFile /site/.ssl/ca.pem
+   CustomLog /var/log/ssl_request_log \
+      "%t %h %{SSL_PROTOCOL}x %{SSL_CIPHER}x \"%r\" %b"
+</VirtualHost>
+</code>

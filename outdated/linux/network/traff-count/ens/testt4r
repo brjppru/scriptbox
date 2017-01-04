@@ -1,0 +1,90 @@
+#!/usr/bin/perl -w
+# скрипт для подсчета статистики
+use DBI;
+
+#подключаемся к базе данных
+
+$dsn = "DBI:mysql:traf:localhost";
+$user_name = "xxx";
+$password = "xxx";
+$dbh = DBI->connect ($dsn, $user_name, $password, { RaiseError => 1 } );
+
+# делаем цикл обсчета по правилам
+
+for ($i=10100; $i<10200;) {
+$trafff=qx(/sbin/ipfw show | grep $i | awk '{ print \$3/2; }' >> /var/count//$i.traf.`date "+%Y-%m-%d"`); #кидаем статистику в файл на винте
+$traff=qx(/sbin/ipfw show | grep $i | awk '{ print \$3/2; }'); #вытягиваем входящий траффик и делим на 2
+$rull=$i+1000;  #правила для deny
+$deny=qx(/sbin/ipfw show | grep $rull | awk '{ print \$4; }'); # узнаем есть ли deny для ипишки
+
+#вытягиваем траффик из базы
+
+$sth = $dbh->prepare ("SELECT traf FROM test WHERE num='$i' ");
+$sth->execute();
+$tr = $sth->fetchrow_array;
+
+$trafic = $traff+$tr; #складываем траффик с правила (после ipfw zero) с траффиком из базы
+$rows=$dbh->do( " UPDATE test SET traf='$trafic' WHERE num='$i' " ); # пхаем в базу новое значение
+$rows=1;
+
+# тянем из базы данные а юзере
+
+$sth1 = $dbh->prepare ("SELECT money,cenameg,ip,login FROM billl WHERE num='$i' ");
+$sth1->execute();
+($money,$cenameg,$ip,$login) = $sth1->fetchrow_array;
+$trafff=$traff/1024; # получаем траффик в кб
+$traffg=sprintf("%.2f",$trafff/1024) ; # траффик в мегах , в форме 0.00
+$sums=$traffg*$cenameg; # цена за порцию траффика между ipfw zero
+$vichet=$money-$sums; # вычетаем из суммы денег на счету текущий траффик
+
+@num=(100..999); # инициализируем массив
+$pass2=$num[rand @num]; # генерим число из массива для подмены логина в случае превышения  траффика
+
+# типа если денежки на счету кончились:
+
+if ($money<=0) {
+# эээ ентот заеб для того что бы не пхалось куча правил ipfw deny за каждый проход скрипта
+if (! $deny) {
+$rul=$i+1000;
+$system = qx(/sbin/ipfw add $rul deny all from $ip to any >> /var/count/log//$i.log.`date "+%Y-%m-%d"` );
+$system = 1; # это /\ если денежки кончились то ип блокируется и кидаем msg в файл
+}
+# меняем логин юзеру у которого кончились деньги , что бы залогинится не смог
+
+$old="/etc/ppp/ppp.secret";
+$new="/etc/ppp/ppp.secret.tmp";
+
+# юзаем временный файл
+
+open(OLD, "< $old") ||  die "can't open file $old: $!";
+open(NEW, "> $new") ||  die "can't open file $new: $!";
+select(NEW);
+while (<OLD>) {
+s/^$login\s/$login.ban.$pass2 /; # подменяем логин всяким бредом
+print NEW $_ || die "can't write $new: $!"; # суем все во временный файл
+}
+close(OLD) || die "can't close $old: $!"; # закрываем нафик файло
+close(NEW) || die "can't close $new: $!";
+rename($old, "$old.orig") || die "can't rename $old to $old.orig: $!"; # делаем копию оригинального файла
+rename($new, $old) || die "can't rename $new to $old: $!"; # копируем временный файл в файл с поролями
+}
+# обновляем деньги на счету у юзера
+
+$rows1=$dbh->do( " UPDATE billl SET money='$vichet' WHERE num='$i' " );
+$rows1=1;
+
+# создаем следующую итерацию по циклу
+
+$i=$i+100;
+}
+
+# отрубаемся от баз
+
+$sth->finish();
+$sth1->finish();
+
+# обнуляем  траффик на правилах
+
+system ("/sbin/ipfw zero >/dev/null");
+
+exit 0; # see u at next cron cycle =)

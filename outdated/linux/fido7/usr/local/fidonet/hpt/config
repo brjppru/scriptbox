@@ -1,0 +1,154 @@
+Name DM-station
+Location Krasnoyarsk, Russia
+Sysop Dmitry Rusov
+
+LogLevels 123456789
+
+Address 2:5090/94
+
+Unpack  "/usr/local/bin/unzip  -j -Loqq $a -d $p" 0 504b0304
+Pack  zip /usr/local/bin/zip -9 -j -q $a $f
+
+Link Oleg Parshin
+Aka 2:5090/1029
+AreafixPwd HOLSTEN
+EchoMailFlavour Crash
+AutoAreaCreate on
+AutoAreaCreateDefaults -p 14 -dupeCheck move -dupeHistory 11
+AutoFileCreate on
+forwardRequests off
+Packer zip
+
+Link Dmitry Andreev
+Aka 2:5090/135
+AreafixPwd zzzzz
+EchoMailFlavour Crash
+Packer zip
+
+Link Victor Macalov
+Aka 2:5090/94.23
+AreafixPwd zzzzzz
+EchoMailFlavour hold
+Packer zip
+
+
+route hold noroute 2:5090/94.*
+route crash 2:5090/135 2:5090/135.*
+route crash 2:5090/1029 2:*/*.*
+
+Inbound		/var/fidonet/uncheck
+ProtInbound	/var/fidonet/inbound
+LocalInbound    /var/fidonet/loc_inbound
+Outbound	/var/fidonet/outbound
+tempOutbound    /var/fidonet/tmp/out
+tempInbound     /var/fidonet/tmp/in
+MsgBaseDir      /var/fidonet/base
+FileAreaBaseDir /var/fidonet/fileecho
+
+intab           /usr/local/fidonet/hpt/outaltkoi8
+outtab          /usr/local/fidonet/hpt/outkoi8alt
+
+echotosslog     /var/log/echotoss.log
+importlog       /var/log/import.log
+
+logFileDir      /var/log
+DupeHistoryDir	/var/fidonet/base/dupehistory
+NodelistDir	/var/fidonet/nodelist
+lockfile        /var/fidonet/tmp/hpt.lock
+
+areafixhelp     /usr/local/fidonet/hpt/areafix.hlp
+#FileFixHelp     /usr/local/fidonet/hpt/filefix.hlp
+
+NodeList /var/fidonet/nodelist
+DiffUpdate /var/fidonet/nodediff
+
+NetmailArea NetmailArea /var/fidonet/netmail -b msg
+BadArea     BadArea     /var/fidonet/base/bad -b Squish
+DupeArea    DupeArea    /var/fidonet/base/dupe -b Squish
+
+EchoArea ru.visual.cpp /var/fidonet/base/ru.visual.cpp -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea ru.delphi /var/fidonet/base/ru.delphi -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea su.windows /var/fidonet/base/su.windows -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea su.c_cpp /var/fidonet/base/su.c_cpp -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea ru.perl /var/fidonet/base/ru.perl -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea su.hardw.pc.cpu /var/fidonet/base/su.hardw.pc.cpu -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea ru.unix.bsd /var/fidonet/base/ru.unix.bsd -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea "$crack$.talks" /var/fidonet/base/$crack$.talks -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea ru.linux /var/fidonet/base/ru.linux -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea su.hardw.pc.video.card /var/fidonet/base/su.hardw.pc.video.card -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea ru.delphi.chainik /var/fidonet/base/ru.delphi.chainik -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea su.hardw.chainik /var/fidonet/base/su.hardw.chainik -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea ru.cd.record /var/fidonet/base/ru.cd.record -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea krs.software /var/fidonet/base/krs.software -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea ru.windows.2000 /var/fidonet/base/ru.windows.2000 -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea su.hardw.pc.motherboard /var/fidonet/base/su.hardw.pc.motherboard -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea ru.golovolomka /var/fidonet/base/ru.golovolomka -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea ru.husky /var/fidonet/base/ru.husky -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea ru.pickup /var/fidonet/base/ru.pickup -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea ru.sex /var/fidonet/base/ru.sex -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea su.hardw.pc.video.monitor /var/fidonet/base/su.hardw.pc.video.monitor -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea ru.unix.linux /var/fidonet/base/ru.unix.linux -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea su.hardw.pc.video /var/fidonet/base/su.hardw.pc.video -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea ru.windows.nt /var/fidonet/base/ru.windows.nt -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea ru.anekdot /var/fidonet/base/ru.anekdot -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea ru.windows.xp /var/fidonet/base/ru.windows.xp -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea ru.apache /var/fidonet/base/ru.apache -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea ru.internet /var/fidonet/base/ru.internet -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea ru.unix /var/fidonet/base/ru.unix -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea su.hardw.pc.media /var/fidonet/base/su.hardw.pc.media -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea krs.business.talk /var/fidonet/base/krs.business.talk -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029 2:5090/94.23
+EchoArea krs.cars /var/fidonet/base/krs.cars -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029 2:5090/94.23
+EchoArea ru.golded /var/fidonet/base/ru.golded -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea ru.algorithms /var/fidonet/base/ru.algorithms -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea ru.web.construction /var/fidonet/base/ru.web.construction -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea ru.pascal.sources /var/fidonet/base/ru.pascal.sources -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea krs.cellular /var/fidonet/base/krs.cellular -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029 2:5090/94.23
+EchoArea krs.internet /var/fidonet/base/krs.internet -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea krs.business /var/fidonet/base/krs.business -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029 2:5090/94.23
+EchoArea ru.web.design /var/fidonet/base/ru.web.design -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea su.humor /var/fidonet/base/su.humor -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea obec.3boh /var/fidonet/base/obec.3boh -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea "$crack$" /var/fidonet/base/$crack$ -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea su.hardw.pc.net /var/fidonet/base/su.hardw.pc.net -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea ru.counter-strike /var/fidonet/base/ru.counter-strike -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea krs.lan /var/fidonet/base/krs.lan -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029 2:5090/94.23
+EchoArea krs.general /var/fidonet/base/krs.general -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029 2:5090/94.23
+EchoArea obec.pactet /var/fidonet/base/obec.pactet -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea ru.binkd /var/fidonet/base/ru.binkd -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea ru.anekdot.the.best /var/fidonet/base/ru.anekdot.the.best -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea su.hardw.pc.video.riva /var/fidonet/base/su.hardw.pc.video.riva -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea krs.music /var/fidonet/base/krs.music -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea krs.hardware /var/fidonet/base/krs.hardware -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029 2:5090/94.23
+EchoArea krs.music.files /var/fidonet/base/krs.music.files -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea 5090_29.points /var/fidonet/base/5090_29.points -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea ru.unix.ftn /var/fidonet/base/ru.unix.ftn -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea krs.fileecho /var/fidonet/base/krs.fileecho -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea krs.help /var/fidonet/base/krs.help -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029 2:5090/94.23
+EchoArea krs.humor /var/fidonet/base/krs.humor -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea donbass.ottyag /var/fidonet/base/donbass.ottyag -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea krs.robots /var/fidonet/base/krs.robots -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea 1029.news /var/fidonet/base/1029.news -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea obec.filtered /var/fidonet/base/obec.filtered -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029 2:5090/94.23
+EchoArea 1029.stat /var/fidonet/base/1029.stat -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea su.windows.nt /var/fidonet/base/su.windows.nt -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea ru.baika /var/fidonet/base/ru.baika -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea krs.tv&video /var/fidonet/base/krs.tv%26video -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea krs.flirt /var/fidonet/base/krs.flirt -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029 2:5090/94.23
+EchoArea krs.prog /var/fidonet/base/krs.prog -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea ru.anecdot /var/fidonet/base/ru.anecdot -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea ru.windows.nt.beta /var/fidonet/base/ru.windows.nt.beta -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea ru.adobe.photoshop /var/fidonet/base/ru.adobe.photoshop -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea ru.mfc /var/fidonet/base/ru.mfc -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea krs.books /var/fidonet/base/krs.books -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea krs.politics /var/fidonet/base/krs.politics -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea ru.compress /var/fidonet/base/ru.compress -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea krs.unix /var/fidonet/base/krs.unix -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea krs.games /var/fidonet/base/krs.games -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029 2:5090/94.23
+EchoArea krs.sysop /var/fidonet/base/krs.sysop -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea krs.link /var/fidonet/base/krs.link -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029 2:5090/94.23
+EchoArea krs.test /var/fidonet/base/krs.test -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029 2:5090/94.23
+EchoArea krs.sport /var/fidonet/base/krs.sport -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea krs.flame /var/fidonet/base/krs.flame -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea ru.internet.filtered /var/fidonet/base/ru.internet.filtered -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029 2:5090/94.23
+EchoArea krs.hyde-park /var/fidonet/base/krs.hyde-park -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029
+EchoArea ru.anekdot.filtered /var/fidonet/base/ru.anekdot.filtered -b Squish -p 14 -dupeCheck move -dupeHistory 11 2:5090/1029

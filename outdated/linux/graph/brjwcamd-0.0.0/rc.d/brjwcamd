@@ -1,0 +1,43 @@
+#!/bin/sh
+# 
+# Startup script for brj@webcam demon
+# version 0.0.1 (c) Roman Y. Bogdanov, 2000
+#
+
+PATH=/bin:/usr/bin:/sbin:/usr/sbin
+DAEMON=/usr/local/bin/webcamd
+
+# daemon exist? No? Get to fuck up this script (-;
+
+# test -f $DAEMON || exit 0
+
+case "$1" in
+
+  start)
+        echo -n "Starting brj@webcam daemon: "
+	$DAEMON start start
+    ;;
+
+  stop)
+        echo -n "Stopping brj@webcam daemon: "
+	$DAEMON stop
+   ;;
+
+  refresh)
+	$DAEMON refresh
+   ;;
+
+  restart)
+      $0 stop
+      sleep 2
+      $0 start
+      ;;
+
+  *)
+    echo "Usage: `basename $0` {start|stop|restart|refresh}"
+    exit 1
+    ;;
+
+esac
+
+exit 0

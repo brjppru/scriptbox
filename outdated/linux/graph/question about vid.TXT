@@ -1,0 +1,33 @@
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+From:    Peter S. Housel <housel@acm.org>
+To:      Roman Y. Bogdanov <peps37@ktk.ru>
+Date:    Sunday, September 23, 2001, 11:50:40 PM
+Subject: question about vid
+Files:   <none>
+--====----====----====----====----====----====----====----====----====----===--
+At Sun, 23 Sep 2001 13:50:42 +0800, Roman Y. Bogdanov <peps37@ktk.ru> wrote:
+> ... now playing: e-life vs. dynamix - more days to come (remix)
+> 
+>   At this time i began learn C and wont add some function to vid.
+> 
+>   Mey be someone add this feature to vid (like patch) - on picture
+>   printed local hostname, date and time?
+> 
+>   Waining for any answer.
+
+This doesn't need to be done in vid... I use the netpbm utilities to do this:
+
+/usr/local/bin/vid \
+        | /usr/local/bin/ppmlabel -colour SeaGreen -y 18 -text "`date`" \
+        | /usr/local/bin/ppmtojpeg > /home/snap/$day/$daytime.jpg
+
+I haven't tried it yet, but Jamie Zawinski has a more advanced program
+for doing this sort of thing.  See http://www.jwz.org/ppmcaption/ for
+information.
+
+Cheers,
+-Peter-
+
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+

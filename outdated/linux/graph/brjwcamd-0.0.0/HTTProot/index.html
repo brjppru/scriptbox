@@ -1,0 +1,101 @@
+<HTML>
+  <HEAD>
+    <TITLE>brj@mobile webcam server</TITLE>
+
+      <STYLE type=text/css>
+	.bodytext { COLOR: #ffffff; FONT-FAMILY: Arial, Helvetica, sans-serif; FONT-SIZE: 10px }
+	BODY {	BACKGROUND-COLOR: #444444; scrollbar-arrow-color: #ff0000; scrollbar-track-color: #444444 }
+	A:visited { COLOR: #26365b; TEXT-DECORATION: none }
+	A:hover { BACKGROUND-COLOR: #666666; COLOR: #ffffff }
+	A:link { COLOR: #26365b; TEXT-DECORATION: underline }
+	A:active { COLOR: #000000; TEXT-DECORATION: none }
+	.bodysmall { COLOR: #ffffff; FONT-FAMILY: Arial, Helvetica, sans-serif; FONT-SIZE: 9px }
+      </STYLE>
+
+<BODY leftMargin=0 topMargin=0 marginheight="0" marginwidth="0" bgColor=#444444 onload="runClock()">
+
+<script type="text/javascript" language="JavaScript">
+<!--
+    var refreshInterval = @@@@@
+
+   function runClock() {
+          refreshInterval = refreshInterval - 1
+
+          var now = new Date()
+          var refreshFudge = parseInt(now.getTime() / 1000)
+          delete now
+
+          if (refreshInterval < 0) {
+            if (document.images)
+              document.homeImage.src = "cam.jpg" + "?" + refreshFudge
+            else
+              window.location.reload()
+            refreshInterval = @@@@@
+          }
+          document.camClock.countdownTime.value = refreshInterval
+         clockID = setTimeout("runClock()", 1000)
+}
+
+//-->
+</script>
+
+
+<TABLE align=center background="/images/sfondo.gif" border=0 cellPadding=0 cellSpacing=0 height="100%" width=348>
+  <TBODY>
+  <TR>
+    <TD align=middle>&nbsp;</TD></TR>
+  <TR>
+    <TD align=middle>
+    <img src="/cam.jpg" name="homeImage">
+    </TD></TR>
+  <TR>
+    <TD align=middle>&nbsp;</TD></TR>
+  <TR>
+    <TD align=middle><BR><BR>
+      <IMG height=168 src="/images/layout.gif" width=267></TD></TR>
+  <TR>
+    <TD align=middle><BR><SPAN class=bodysmall>&gt;&gt;
+
+      <SCRIPT language=JavaScript>
+	var txt = "BOOKMARK NOW!";
+	var url = "http://192.168.0.240:8080/";
+	var who = "brj@mobile webcam online";
+
+	var ver = navigator.appName;
+	var num = parseInt(navigator.appVersion);
+	var oso = navigator.platform;
+	if ( (ver == "Microsoft Internet Explorer") && (num >= 4) && (oso == "Win32") ) {
+	document.write('<A CLASS=menu HREF="javascript:window.external.AddFavorite(url,who);" ');
+	document.write('onMouseOver=" window.status=');
+	document.write("txt; return true ");
+	document.write('"onMouseOut=" window.status=');
+	document.write("' '; return true ");
+	document.write('">'+ txt + '</a>');
+	}else if (oso == "Win32"){
+	txt += "  (Ctrl+D)";
+	document.write(txt); 
+	} 
+	else {
+	txt += "  (Cmd+D)";
+	document.write(txt); 
+	} 
+
+	</SCRIPT>
+       &lt;&lt;
+       <BR><BR>
+       <A HREF=/archive/>Browse images archive</a>
+       <BR><BR>
+       </SPAN>
+
+	<form name="camClock" action="" method="post">
+	<input type="hidden" name="countdownTime" size="1" value="" >
+	</form>
+
+</TD></TR>
+  <TR>
+    <TD align=middle>
+      <SPAN class=bodysmall>&copy; 2002 by Roman Y. Bogdanov<BR><BR></SPAN>
+    </TD></TR></TBODY></TABLE>
+
+</DIV>
+</BODY></HTML>

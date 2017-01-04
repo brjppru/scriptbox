@@ -1,0 +1,5 @@
+#!/bin/sh
+
+exec /usr/sbin/ppp -direct loop-in
+
+

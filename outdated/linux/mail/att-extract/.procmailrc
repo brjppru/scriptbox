@@ -1,0 +1,13 @@
+SHELL=/bin/bash
+PATH=/usr/sbin:/usr/bin
+MAILDIR=/root/Maildir/
+DEFAULT=/root/Maildir/
+LOGFILE=/var/log/procmail.log
+LOG=""
+ATTACHDIR=/root/att
+PMDIR=/root/Maildir/
+VERBOSE=yes
+
+:0
+        |/root/filtermail.sh
+

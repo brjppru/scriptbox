@@ -1,0 +1,31 @@
+server-name "rt1";
+log-facility local7;
+authoritative;
+default-lease-time 43200;
+default-lease-time 1800;
+max-lease-time 86400;
+one-lease-per-client on;
+deny duplicates;
+
+option domain-name-servers 1.2.3.4;
+option ntp-servers 1.2.3.4;
+option netbios-name-servers 1.2.3.4;
+option netbios-dd-server 1.2.3.4;
+option netbios-node-type 2;
+option wpad code 252 = text;
+option wpad "http://1.2.3.4/wpad.dat\n";
+
+ddns-updates on;
+ddns-update-style interim;
+update-static-leases on;
+
+key DHCP_UPDATER {
+    algorithm hmac-md5;
+    secret "ololokey";
+};
+
+zone dymamic. {
+    primary 127.0.0.1;
+    key DHCP_UPDATER;
+}
+

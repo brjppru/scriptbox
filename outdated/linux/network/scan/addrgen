@@ -1,0 +1,4 @@
+#!/bin/sh
+
+cat arp.hold | awk '{print $1}' >> addr
+

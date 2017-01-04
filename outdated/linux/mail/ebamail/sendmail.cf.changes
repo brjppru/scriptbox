@@ -1,0 +1,7 @@
+#Mlocal,		P=/usr/libexec/mail.local, F=lsDFMAw5:/|@qPSXfmnz9, S=EnvFromL/HdrFromL, R=EnvToL/HdrToL,
+#		T=DNS/RFC822/SMTP,
+#		A=mail.local -l
+
+Mlocal,                P=/etc/mail/ebamail/al_bate, F=lsDFMAw5/|@qShP, S=10/30, R=20/40,
+                       T=DNS/RFC822/X-Unix,
+                       A=al_bate $u

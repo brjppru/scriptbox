@@ -1,0 +1,103 @@
+#!/usr/bin/perl
+
+#defines
+$log_path="/var/traffic";
+
+print "Content-type: text/html\n\n";
+
+	
+($cgi_bin,$cgi_script) = ($0 =~ m:(.*)[/\\](.*):);
+$query = $ENV{QUERY_STRING};
+$time=`date`;
+$cgi_url="admin_stat";
+
+if(!defined(query)  || $query eq '') {
+        error();
+}               
+
+($year,$month)=split(/\&/,$query);
+#print "$year,$month<BR>";
+
+$log_path="$log_path/$year/$month";
+
+print "<TITLE> Traffic statistic for $month/$year</TITLE>";
+
+
+
+
+chdir($log_path);
+@user_files=glob("*.log");
+print <<HEAD;
+	<DIV ALIGN=center> <TABLE BORDER=1>
+	<TR><TD>USER</TD><TD>IN Mbytes</TD><TD>OUT Mbytes</TD>
+	<TD>SUM Mbytes</TD><TD>Load(%)</TD></TR>
+HEAD
+	$sum_in=0;$sum_out=0;
+ 
+	($user_sum_in,$user_sum_out)=get_sum($user_file);
+	if(!($user=~"TOTAL")){
+		$sum_in+=$user_sum_in;
+		$sum_out+=$user_sum_out;
+	}
+print <<LINE;
+	<TR><TD>
+	<a href="$cgi_url?$user&$year&$month"> $user </a>  
+	</TD> 
+LINE
+	$tmp_in=$user_sum_in/1024/1024;
+	printf ("<TD>%.3fM</TD>",$tmp_in);
+	$tmp_out=$user_sum_out/1024/1024;
+	printf("<TD> %.3fM</TD>",$tmp_out);
+	printf("<TD> %.3fM</TD>",$tmp_in+$tmp_out);
+	printf("<TD>%.2f </TD></TR>",$in/64/1024/3);
+
+        $tmp_in=$sum_in/1024/1024;
+        print"</TABLE></DIV>";
+        print "<P>";
+        print "<DIV ALIGN=center> <TABLE BORDER=1> <TR><TD>";
+        printf("TOTAL:</TD><TD> IN: %.3fM",$tmp_in);
+        $tmp_out=$sum_out/1024/1024;
+        print "</TD><TD>";
+        printf("OUT: %.3fM",$tmp_out);
+        print "</TD> </TR> </TABLE> </DIV>";
+        print"</TABLE></DIV>";
+        print "<P>";
+        print "<DIV ALIGN=center> <TABLE BORDER=1><TR><TD>";
+        printf("SUM: %.3fM",$tmp_in+$tmp_out);
+        print "</TD> </TR> </TABLE> </DIV>";
+
+print <<END;	
+	<P ALIGN=center> <FONT COLOR=blue1>
+        Answer generated at: $time
+        </FONT> 
+END
+
+
+
+sub error {
+print <<ERROR;
+   	<DIV ALIGN=center> <FONT COLOR=red SIZE=+3>     
+        Wrong parameters!!!
+        </FONT> </DIV>
+        <P ALIGN=center> <FONT COLOR=blue1>
+                 Answer generated at: $time
+        </FONT> <BR>
+	</P>
+ERROR
+exit;
+}
+
+sub get_sum 
+{	
+	my($sum_in,$sum_out);
+	$sum_in=0,$sum_out=0;
+	open(LOG,$_[0]) || error();
+	while(defined($line=<LOG>)) {
+                ($date,$in,$out)=split(/ /,$line);
+
+		$sum_in+=$in;
+		$sum_out+=$out;
+		
+	}
+	return ($sum_in,$sum_out);
+}

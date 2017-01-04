@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# convert any video files in current directory to mp3
+
+mkdir -p mp3
+
+# exit on error
+set -e
+
+# extended globbing
+shopt -s extglob
+shopt -s nullglob
+
+# video files
+videos=*(*.flv|*.mp4|*.avi|*.mkv)
+
+# grab convert
+
+for file in $videos; do
+    outputname="mp3/${file%.*}.mp3"
+    cowsay -d "$file convert"
+    ffmpeg -i "$file" -vn -acodec libmp3lame -ar 44100 -ab 128k -ac 1 -f mp3 "$outputname"
+done
+
+chmod -R 777 mp3

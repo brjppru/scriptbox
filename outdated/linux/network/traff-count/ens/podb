@@ -1,0 +1,26 @@
+#!/usr/bin/perl -w
+# подбивалка траффика
+use DBI;
+use Time::localtime;
+
+$dsn = "DBI:mysql:traf:localhost";
+$user_name = "xxx";
+$password = "xxx";
+$tm = localtime;
+$time=sprintf("%04d-%02d-%02d\n", $tm->year+1900, $tm->mon+1, $tm->mday);
+
+$dbh = DBI->connect ($dsn, $user_name, $password, { RaiseError => 1 } );
+
+#создаем цикл по правилам
+for ($i=10100; $i<11000;) {
+# тянем траффик за день из базы
+$sth = $dbh->prepare ("SELECT traf FROM test WHERE num='$i' ");
+$sth->execute();
+$tr = $sth->fetchrow_array; # пхаем траффик в переменную
+
+# пхаем траффик за день в другую таблицу,привязываем дату
+$rows=$dbh->do("INSERT INTO daytest VALUES('$i','$tr','$time')");
+$rows=1;
+$i=$i+100; # делаем следующую итерацию
+}
+exit 0; # ждемс до 00.02 следующего дня, запускаем по cron

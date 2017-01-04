@@ -1,0 +1,45 @@
+#!/bin/sh
+
+# This ckript startup with params:
+# USER INTERFACE HISADDR PEER_ENDDISC PROCESSID
+
+    socket=`sockstat | grep $(($5-1)) | grep tcp4`
+    ip=`/etc/ppp/security/parser.pl ${socket}`
+
+# Log it into security.log
+
+#logger -t vpn "user [$1] logged in, pid=$5 hisaddr=$3 iface=$2"
+#logger -t vpn "user [$1]: come from `arp $ip`"
+
+    logger -t vpn "user [$1] logged in, come from `arp ${ip}`"
+
+# Compare username and host:
+
+    fullhostname=`arp ${ip} | awk '{ print $1 }'`
+    userhostname=`echo ${fullhostname} | awk -F . '{ print $1 }'`
+
+# Spisok biratinov:
+
+    buratina=0
+
+    for buratinas in `cat /etc/ppp/security/buratinov.list`; do 
+    
+        if [ "${buratinas}" = "$1" ] ; then 
+		buratina=1 
+        fi 
+	
+    done
+
+# Esli eto buratina, to logiruem i vihodim:
+
+        if [ "${buratina}" = "1" ] ; then 
+            logger -t vpn "user [$1] is buratino, logged in from hostname = `arp ${ip}`"
+	    exit 0
+        fi 
+
+# disconnect it, if login ! = hostname
+
+if [ "$1" != "$userhostname" ]; then
+    logger -t vpn "user [$1] logged in, from hostname = $userhostname, kill it"
+    kill -9 $5
+fi

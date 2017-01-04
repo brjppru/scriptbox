@@ -1,0 +1,184 @@
+#!/usr/bin/perl
+# All copyright reserved. Don't change anything in this program 
+# without my agreement.
+# Copyright (C) Alexandr S. Dubovukov. Baron. shurik@te.net.ua 1999. Odessa
+
+use Socket;
+$port = 6667;
+
+print "Enter nick:";
+$nick=<>;
+chomp($nick);
+print "Enter channel:";
+$channel=<>;
+chomp($channel);
+print "Enter server:";
+$server=<>;
+chomp($server);
+$sd="NICK $nick";
+$sd2="USER $nick $nick $nick : Simple $nick 33a33";
+$sd3="JOIN $channel";
+
+$them = $server;
+
+$SIG{'Int'} = 'dokill';
+
+sub dokill {
+    kill 9, $child if $child;
+}
+chop($hostname = `hostname`);
+
+($name, $aliases, $proto) = getprotobyname('tcp');
+
+
+($name, $aliases, $port) = getservbyname($port,'tcp')
+    unless $port =~ /^\d+$/;
+print "Using port $port to connect to server on host $them...\n";
+
+($name,$aliases,$type,$len,$thisaddr) = gethostbyname($hostname);
+
+($name, $aliases,$type,$len,$thataddr) = gethostbyname($them);
+
+if (socket(S,AF_INET, SOCK_STREAM, $proto)) {
+    print "Socket creation succeeded.\n";
+    #print <S> , $hello ;
+    #$_=<S>;
+}
+else {
+    die $!;
+}
+
+$sockaddr = 'S n a4 x8';
+$this = pack($sockaddr, AF_INET, 0, $thisaddr);
+$that = pack($sockaddr, AF_INET, $port, $thataddr);
+
+if (bind(S, $this)) {
+    print "Bind succeeded.\n";
+}
+else  {
+    die $!;
+}
+
+if (connect(S, $that)) {
+    print "Connect succeeded.\n";
+}
+else {
+    die $!;
+}
+
+select(S);
+$| = 1;
+
+select(STDOUT);
+
+$| = 1;
+#print S @main;
+#print "$sd\n$sd2\n";
+print S "$sd\n$sd2\n";
+sleep(2);
+print S "$sd3\n";
+#open (FILE2,"<./words.irc");
+
+do main();
+
+#while(<S>){
+#	print "Server answered: $_";
+#}
+
+sub main { 
+
+if ($child = fork) {
+    
+    while (<STDIN>) {
+    #@str=(":$sname ", "MODE ", "$_");
+	print S;
+	print FILE5 "$_\n";
+    }
+    sleep 3;
+    do dokill();
+}
+else {
+    while (<S>) {
+	$tar=0;
+	#print "Server: $_";
+	#print "test\n";
+	open (FILE5,">>privat.log");
+	open (FILE4,">>bot.log");
+	open (FILE6,">>unknow.log");
+	#if(/PRIVMSG $channel/ || /PRIVMSG $nick/) {
+	 if(/PRIVMSG $nick/) {
+		print $_;
+		if (/PRIVMSG $channel/){ $kuda=$channel}
+		#baron!~shurik@shurik.Te.NeT.UA PRIVMSG #baron :hi
+		($nick1,$all)=split(/!/,$_,2);
+		($nick0,$nick1)=split(/:/,$nick1,2);
+		chomp($nick1);
+		if (/PRIVMSG $nick/){ $kuda=$nick1}
+
+		($dd23,$d21,$mesg)=split(/:/,$_,3);
+		print FILE5 "<$nick1> $mesg";
+		#chomp($mesg);
+		chop($mesg);
+		print "DDD $mesg\n";
+		print FILE4 "$mesg\n";
+		open (FILE2,"<./words.irc");
+		while(<FILE2>) {
+			#print "$_\n";			
+			($s1,$s2)=split(/\&\&/,$_,2);
+			chomp($s1);
+			chomp($s2);
+			#print "$s1 $s2\n";
+			#if($mesg eq "hi") {print "DONE1\n"}
+			$_=$mesg;
+			if(/$s1/i) {
+				#print "DONE\n";
+				sleep(3);
+				print "PRIVMSG $nick1 :$s2\n";
+				print S "PRIVMSG $nick1 :$s2\n";
+				$tar=1;
+				print FILE5 "<-$nick1-> $s2\n";
+				last;
+			}
+		}
+	 close(FILE2);
+	}
+	if (/PING :$server/) {
+		print "PONG!\n";
+		print S "PONG $server\n";	
+	}
+	#:baron!~shurik@shurik.Te.NeT.UA JOIN :#baron
+	if (/JOIN :$channel/) {
+		if (/$nick/) {
+			next;
+		}
+		else  {
+			#:irc.rus.net 311 diatel diatel shurik iron.Te.NeT.UA
+			# * : Simple diatel
+			($nick1,$all)=split(/!/,$_,2);
+        	        ($nick0,$nick1)=split(/:/,$nick1,2);
+                	chomp($nick1);
+			#print S "PRIVMSG $nick1 : :) hi, kak dela ?\n";	
+			print S "WHOIS $nick1\n";
+		}	
+	}
+	if (/:$server 311/) {
+		($sa1,$sa2,$sa3)=split(/:/,$_,3);
+		($key1,$key2,$key3)=split(/33/,$sa3,3);
+		#chomp($key2);
+		#print "DONE11 $key1 $key2\n";
+		if($key2 ne "a") {
+			($n1,$n2,$n4,$nick1,$nick5)=split(/ /,$_,5);
+        		#($nick0,$nick1)=split(/:/,$nick1,2);
+	                #chomp($nick1);
+			#print S "PRIVMSG $nick1 : :) hi s 1 aprelia tebia :)\n";
+		}
+		else {
+			next;
+		}
+	}
+	close (FILE5);
+	if ($tr==1) { } else {print FILE6 "$nick1 $mesg"}
+	close (FILE6);
+    }
+}
+}

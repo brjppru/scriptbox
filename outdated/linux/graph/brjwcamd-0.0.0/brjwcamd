@@ -1,0 +1,121 @@
+#!/usr/bin/perl
+#
+# brj@webcam daemon. version 0.0.1 (c) copyright 2002, Roman Y. Bogdanov.
+# Lasted version you can get at http://brj.pp.ru/project/brjwcamd/
+#
+# This script based on webcamd code by 
+# Pierre Dinh-van <pierre@tuxfamily.org> http://www.bill2tux.org 
+#
+# Last modification: by brj
+#
+
+#######
+#
+# Config section is here.
+
+# Webpage and picture storage path (for using local webserver)                  
+$www_path = "/usr/local/brjwcamd/HTTProot";
+
+# Whereis located archive? www_path + /archive/
+$archive_path = "/usr/local/brjwcamd/HTTProot/archive";
+
+# Time refresh in seconds (min might be 5s)
+$inter = 5;
+
+#######
+#
+# You needn't to change anything after this line (-;
+#
+
+#### Analize arguments
+
+$action = $ARGV[0];
+
+if ($action eq "")
+  {
+    die("Usage : {start|stop|refresh}\n");
+  }
+elsif ($ARGV[1] ne "")
+ {
+    die("Too many args\n");
+ }
+
+#### Begin parse ARGV on start
+
+else
+  {
+    if ($action eq "start")
+    {
+      if (!(-e "/var/run/brjwcamd.pid"))  # brjwcamd is run?
+	{
+	  print("brj\@\webcam run, pictures are taken every $inter secondes\n");
+	  if (-e "/var/run/brjwcamd.stop") {`rm /var/run/brjwcamd.stop`};
+	  open(PID,">/var/run/brjcamd.pid"); # create pid file
+	  close(PID);
+	  # fork && exit;    # yeap!
+
+	  while(1)
+	    {
+	      getshot();
+	      last if (-e "/var/run/brjwcamd.stop");  
+	      sleep($inter);
+	    }
+	  system("rm -f /var/run/brjwcamd.stop");  # remove lock file
+	}
+      else                      # other pid? exit...
+	{
+	  print("brj\@\webcam is already running\n");
+	}
+    }
+  elsif ($action eq "stop")
+    {
+      if (!(-e "/var/run/brjwcamd.stop"))  # stop script
+	{
+	  if (-e "/var/run/webcamd.pid")  # kill pid
+	    {
+	      open(STOP,"> /var/run/brjwcamd.stop");  # stop script
+	      close(STOP);
+	      system("rm -f /var/run/brjwcamd.pid &");  #suppression pid
+	      print("Shutting down brj\@\webcam...\n");
+	      make_offline();    # make offline image
+	    }
+	  else
+	    {
+	      print ("brj\@\webcam is not running !\n"); # script don't started
+	      exit;
+	    }
+	}
+      else
+	{
+	  print("You have already ask brj\@\webcam to be stopped. Please wait...\n"); #si le stop existe deja
+	}
+    }
+  elsif ($action eq "refresh")
+    {
+      getshot();
+      print("Smile ! We are taking a shot ! (-:\n");  #prise d'image anticipée
+    }
+  else
+    {
+      print("I don't know this\n");
+    }
+}
+
+#### Smile! We are taking a shot!
+
+sub getshot()
+  {
+	# we get the date and hour
+        $year=""; $month=""; $day=""; $time="";
+	$year=`date +%Y`; $month=`date +%m`; $day=`date +%d`; $time=`date +%H%M%S.jpg`;
+	chomp($year); chomp($month); chomp($day); chomp($time);
+	system("mkdir -p $archive_path/$year/$month/$day");
+	system("vid | pnmtojpeg --quality=100 > $www_path/cam.jpg");
+	system("cp $www_path/cam.jpg $archive_path/$year/$month/$day/$year$month$day$time");
+  }
+
+sub make_offline()
+  {
+  }
+  
+### End of script
