@@ -1,0 +1,81 @@
+add address=10.10.24.10 always-broadcast=yes comment="pfsense pfsense " mac-address=00:0c:29:45:e1:27
+add address=10.10.24.11 always-broadcast=yes comment="esxi esxi " mac-address=00:8c:fa:c8:4d:80
+add address=10.10.24.14 always-broadcast=yes comment="qnap qnap storage " mac-address=00:08:9b:f0:3c:3e
+add address=10.10.24.15 always-broadcast=yes comment="1C 1C server " mac-address=00:0c:29:62:40:2b
+add address=10.10.24.18 always-broadcast=yes comment="lab2-hp lab2-hp server " mac-address=28:80:23:a1:c7:84
+add address=10.10.24.19 always-broadcast=yes comment="lab2-ilo LAB2 ilo in rack " mac-address=12:13:14:15:16:04
+add address=10.10.24.20 always-broadcast=yes comment="ats ATS " mac-address=08:00:23:37:4e:2a
+add address=10.10.24.21 always-broadcast=yes comment="ats-e1 ats trunk1 " mac-address=08:00:23:37:4e:2b
+add address=10.10.24.22 always-broadcast=yes comment="ats-e2 ats trunk2 " mac-address=08:00:23:37:4e:2c
+add address=10.10.24.30 always-broadcast=yes comment="moxa-au680 moxa-au680 " mac-address=00:90:e8:34:27:d3
+add address=10.10.24.31 always-broadcast=yes comment="moxa-au5800 moxa-au5800 " mac-address=00:90:e8:4d:7a:d9
+add address=10.10.24.32 always-broadcast=yes comment="moxa-ir200l moxa-ir200l " mac-address=00:90:e8:4d:7a:c3
+add address=10.10.24.33 always-broadcast=yes comment="moxa-ir200r moxa-ir200r " mac-address=00:90:e8:4d:7b:32
+add address=10.10.24.34 always-broadcast=yes comment="moxa-evolis moxa-evolis " mac-address=00:90:e8:4d:7a:a6
+add address=10.10.24.35 always-broadcast=yes comment="moxa-roller moxa-roller " mac-address=00:90:e8:4d:7a:ab
+add address=10.10.24.36 always-broadcast=yes comment="moxa-alifax1 moxa-alifax1 " mac-address=00:90:e8:4d:7a:af
+add address=10.10.24.37 always-broadcast=yes comment="brj Roman Y. Bogdanov " mac-address=d8:cb:8a:b3:5d:d7
+add address=10.10.24.38 always-broadcast=yes comment="moxa-alifax2 moxa-alifax2 " mac-address=00:90:e8:4e:5b:05
+add address=10.10.24.39 always-broadcast=yes comment="moxa-alifax3 moxa-alifax3 " mac-address=00:90:e8:4e:5b:0b
+add address=10.10.24.50 always-broadcast=yes comment="skorohod Skorohodova TG " mac-address=b8:ae:ed:d1:93:74
+add address=10.10.24.51 always-broadcast=yes comment="rm Romanchenko Alexander " mac-address=d8:cb:8a:b3:60:2a
+add address=10.10.24.52 always-broadcast=yes comment="polina Korsun Polina " mac-address=d8:cb:8a:b3:60:2e
+add address=10.10.24.53 always-broadcast=yes comment="petra Petrachenko " mac-address=d8:cb:8a:b3:60:2b
+add address=10.10.24.54 always-broadcast=yes comment="kyocera kyocera in 36 " mac-address=00:17:c8:04:73:dc
+add address=10.10.24.56 always-broadcast=yes comment="matus S.G. " mac-address=d8:cb:8a:b3:5f:60
+add address=10.10.24.57 always-broadcast=yes comment="pcr22 PCR + anal " mac-address=d8:cb:8a:b3:5d:7e
+add address=10.10.24.58 always-broadcast=yes comment="pcr1 pcr no anal " mac-address=40:8d:5c:2c:e6:7a
+add address=10.10.24.59 always-broadcast=yes comment="buhprint buh olga print " mac-address=60:02:92:4e:68:26
+add address=10.10.24.60 always-broadcast=yes comment="olgaprint buh olga nout print " mac-address=3c:a8:2a:f9:2a:cc
+add address=10.10.24.61 always-broadcast=yes comment="labsort lab sorter comp " mac-address=d8:cb:8a:b3:60:23
+add address=10.10.24.62 always-broadcast=yes comment="sorter sorter 2500 " mac-address=00:01:29:62:1a:da
+add address=10.10.24.63 always-broadcast=yes comment="itprint itprint " mac-address=58:20:b1:53:34:81
+add address=10.10.24.64 always-broadcast=yes comment="lab28 lab28 - kto eto? " mac-address=d8:cb:8a:b3:60:22
+add address=10.10.24.65 always-broadcast=yes comment="arc2000 arc2000 " mac-address=90:e2:ba:a5:4f:a4
+add address=10.10.24.66 always-broadcast=yes comment="vipnet vipnet " mac-address=10:10:10:20:30:20
+add address=10.10.24.67 always-broadcast=yes comment="vipclient vipclient " mac-address=10:10:10:20:30:21
+add address=10.10.24.68 always-broadcast=yes comment="zebra zebra " mac-address=d8:cb:8a:b3:60:34
+add address=10.10.24.69 always-broadcast=yes comment="pcrprint pcrprint " mac-address=58:20:b1:52:27:70
+add address=10.10.24.70 always-broadcast=yes comment="color-print color-print " mac-address=34:64:a9:96:c8:21
+add address=10.10.24.71 always-broadcast=yes comment="karpov karpov " mac-address=f0:76:1c:31:1d:0d
+add address=10.10.24.72 always-broadcast=yes comment="olgap olga p nastol " mac-address=50:7b:9d:b0:cf:b1
+add address=10.10.24.73 always-broadcast=yes comment="printolga olga p. print " mac-address=fc:3f:db:c1:9c:0a
+add address=10.10.24.74 always-broadcast=yes comment="stat-01 stat-01 " mac-address=d8:cb:8a:b3:60:1f
+add address=10.10.24.75 always-broadcast=yes comment="polinaprint polinaprint " mac-address=58:20:b1:52:77:dc
+add address=10.10.24.76 always-broadcast=yes comment="pcr-gp" mac-address=94:de:80:df:74:6c
+add address=10.10.24.77 always-broadcast=yes comment="brjap brjap " mac-address=2c:60:0c:e7:fd:20
+add address=10.10.24.78 always-broadcast=yes comment="au680-inet au680-inet " mac-address=00:19:0f:24:c5:a1
+add address=10.10.24.79 always-broadcast=yes comment="brjfox2 brjfox2 " mac-address=fc:3d:93:75:0b:fb
+add address=10.10.24.80 always-broadcast=yes comment="sip122" mac-address=08:00:23:a8:00:2f
+add address=10.10.24.81 always-broadcast=yes comment="sip123" mac-address=08:00:23:a8:00:2e
+add address=10.10.24.82 always-broadcast=yes comment="sip126" mac-address=08:00:23:a8:00:2c
+add address=10.10.24.83 always-broadcast=yes comment="sip127" mac-address=08:00:23:a8:00:4c
+add address=10.10.24.84 always-broadcast=yes comment="sip125" mac-address=08:00:23:a8:00:4b
+add address=10.10.24.85 always-broadcast=yes comment="sip116" mac-address=08:00:23:a8:00:4a
+add address=10.10.24.86 always-broadcast=yes comment="sip131" mac-address=08:00:23:a8:00:43
+add address=10.10.24.87 always-broadcast=yes comment="sip132" mac-address=08:00:23:a8:00:41
+add address=10.10.24.88 always-broadcast=yes comment="sip124" mac-address=08:00:23:a8:00:40
+add address=10.10.24.89 always-broadcast=yes comment="sip111" mac-address=08:00:23:a8:00:c2
+add address=10.10.24.90 always-broadcast=yes comment="sip112" mac-address=08:00:23:a8:00:c0
+add address=10.10.24.91 always-broadcast=yes comment="sip113" mac-address=08:00:23:a8:00:c1
+add address=10.10.24.92 always-broadcast=yes comment="sip114" mac-address=08:00:23:a7:ff:f3
+add address=10.10.24.93 always-broadcast=yes comment="sip115" mac-address=08:00:23:a7:ff:f1
+add address=10.10.24.94 always-broadcast=yes comment="sip121" mac-address=08:00:23:a7:ff:f2
+add address=10.10.24.95 always-broadcast=yes comment="dianov-book dianov-book " mac-address=68:f7:28:50:3b:21
+add address=10.10.24.96 always-broadcast=yes comment="clinica clinica " mac-address=d8:cb:8a:b3:60:3d
+add address=10.10.24.97 always-broadcast=yes comment="del-iris" mac-address=00:19:0f:25:fb:7d
+add address=10.10.24.98 always-broadcast=yes comment="immunologia immunologia " mac-address=d8:cb:8a:b3:60:1c
+add address=10.10.24.99 always-broadcast=yes comment="test-test test-test " mac-address=00:01:02:03:02:02
+add address=10.10.24.100 always-broadcast=yes comment="hozyayka hozyayka Irina " mac-address=d8:cb:8a:b3:60:3c
+add address=10.10.24.101 always-broadcast=yes comment="hematology" mac-address=d8:cb:8a:b3:5f:89
+add address=10.10.24.102 always-broadcast=yes comment="lab28-2 lab28-2 " mac-address=d8:cb:8a:b3:5e:ec
+add address=10.10.24.103 always-broadcast=yes comment="video video net " mac-address=c8:3a:35:09:0e:d0
+add address=10.10.24.104 always-broadcast=yes comment="reg-04 reg-04 " mac-address=d8:cb:8a:b3:5f:4d
+add address=10.10.24.105 always-broadcast=yes comment="reg-01 reg-01 " mac-address=d8:cb:8a:b3:60:3b
+add address=10.10.24.106 always-broadcast=yes comment="HP-M604-reg-left print-HP-M604-reg-left " mac-address=fc:3f:db:bd:78:cd
+add address=10.10.24.107 always-broadcast=yes comment="reg-03 reg-03 " mac-address=d8:cb:8a:b3:5f:b2
+add address=10.10.24.108 always-broadcast=yes comment="reg-02 reg-02 " mac-address=d8:cb:8a:b3:60:38
+add address=10.10.24.109 always-broadcast=yes comment="reg-05 reg-05 " mac-address=d8:cb:8a:b3:60:31
+add address=10.10.24.110 always-broadcast=yes comment="gemostaz gemostaz " mac-address=d8:cb:8a:b3:60:28
+add address=10.10.24.111 always-broadcast=yes comment="kadri kadri " mac-address=50:7b:9d:b3:0a:18
+add address=10.10.24.112 always-broadcast=yes comment="pcr-notebook pcr-notebook" mac-address=3c:97:0e:dc:4d:dc
