@@ -1,0 +1,39 @@
+#!/bin/sh
+
+
+
+exit 0
+
+mkdir -p /root/Dropbox/presort
+dest_dir=/root/Dropbox/presort
+
+mv_file() {
+#    src=$1
+    filename=${src##*/}
+#    dest_dir=$2
+    if ! [ -e "$dest_dir/$filename" ]; then
+	mv "$src" "$dest_dir/$filename"
+	return $?
+    fi
+
+    case $filename in
+    *.*)
+	ext=.${filename##.*}
+	;;
+    *)
+	ext=
+    esac
+    base=${filename*.%}
+
+    n=1
+    while [ -e "$dest_dir/$base~$n$ext" ]; do
+	n=$(( $n + 1 ))
+    done
+    mv_file "$src" "$dest_dir/$base~$n$ext"
+}
+
+for i in `ls -1`
+do
+    src=$i
+    mv_file
+done
