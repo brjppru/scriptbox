@@ -1,0 +1,10 @@
+
+on ssh got old key? 
+
+sign_and_send_pubkey: no mutual signature supported ?
+
+Just add this one inside ~/.ssh/config.
+
+Host *
+  PubkeyAcceptedKeyTypes=+ssh-dss
+

@@ -1,0 +1,28 @@
+#
+# brj@etc crontab
+#
+
+SHELL=/bin/sh
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+MAILTO=sam@brj.pp.ru
+
+# m 	h 	dom 	mon 	dow 	user	command
+
+*/30	* 	* 	* 	* 	root /bin/sh /opt/backup/brj.hourly.dropbox.sh >> /dev/null 2>&1
+
+#0	2,9,15,18 *	*	*	root /bin/sh /opt/mail/news-grab.sh >> /dev/null 2>&1
+#*/59	* 	* 	* 	* 	root /bin/sh /opt/mail/rssfeed.sh  >> /dev/null 2>&1
+#0	0	*	*	*	root /bin/sh /opt/mail/mailworks.sh >> /dev/null 2>&1
+
+#0	6	*	*	*	root /bin/bash /opt/torrent/update-torrent-block >> /dev/null 2>&1
+#*/5	* 	* 	* 	* 	root /bin/sh /opt/torrent/grab-torrent.sh >> /dev/null 2>&1
+#*/15	* 	* 	* 	* 	root /bin/sh /opt/torrent/stop.seed.sh >> /dev/null 2>&1
+
+*/15	* 	* 	* 	* 	root /bin/sh /opt/ifttt/boss.sh >> /dev/null 2>&1
+
+#0 	7 	* 	* 	* 	root /root/bin/daily/todoist.sh >> /dev/null 2>&1
+0	4 	* 	* 	* 	root /bin/sh /opt/backup/daily.sh >> /dev/null 2>&1
+
+0 	5 	* 	* 	* 	root /bin/sh /opt/backup/micro.backup.sh >> /dev/null 2>&1
+
+#4	4	*	*	*	root /bin/sh /opt/ifttt/today-dairy-mail.sh >> /dev/null 2>&1

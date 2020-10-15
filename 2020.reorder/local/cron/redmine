@@ -1,0 +1,11 @@
+#
+# brj@etc crontab
+#
+
+SHELL=/bin/sh
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+MAILTO=sam@brj.pp.ru
+
+# m 	h 	dom 	mon 	dow 	user	command
+
+0 	8 	* 	* 	1-5 	root /bin/sh /opt/redmine/worktodo.sh >> /dev/null 2>&1

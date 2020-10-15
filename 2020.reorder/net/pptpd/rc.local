@@ -1,0 +1,18 @@
+#!/bin/sh
+
+iptables -F
+iptables -X
+
+iptables -t nat -F
+iptables -t mangle -F
+
+iptables -P INPUT ACCEPT
+iptables -P FORWARD ACCEPT
+iptables -P OUTPUT ACCEPT
+
+# mtu black hole
+iptables -I FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
+
+# route nat vse 
+iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -o enp4s0 -j MASQUERADE
+

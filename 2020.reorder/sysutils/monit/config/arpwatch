@@ -1,0 +1,4 @@
+check process arpwatch matching "arpwatch"
+  start program = "/bin/systemctl start arpwatch"
+# with timeout 60 seconds
+  stop program  = "/bin/systemctl stop arpwatch"

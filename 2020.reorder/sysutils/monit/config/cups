@@ -1,0 +1,4 @@
+check process CUPSd with pidfile /run/cups/cupsd.pid
+  start program = "/bin/systemctl start cups" with timeout 60 seconds
+  stop program  = "/bin/systemctl stop cups"
+  if failed host 127.0.0.1 port 631 3 cycles then restart
