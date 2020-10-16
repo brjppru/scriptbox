@@ -1,0 +1,434 @@
+# HP debian tools #
+
+https://downloads.linux.hpe.com/SDR/project/mcp/
+
+curl http://downloads.linux.hpe.com/SDR/hpPublicKey1024.pub | apt-key add -
+curl http://downloads.linux.hpe.com/SDR/hpPublicKey2048.pub | apt-key add -
+curl http://downloads.linux.hpe.com/SDR/hpPublicKey2048_key1.pub | apt-key add -
+curl http://downloads.linux.hpe.com/SDR/hpePublicKey2048_key1.pub | apt-key add -
+
+via:  http://ximunix.blogspot.com
+
+Abbreviations: 
+chassisname = ch
+controller = ctrl 
+logicaldrive = ld
+physicaldrive = pd 
+drivewritecache = dwc
+
+There are two ways execute the command:
+
+1. When you type the command hpacucli/hpssacli, it will display a “=>” prompt as shown below where you can enter all the hpacucli commands:
+
+root@ximunix:~# hpssacli
+HP Smart Storage Administrator CLI 2.10.14.0
+Detecting Controllers...Done.
+Type "help" for a list of supported commands.
+Type "exit" to close the console.
+
+=> ctrl all show
+
+Smart Array P400 in Slot 1                (sn: XXXXXXXXXXXXXX)
+
+=> quit
+
+2. Or, if you don’t want to get to the hpacucli/hpssacli prompt, you can just enter the following directly in the Linux prompt:
+
+root@ximunix:~# hpssacli ctrl all show
+
+Smart Array P400 in Slot 1                (sn: XXXXXXXXXXXXXX)
+
+Controller Commands
+## Display detail of Controller
+hpssacli ctrl all show config
+
+## Display detail of Controller
+hpssacli ctrl all show config detail
+
+## Display status of Controller
+hpssacli ctrl all show status
+
+## Rescan for New Devices
+hpssacli rescan
+
+Physical Drive Commands
+## Display detail information of all physical drives
+hpssacli ctrl slot=0 pd all show
+
+## Display detail information of single phiysical drive
+hpssacli ctrl slot=0 pd 2:3 show detail
+
+## Display status of all physical drives
+hpssacli ctrl slot=0 pd all show status
+
+## Display status of single physical drive
+hpssacli ctrl slot=0 pd 2:3 show status
+
+## To Erase the physical drive (WARN!)
+hpssacli ctrl slot=0 pd 2:3 modify erase
+
+## To enable the LED of a physical drive
+hpssacli ctrl slot=0 pd 2:3 modify led=on
+
+## To disable the LED of a physical drive
+hpssacli ctrl slot=0 pd 2:3 modify led=off
+
+Logical Drive Commands
+## Display detail information of all logical drives
+hpssacli ctrl slot=0 ld all show
+
+## Display detail information of single logical drive
+hpssacli ctrl slot=0 ld 4 show
+
+## Display status of all logical drives
+hpssacli ctrl slot=0 ld all show status
+
+## Display status of single logical drive
+hpssacli ctrl slot=0 ld 4 show status
+
+## Re-enabling failed drive
+hpssacli ctrl slot=0 ld 4 modify reenable forced
+
+## Create logical drive with RAID 0 using one drive
+hpssacli ctrl slot=0 create type=ld drives=1:12 raid=0
+
+## Create LogicalDrive with RAID 1 using two drives
+hpssacli ctrl slot=0 create type=ld drives=1:13,1:14 size=300 raid=1
+
+## Create LogicalDrive with RAID 5 using five drives
+hpssacli ctrl slot=0 create type=ld drives=1:13,1:14,1:15,1:16,1:17 raid=5
+
+## Delete a specific logical drive
+hpssacli> ctrl slot=0 ld 4 delete
+
+## Expanding a logical drive by adding two more drives
+hpssacli> ctrl slot=0 ld 4 add drives=2I:1:6,2I:1:7
+
+## Extending the logical drive
+hpssacli> ctrl slot=0 ld 4 modify size=500 forced
+
+## Add two spare disks
+hpssacli> ctrl slot=0 array all add spares=2I:1:6,2I:1:7
+
+Caching
+## Enable Cache
+if you have a battery pack installed but your Drive Write Cache is still shown as “Disabled”, you can enable it using the command:
+
+root@ximunix:~# hpssacli ctrl slot=0 modify dwc=enable
+
+Warning: Without the proper safety precautions, use of write cache on physical 
+         drives could cause data loss in the event of power failure.  To ensure
+         data is properly protected, use redundant power supplies and
+         Uninterruptible Power Supplies. Also, if you have multiple storage
+         enclosures, all data should be mirrored across them. Use of this
+         feature is not recommended unless these precautions are followed.
+         Continue? (y/n) y
+
+Warning is self-explaining I guess. Disks's cache aren't protected by controller's battery. It's up to you but I wouldn't enable such features if your power supply isn't protected.
+
+## Disable Cache
+hpssacli ctrl slot=0 modify dwc=disable
+
+## Modify Accelerator Ratio (read/write):
+hpssacli ctrl slot=0 modify cacheratio=25/75
+
+## Enable Array Acceleration for one of your logical drives use:
+hpssacli ctrl slot=0 ld 4 modify aa=enable
+
+## Enable Array Acceleration for all of your logical drives use:
+hpssacli ctrl slot=0 ld all modify arrayaccelerator=enable
+
+Generate Diagnost Report
+hpssacli ctrl all diag file=/tmp/ADUreport.zip ris=on xml=on zip=on
+
+To all the SysAdmin which always jump into this situation where you have to support HP ProLiant Servers under GNU/Debian and you don't find the Official Support from HP. Here are some tips&tricks.
+
+WARNING: This blog, of course, does not infer official support from HP. Information on official HP support offerings for Debian can be found on http://hp.com/go/debian
+
+Debian + bnx2 Firmware
+First of all, and as how many of you know, to Install a new Debian on HP ProLiant servers, we need the bnx2 Firmware.
+If you are a lazy SysAdmin like me, and you don't want to build the CD with Firmware by your own, there is a non-free Repo where you can find Debian including the bnx2 firmware:
+http://cdimage.debian.org/cdimage/unofficial/non-free/cd-including-firmware/
+
+The cool thing of this, is that It Works!  ;)
+
+Now, after you got your Debian pretty installed and running in your cool HP ProLiant server, here are some tools that you may need in your HP Box.
+
+HP-Tools
+ Sources
+
+wget http://downloads.linux.hpe.com/SDR/add_repo.sh
+chmod +x add_repo.sh
+./add_repo.sh mcp
+
+For example:
+
+root@test01:~# ./add_repo.sh mcp
+note : You must read and accept the License Agreement to continue.
+Press enter to display it ...
+ END USER LICENSE AGREEMENT
+ PLEASE READ CAREFULLY: THE USE OF THE SOFTWARE IS SUBJECT TO THE TERMS AND CONDITIONS THAT FOLLOW (AGREEMENT), UNLESS THE SOFTWARE IS SUBJECT TO A SEPARATE LICENSE AGREEMENT BETWEEN YOU AND HP OR ITS SUPPLIERS.  BY DOWNLOADING, INSTAL
+LING, COPYING, ACCESSING, OR USING THE SOFTWARE, OR BY CHOOSING THE I ACCEPT OPTION LOCATED ON OR ADJACENT TO THE SCREEN WHERE THIS AGREEMENT MAY BE DISPLAYED, YOU AGREE TO THE TERMS OF THIS AGREEMENT, ANY APPLICABLE WARRANTY STATEMENT
+ AND THE TERMS AND CONDITIONS CONTAINED IN THE ANCILLARY SOFTWARE  (as defined below). IF YOU AR E ACCEPTING THESE TERMS ON BEHALF OF ANOTHER PERSON OR A COMPANY OR OTHER LEGAL ENTITY, YOU REPRESENT AND WARRANT THAT YOU HAVE FULL AUTHOR
+ITY TO BIND THAT PERSON, COMPANY, OR LEGAL ENTITY TO THESE TERMS.  IF YOU DO NOT AGREE TO THESE TERMS, DO NOT DOWNLOAD, INSTALL, COPY, ACCESS, OR USE THE SOFTWARE, AND PROMPTLY RETURN THE SOFTWARE WITH PROOF OF PURCHASE TO THE PARTY FROM
+ WHOM YOU ACQUIRED IT AND OBTAIN A REFUND OF THE AMOUNT YOU PAID, IF ANY.  IF YOU DOWNLOADED THE SOFTWARE, CONTACT THE PARTY FROM WHOM YOU ACQUIRED IT.
+ QUANTITY OF DEVICES:
+ 1.& nbsp;  GENERAL TERMS
+...
+...
+...
+Do you accept? (yes/no) yes
+info : Repo added to /etc/apt/sources.list.d/HP-mcp.list.
+root@test01:~# less /etc/apt/sources.list.d/HP-mcp.list
+
+# auto-generated by
+#   http://downloads.linux.hpe.com/SDR/repo/./add_repo.sh mcp
+ 
+# By including and using this configuration,
+# you agree to the terms and conditions
+# of the HP Software License Agreement at
+# http://h20000.www2.hp.com/bizsupport/TechSupport/softwareLicense.jsp?lang=en&cc=us&prodTypeId=15351&prodSeriesId=1121516&prodNameId=3288134&taskId=135
+ 
+# HP Software Delivery Repository for mcp
+deb http://downloads.linux.hpe.com/SDR/repo/mcp jessie/current non-free
+
+root@test01:~#
+
+
+And then we download the GPG-KEY:
+
+# corresponding to http://downloads.linux.hpe.com/faq.html:
+wget http://downloads.linux.hpe.com/SDR/repo/mcp/GPG-KEY-mcp -O - | apt-key add -
+apt-get update
+ 
+OR
+Add this line to your APT sources list:
+
+# HP-TOOLS
+deb http://downloads.linux.hpe.com/SDR/downloads/MCP/debian jessie/current non-free
+
+Add HP-apt Key:
+wget http://downloads.linux.hpe.com/SDR/downloads/MCP/GPG-KEY-mcp -O - | apt-key add -
+
+Then run apt-get update and install any of the packages you might need.
+
+Installing Individual Packages
+ 
+HP System Health Application and Command line Utilities (hp-health)
+The HP System Health Application and Command Line Utilities (hp-health) is a collection of applications and tools which enables monitoring of fans, power supplies, temperature sensors, and other management events. It also provides collection of command-line utilities: the ProLiant boot configuration utility (hpbootcfg), the ProLiant Management Command Line Interface Utility (hpasmcli), the ProLiant Integrated Management Log (IML) Utility (hplog), and the UID (blue) Light Utility (hpuid). To install the hp-health package, run:
+
+apt-get install hp-health
+
+Here we can have some interesting usage for hpasmcli:
+
+root@anneke:~$ hpasmcli
+HP management CLI for Linux (v1.0)
+Copyright 2004 Hewlett-Packard Development Group, L.P.
+
+--------------------------------------------------------------------------
+NOTE: Some hpasmcli commands may not be supported on all Proliant servers.
+      Type 'help' to get a list of all top level commands.
+--------------------------------------------------------------------------
+hpasmcli> help
+CLEAR  DISABLE  ENABLE  EXIT  HELP  NOTE  QUIT  REPAIR  SET  SHOW
+hpasmcli>
+
+As it can be seen in the above example several main tasks can be done, to get the usage of every command simply use HELP followed by the command.
+
+hpasmcli> help show
+USAGE: SHOW [ ASR | BOOT | DIMM | F1 | FANS | HT | IML | IPL | NAME | PORTMAP | POWERSUPPLY | PXE | SERIAL | SERVER | TEMP | UID | WOL ]
+hpasmcli>
+hpasmcli> HELP SHOW BOOT
+USAGE: SHOW BOOT: Shows boot devices.
+hpasmcli>
+
+The scripting mode hpasmcli can be used directly from the shell prompt with the -s option and the command between quotation marks. It can be an easier way, or just a simple way to run some scripts or checks for the health status of our Servers. For example:
+
+root@anneke:~$ hpasmcli -s "show server"
+
+System        : ProLiant DL380 G5
+Serial No.    : xxxxxx
+ROM version   : P56 05/02/2011
+iLo present   : Yes
+Embedded NICs : 2
+        NIC1 MAC: x:x:x:x:x:x
+        NIC2 MAC: x:x:x:x:x:x
+
+Processor: 0
+        Name         : Intel Xeon
+        Stepping     : 6
+        Speed        : 2500 MHz
+        Bus          : 1333 MHz
+        Core       &n bsp; : 4
+        Thread       : 4
+        Socket       : 1
+        Level1 Cache : 128 KBytes
+        Level2 Cache : 12288 KBytes
+        Status       : Ok
+
+Processor: 1
+        Name         : Intel Xeon
+        Stepping     : 6
+        Speed        : 2500 MHz
+        Bus          : 1333 MHz
+        Core         : 4< br />        Thread       : 4
+        Socket       : 2
+        Level1 Cache : 128 KBytes
+        Level2 Cache : 12288 KBytes
+        Status       : Ok
+
+Processor total  : 2
+
+Memory installed : 32768 MBytes
+ECC supported    : Yes
+
+or:
+
+root@anneke:~$ hpasmcli -s "show fan; show temp"
+
+Fan  Location        Present Speed  of max  Redundant  Partner  Hot-pluggable
+---  --------&nb sp;       ------- -----  ------  ---------  -------  -------------
+#1   I/O_ZONE        Yes     NORMAL  45%     Yes        0        Yes          
+#2   I/O_ZONE        Yes     NORMAL  45%     Yes        0        Yes          
+#3   PROCESSOR_ZONE  Yes     NORMAL  41%     Yes        0        Yes          
+#4   PROCE SSOR_ZONE  Yes     NORMAL  36%     Yes        0        Yes          
+#5   PROCESSOR_ZONE  Yes     NORMAL  36%     Yes        0        Yes          
+#6   PROCESSOR_ZONE  Yes     NORMAL  36%     Yes        0        Yes          
+
+
+Sensor   Location              Temp       Threshold
+------   --------   &nb sp;          ----       ---------
+#1        I/O_ZONE             48C/118F   70C/158F
+#2        AMBIENT              23C/73F    39C/102F
+#3        CPU#1                36C/96F    127C/260F
+#4        CPU#1                36C/96F    127C/260F
+#5        SYSTEM_BD            50C/122F   77C/170F
+#6    &n bsp;   CPU#2                36C/96F    127C/260F
+#7        CPU#2                36C/96F    127C/260F
+
+or:
+
+root@anneke:~$ hpasmcli -s "show dimm" | egrep "Module|Status"
+Module #:                     1
+Status:                       Ok
+Module #:                     2
+Status:&n bsp;                      Ok
+Module #:                     3
+Status:                       Ok
+Module #:                     4
+Status:                       Ok
+Module #:                     5
+Status:                       Ok
+Mod ule #:                     6
+Status:                       Ok
+Module #:                     7
+Status:                       Ok
+Module #:                     8
+Status:                       Ok
+
+
+and many more... you can play a bit with them! ;)
+
+HP RILOE II/iLO online c onfiguration utility (hponcfg)
+Hponcfg is a command line utility that can be used to configure iLO/RILOE II from within the operating system without requiring a reboot of the server. To install the hponcfg package, run:
+
+apt-get install hponcfg
+
+Say you want to check the Firmware version of you iLO:
+root@anneke:~$  hponcfg | grep Firmware
+Firmware Revision = 1.22 Device type = iLO 3 Driver name = hpilo
+root@anneke:~$
+
+Insight Management SNMP Agents for HP ProLiant Systems (hp-snmp-agents)
+The HP SNMP Agents (hp-snmp-agents) is a collection of SNMP protocol based agents and tools which enables monitoring of fans, power supplies, temperature sensors and other management events via SNMP. To install the hp-snmp-agents package, run:
+
+apt-get instal l hp-snmp-agents
+
+To configure the hp-snmp-agents package, run:
+
+/sbin/hpsnmpconfig
+
+Finally, restart the hp-snmp-agents service:
+
+/etc/init.d/hp-snmp-agents restart
+
+Note: In some configurations, the following message will be displayed when hp-snmp-agents starts:
+
+    FATAL: Module sg not found.
+
+This message can be safely ignored... (so it says HP :P )
+
+HP System Management Homepage (hpsmh)
+The HP System Management Homepage (hpsmh) provides a consolidated view for single server management highlighting tightly integrated management functionalities including performance, fault, security, diagnostic, configuration, and software change management. To install the hpsmh package, run:
+
+apt-get install hpsmh
+
+Note: You may see the following message the first time you attempt to install hpsmh:
+
+I/O warning : failed to load external entity "/opt/hp/hpsmh/conf/smhpd.xml"
+
+If you see this message, you will need to restart the hpsmh service before you can make use of it. To restart the hpsmh service, run:
+
+/etc/init.d/hpsmhd restart
+
+HP System Management Homepage Templates (hp-smh-templates)
+The HP System Management Homepage Templates for Linux (hp-smh-templates) contains the System Management Homepage Templates for Server, Management processor, NIC and Storage subsystems. The templates are a collection of html, javascript and php files that act as a GUI to display the SNMP data provided by each subsystems agent(s). This package is dependant on the hp-snmp-agents package and also on the hpsmh package to serve the page s to the browser. To install the hp-smh-templates package, run:
+
+apt-get install hp-smh-templates
+
+HP Command Line Array Configuration Utility (hpacucli/hpssacli)
+The Array Configuration Utility CLI (hpacucli) is a command line based disk configuration program that allows you to configure Smart Array Controllers and RAID Array Controllers.
+
+For this special friend, we have another Repo which has the software more up2date!
+
+
+Add this line to your APT sources list: (if the package is not already working with the previous repo (see at the beginning of the post))
+
+deb http://downloads.linux.hpe.com/SDR/downloads/MCP jessie/current non-free
+
+Packages are now signed, please run the following command after adding the repository to sources .list:
+wget -O - http://downloads.linux.hpe.com/SDR/downloads/MCP/debian/dists/jessie/current/Release.gpg | sudo apt-key add -
+
+Now Run:
+apt-get update
+apt-get install hpssacli
+
+And  for a quick guide of the commands of this tool, you can take a look on my special guide ;)
+http://www.datadisk.co.uk/html_docs/redhat/hpacucli.htm
+
+HP Array Configuration Utility (cpqacuxe)
+The HP Array Configuration Utility (cpqacuxe) is a web-based disk configuration utility for HP array controllers. To install cpqacuxe package, run:
+
+apt-get install cpqacuxe
+
+To enable the use of the web-based Array Configuration Utility, you must first manually start the cpqacuxe service fro m the command line:
+
+/usr/sbin/cpqacuxe
+
+
+ Hope this helps to the lost souls that need some of these things!
+
+If in your new freshly installed Debian Jessie you find the following error while running hpacucli:
+
+ximena@xdev:~$ hpacucli ctrl all show status
+
+Error: No controllers detected.
+
+Don't break your brain and install "hpssacli" from the same repo:
+
+ximena@xdev:~$ hpssacli ctrl all show config
+
+Smart Array P440ar in Slot 0 (Embedded)   (sn: XXXXXXXXXXX)
+
+   array A (SAS, Unused Space: 0  MB)
+
+
+      logicaldrive 1 (558.9 GB, RAID 1, OK)
+
+      physicaldrive 1I:1:1 (port 1I:box 1:bay 1, SAS, 600 GB, OK)
+      physicaldrive 1I:1:2 (port 1I:box 1:bay 2, SAS, 600 GB, OK)
+
+ximena@xdev:~$
+
+And that's it... 
+

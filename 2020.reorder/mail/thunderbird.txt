@@ -1,0 +1,28 @@
+====== Thunderbird 38.3 ======
+
+==== Джедай ====
+
+  * тема Airmail -> taeco -> https://addons.mozilla.org/ru/thunderbird/addon/airmail/
+  * AchiveThis -> https://addons.mozilla.org/ru/thunderbird/addon/archive-this/
+  * gcontactsync -> https://addons.mozilla.org/en-US/thunderbird/addon/gcontactsync/
+  * Hide Local Folders -> https://addons.mozilla.org/ru/thunderbird/addon/hide-local-folders/
+  * gcalsync -> https://addons.mozilla.org/ru/thunderbird/addon/provider-for-google-calendar/
+
+==== Настройки ====
+
+  * отключить все уведомления
+  * отключить использвать автоматическую / плавную прокрутку
+
+==== archive this ====
+
+<note>джедайская метода</note> 
+
+  * ctl-alt-1 -> в архив
+  * ctl-alt-2 -> в папку делать
+  * ctl-alt-3 -> в папку длинное / не понятно что делать, но реагировать нужно
+  * ctl-alt-4 -> нужно делать, но ещё время не пришло
+
+==== Yandex ====
+
+    * https://yandex.ru/support/mail/mail-clients.xml#imap
+    * https://yandex.ru/support/mail/mail-clients/mozilla-thunderbird.xml
