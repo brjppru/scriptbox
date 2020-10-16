@@ -1,0 +1,482 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+    <title>Puffy Security</title>
+    <meta name="resource-type" content="document">
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <meta name="description" content="the main page">
+    <meta name="keywords" content="openbsd,main">
+    <meta name="distribution" content="global">
+    <meta name="copyright" content="This document copyright 2015 by Thomas Dwyer http://tomd.tel.">
+    <link rel="shortcut icon" HREF="/favicon.ico" TYPE="image/x-icon">
+    <style>
+      a:link    {color:#204080; text-decoration:none; font-weight:normal}
+      a:visited {color:#204080; text-decoration:none; font-weight:normal}
+      a:hover   {color:#804020; text-decoration:underline; font-weight:normal}
+      a:active  {color:#204080; text-decoration:none; font-weight:normal}
+    </style>
+</head>
+<body text="#000000" bgcolor="#ffffff" topmargin=0 leftmargin=0 marginheight=0 marginwidth=0>
+  <table width="100%" height="100%" border="0" cellspacing="0" cellpadding="4">
+  <tr>
+    <td bgcolor="#6bbdd6" rowspan="2" valign=top>
+      <big><b>Site Index</b></big><br>
+        &nbsp;<a style="color:#000000" href="/wiki/index.html">Wiki</a><br>
+      <p>
+
+      <big><b>External Links</b></big><br>
+        &nbsp;<a style="color:#000000" href="http://tomd.tel">Public Directory</a><br>
+      <p>
+
+      <big><b>Search Site</b></big><br>
+      <form method=GET action="http://www.google.com/search">
+      <input type="text" name="q" maxlength="255" value="">
+      <input type="hidden" name="domains" value="puffysecurity.com">
+      <input type="hidden" name="sitesearch" value="puffysecurity.com">
+      <br/>
+      <input type="submit" name="btnG" value="Search">
+      </form>
+      <p>
+    </td>
+    <td bgcolor="#007b9c" rowspan="2"><font size="1">&nbsp;</font></td>
+    <td bgcolor="#ffffff" valign="top">
+      <a id="top"></a>
+      <center>
+        <h1><a style="color:#000000" href="/"><b>Puffy Security</b></a></h1>
+      </center>
+      <hr>
+
+<p><center>
+<a href="http://www.opensmtpd.org"><img src="/images/opensmtpd.png"></a></p>
+<h3>OpenBSD Email Server</h3>
+<p></center></p>
+<p>This Wiki page will walk through the setup of an OpenBSD Email Server.</p>
+<p><em>The server will be built with:</em>
+ <a href="http://www.opensmtpd.org" title="OpenSMTPD"><i>Open</i>SMTPD</a> ,
+ <a href="http://www.libressl.org" title="LibreSSL">Lib<i>re</i>SSL</a> ,
+ <a href="http://www.openbsd.org/spamd" title="spamd">spamd</a> ,
+ <a href="http://www.dovecot.org" title="Dovecot">Dovecot</a> ,and
+ <a href="http://dkimproxy.sourceforge.net/" title="DKIMproxy">DKIMproxy</a></p>
+<p><em>OpenSMTPD will be configured to:</em></p>
+<ul>
+<li>Receive mail for Local User Accounts</li>
+<li>Receive mail for Virtual Domains</li>
+<li>Provide Virtual Domain aatch-all aliases for local user accounts</li>
+<li>Use SSL Cert Signed by a Personal Certificate Authority for SMTPS</li>
+<li>Use SSL Cert Signed by a Public Certificate Authority for STARTTLS</li>
+<li>Require STARTTLS for MTA-to-MTA Connections on Port 25</li>
+<li>Send Un-Signed email through <code>dkimproxy_out</code> Before Relay</li>
+</ul>
+<h4><a id="contents"></a>Table of Contents</h4>
+<ol>
+<li><a href="#1">Install Packages</a></li>
+<li><a href="#2">Create Maildir</a></li>
+<li><a href="#3">Configure PF Firewall</a><ol>
+<li><a href="#3.1"><code>/etc/pf.conf</code></a></li>
+</ol>
+</li>
+<li><a href="#4">Configure Daemons</a><ol>
+<li><a href="#4.1"><code>/etc/rc.conf.local</code></a></li>
+</ol>
+</li>
+<li><a href="#5">Configure OpenSMTPD</a><ol>
+<li><a href="#5.1"><code>/etc/mail/smtpd.conf</code></a></li>
+<li><a href="#5.2">OpenSMTPD Tables</a><ol>
+<li><a href="#5.2.1"><code>/etc/mail/domains</code></a></li>
+<li><a href="#5.2.2"><code>/etc/mail/users</code></a></li>
+<li><a href="#5.2.3"><code>/etc/mail/blacklist-recipients</code></a></li>
+</ol>
+</li>
+</ol>
+</li>
+<li><a href="#6">DKIM and DomainKey</a><ol>
+<li><a href="#6.1">Create DKIM DomainKey</a></li>
+<li><a href="#6.2">Make DNS Record</a><ol>
+<li><a href="#6.2.1"><code>/var/dkimproxy/default.txt</code></a></li>
+</ol>
+</li>
+<li><a href="#6.3">Configure Outbound Mail Signing</a><ol>
+<li><a href="#6.3.1"><code>/etc/dkimproxy_out.conf</code></a></li>
+</ol>
+</li>
+</ol>
+</li>
+<li><a href="#7">Configure Dovecot for IMAP</a><ol>
+<li><a href="#7.1"><code>/etc/dovecot/dovecot.conf</code></a></li>
+<li><a href="#7.2"><code>/etc/dovecot/conf.d/10-auth.conf</code></a></li>
+<li><a href="#7.3"><code>/etc/dovecot/conf.d/10-mail.conf</code></a></li>
+<li><a href="#7.4"><code>/etc/dovecot/conf.d/10-ssl.conf</code></a></li>
+</ol>
+</li>
+</ol>
+<hr />
+<h3><a id="1"><a href="#top">1</a> Install Packages</a></h3>
+<p>In this setup we will not use <code>dkim-milter</code>, but we install it anyway because it brings with some useful programs.</p>
+<pre><code>    pkg_add dkim-milter dkimproxy dovecot
+</code></pre>
+<hr />
+<h3><a id="2"><a href="#top">2</a> Create Maildir</a></h3>
+<pre><code>    rm /var/mail/{root,thomas}
+    mkdir -p /var/mail/{root,thomas}/{Inbox,Drafts,Sent,Trash,Spam}/{new,cur,tmp}
+    chown -R thomas:thomas /var/mail/thomas
+    chmod 700 /var/mail/{root,thomas}
+</code></pre>
+<hr />
+<h3><a id="3"><a href="#top">3</a> Configure PF Firewall</a></h3>
+<p>The following OpenBSD 5.6 PF firewall configuration will:</p>
+<ul>
+<li>Reassemble Fragmented Packets</li>
+<li>Return ICMP for dropped packets</li>
+<li>Enable logging on egress interfaces</li>
+<li>Allow everything on loopback interfaces</li>
+<li>Scrub Packets of weirdness</li>
+<li>Define tables <code>&lt;bruteforce&gt;</code>, <code>&lt;spamd&gt;</code></li>
+<li>Set Default policy for in to Drop and Log</li>
+<li>Drop <code>urpf-failed</code> packets add label <code>uRPF</code></li>
+<li>Drop packets from IPs in <code>&lt;bruteforce&gt;</code> table</li>
+<li>Randomize TCP Sequence Numbers</li>
+<li>Respond to ICMPv4 Echo-Requests and Destination-Unreachable</li>
+<li>Allow SSH connections<ul>
+<li>Limit 15 connections from a Source IP</li>
+<li>Limit 15 Connection Attempts in 5 minute window</li>
+<li>Violating IPs are added to <code>&lt;bruteforce&gt;</code> table and associated states flushed</li>
+</ul>
+</li>
+<li>Allow HTTP, HTTPS connections<ul>
+<li>Limit 100 connections from a Source IP</li>
+<li>Limit 25 Connection Attempts in 5 minute window</li>
+<li>Violating IPs are added to <code>&lt;bruteforce&gt;</code> table and associated states flushed</li>
+</ul>
+</li>
+<li>Allow IMAPS connections<ul>
+<li>Limit 50 connections from a Source IP</li>
+<li>Limit 15 Connection Attempts in 5 minute window</li>
+<li>Violating IPs are added to <code>&lt;bruteforce&gt;</code> table and associated states flushed</li>
+</ul>
+</li>
+<li>Tarpit SMTP, SMTPS packets from IPs found in <code>&lt;spamd&gt;</code> table to <code>spamd</code> on localhost</li>
+<li>Allow IMAPS connections<ul>
+<li>Limit 50 connections from a Source IP</li>
+<li>Limit 15 Connection Attempts in 5 minute window</li>
+<li>Violating IPs are added to <code>&lt;bruteforce&gt;</code> table and associated states flushed</li>
+</ul>
+</li>
+</ul>
+<h4><a id="3.1"><a href="#top">3.1</a> /etc/pf.conf</a></h4>
+<p><small>
+<em>File Permissions</em>: <code>-rw-------   1 root  wheel</code>
+</small></p>
+<pre><code>    set reassemble yes
+    set block-policy return
+    set loginterface egress
+    set skip on lo
+
+    match in all scrub (no-df random-id max-mss 1440)
+
+    table &lt;bruteforce&gt; persist
+    table &lt;spamd&gt; persist
+
+    block in log
+    block in quick from urpf-failed label uRPF
+    block quick from &lt;bruteforce&gt;
+
+    pass out all modulate state
+
+    pass in quick inet proto icmp icmp-type { echoreq, unreach }
+
+    pass in quick proto tcp from any \
+        to (egress) port ssh \
+        flags S/SA modulate state \
+        (max-src-conn 15, max-src-conn-rate 15/5, overload &lt;bruteforce&gt; flush global)
+
+    pass in quick proto tcp from any \
+        to (egress) port { http, https } \
+        flags S/SA modulate state \
+        (max-src-conn 100, max-src-conn-rate 25/5, overload &lt;bruteforce&gt; flush global)
+
+    pass in quick proto tcp from any \
+        to (egress) port imaps \
+        flags S/SA modulate state \
+        (max-src-conn 50, max-src-conn-rate 15/5, overload &lt;bruteforce&gt; flush global)
+
+    pass in on egress inet proto tcp from &lt;spamd&gt; \
+        to (egress) port { smtp, smtps } \
+        rdr-to 127.0.0.1 port spamd
+
+    pass in proto tcp from any \
+        to (egress) port { smtp, smtps } \
+        flags S/SA modulate state \
+        (max-src-conn 50, max-src-conn-rate 25/5, overload &lt;bruteforce&gt; flush global)
+</code></pre>
+<hr />
+<h3><a id="4"><a href="#top">4</a> Configure Daemons</a></h3>
+<p>Configure your system to start the daemons <em>spamd</em>, <em>Dovecot</em>, and <em>dkimproxy</em> to start at boot.</p>
+<h4><a id="4.1"><a href="#top">4.1</a> <code>/etc/rc.conf.local</code></a></h4>
+<p><small>
+<em>File Permissions</em>: <code>-rw-r--r--   1 root  wheel</code>
+</small></p>
+<pre><code>    spamd_flags="-v -b"
+    spamd_black=YES
+    pkg_scripts="dovecot dkimproxy_in dkimproxy_out"
+</code></pre>
+<hr />
+<h3><a id="5"><a href="#top">5</a> Configure OpenSMTPD</a></h3>
+<p>The following OpenSMTPD <code>/etc/mail/smtpd.conf</code> configuration will:</p>
+<ul>
+<li>Enable Queue Compression</li>
+<li>Enable Queue Encryption<ul>
+<li>Create a key with the following command</li>
+<li><code>openssl rand -hex 16</code></li>
+</ul>
+</li>
+<li>Define table aliases as Berkly DB <code>/etc/mail/aliases.db</code></li>
+<li>Define table domains as File <code>/etc/mail/domains</code></li>
+<li>Define table users as File <code>/etc/mail/users</code></li>
+<li>Define table blacklist-recipients as File <code>/etc/mail/blacklist-recipients</code></li>
+<li>Define SSL Cert/Key <em>comodo.puffysecurity.com.pki</em><ul>
+<li>Certificate <code>/etc/ssl/comodo/full.comodo.puffysecurity.com.crt</code></li>
+<li>Key <code>/etc/ssl/private/comodo.puffysecurity.com.pem</code></li>
+</ul>
+</li>
+<li>Define SSL Cert/Key <em>puffysecurity.com.pki</em><ul>
+<li>Certificate <code>/etc/ssl/puffysecurity.com.crt</code></li>
+<li>Key <code>/etc/ssl/private/puffysecurity.com.pem</code></li>
+</ul>
+</li>
+<li>Listen on SMTP, STARTTLS in on egress interface<ul>
+<li>Use <em>comodo.puffysecurity.com.pki</em> SSL Cert/Key</li>
+<li>Require STARTTLS</li>
+<li>Server Hostname puffysecurity.com</li>
+</ul>
+</li>
+<li>Listen on SMTPS in on egress interface<ul>
+<li>Use <em>puffyssl_ca01.puffysecurity.com.pki</em> SSL Cert/Key</li>
+<li>Require Authentication</li>
+<li>Server Hostname puffysecurity.com</li>
+</ul>
+</li>
+<li>Accept mail from any<ul>
+<li>For recipient not found in <code>&lt;blacklist-recipients&gt;</code></li>
+<li>For domain found in <code>&lt;domains&gt;</code></li>
+<li>For Virtual User found in <code>&lt;users&gt;</code></li>
+<li>Deliver to Maildir <code>/var/mail/%{user.username}/Inbox</code></li>
+</ul>
+</li>
+<li>Accept mail from any<ul>
+<li>For recipient not found in <code>&lt;blacklist-recipients&gt;</code></li>
+<li>For local domain</li>
+<li>Lookup alias in <code>&lt;aliases&gt;</code></li>
+<li>Deliver to Maildir <code>/var/mail/%{user.username}/Inbox</code></li>
+</ul>
+</li>
+<li>Listen on SMTP in on loopback interface<ul>
+<li>Server Hostname puffysecurity.com</li>
+</ul>
+</li>
+<li>Listen in on loopback interface<ul>
+<li>Port 10028</li>
+<li>tag DKIM</li>
+<li>Server Hostname puffysecurity.com</li>
+</ul>
+</li>
+<li>Accept mail tagged DKIM<ul>
+<li>For any</li>
+<li>Relay</li>
+<li>Server source <code>$wan_ip</code></li>
+<li>Server Hostname puffysecurity.com</li>
+</ul>
+</li>
+<li>Accept mail from local<ul>
+<li>For any</li>
+<li>Relay via <code>smtp://127.0.0.1:10027</code></li>
+</ul>
+</li>
+</ul>
+<h4><a id="5.1"><a href="#top">5.1</a> <code>/etc/mail/smtpd.conf</code></a></h4>
+<p><small>
+<em>File Permissions</em>: <code>-rw-r--r--   1 root  wheel</code>
+</small></p>
+<pre><code>    egress_int="bnx0"
+    wan_ip="91.209.12.222"
+    queue compression
+    # Create Unique Queue Key `openssl rand -hex 16`
+    queue encryption key 400e0bb7ac8c0368b2150a29e65d3de5
+
+    table aliases db:/etc/mail/aliases.db
+    table domains file:/etc/mail/domains
+    table users file:/etc/mail/users
+    table blacklist-recipients file:/etc/mail/blacklist-recipients
+
+    pki comodo.puffysecurity.com.pki certificate "/etc/ssl/comodo/full.comodo.puffysecurity.com.crt" 
+    pki comodo.puffysecurity.com.pki key "/etc/ssl/private/comodo.puffysecurity.com.pem"
+    pki puffyssl_ca01.puffysecurity.com.pki certificate "/etc/ssl/puffysecurity.com.crt" 
+    pki puffyssl_ca01.puffysecurity.com.pki key "/etc/ssl/private/puffysecurity.com.pem"
+
+    listen on $egress_int pki comodo.puffysecurity.com.pki tls-require hostname puffysecurity.com
+    listen on $egress_int pki puffyssl_ca01.puffysecurity.com.pki smtps auth hostname puffysecurity.com
+
+    accept from any \
+        recipient !&lt;blacklist-recipients&gt; \
+        for domain &lt;domains&gt; \
+        virtual &lt;users&gt; \
+        deliver to maildir "/var/mail/%{user.username}/Inbox"
+    accept \
+        recipient !&lt;blacklist-recipients&gt; \
+        for local alias &lt;aliases&gt; \
+        deliver to maildir "/var/mail/%{user.username}/Inbox"
+
+    listen on lo0 hostname puffysecurity.com
+    listen on lo0 port 10028 tag DKIM hostname puffysecurity.com
+
+    accept tagged DKIM \
+        for any \
+        relay \
+        source $wan_ip \
+        hostname puffysecurity.com
+    accept from local \
+        for any \
+        relay via smtp://127.0.0.1:10027
+</code></pre>
+<h4><a id="5.2"><a href="#top">5.2</a> OpenSMTPD Tables</a></h4>
+<ul>
+<li>
+<p>Add domains you want to receive mail for to table <em>domains</em> file: <strong>one-per-line</strong></p>
+</li>
+<li>
+<p>Add <code>/(recipient)([[:space:]])(user)/</code> mappings to table <em>users</em>
+ file: <strong>one-per-line</strong>. The <code>recipient</code> may be a complete email addresses
+ or apply to an entire domain if prefixed with '@'.</p>
+</li>
+<li>
+<p>Add recipient to table <em>blacklist-recipients</em> file: <strong>one-per-line</strong></p>
+</li>
+</ul>
+<h4><a id="5.2.1"><a href="#top">5.2.1</a> <code>/etc/mail/domains</code></a></h4>
+<p><small>
+<em>File Permissions</em>: <code>-rw-r--r--   1 root  wheel</code>
+</small></p>
+<pre><code>    puffysecurity.com
+    tomd.tel
+    venona.nl
+</code></pre>
+<h4><a id="5.2.2"><a href="#top">5.2.2</a> <code>/etc/mail/users</code></a></h4>
+<p><small>
+<em>File Permissions</em>: <code>-rw-r--r--   1 root  wheel</code>
+</small></p>
+<pre><code>    thomas@puffysecurity.com thomas
+    @puffysecurity.com thomas
+    thomas@tomd.tel thomas
+    @tomd.tel thomas
+    thomas@venona.nl thomas
+    @venona.nl thomas
+</code></pre>
+<h4><a id="5.2.3"><a href="#top">5.2.3</a> <code>/etc/mail/blacklist-recipients</code></a></h4>
+<p><small>
+<em>File Permissions</em>: <code>-rw-r--r--   1 root  wheel</code>
+</small></p>
+<pre><code>    troll@puffysecurity.com
+    igetspam@tomd.tel
+    ticketsite@venona.nl
+</code></pre>
+<hr />
+<h3><a id="6"><a href="#top">6</a> DKIM and DomainKey</a></h3>
+<p>This setup will sign out-going mail with DKIM DomainKey via <code>dkimproxy_out</code>.</p>
+<h4><a id="6.1"><a href="#top">6.1</a> Create DKIM DomainKey</a></h4>
+<p>Use <code>dkim-genkey</code> to create a <code>2048 RSA</code> key in <code>/var/dkimproxy</code>.</p>
+<pre><code>    dkim-genkey -D /var/dkimproxy -r -b 2048 -d $HOSTNAME
+</code></pre>
+<h4><a id="6.2"><a href="#top">6.2</a> Make DNS Record</a></h4>
+<p>The file <code>/var/dkimproxy/default.txt</code> will contain a valid
+ Domainkey TXT record that you need to add to your DNS.
+ Create a new <code>TXT</code> record for <code>default._domainkey</code> and copy
+ everything in-between the double-quotes into the value field
+ of the TXT record.</p>
+<h4><a id="6.3"><a href="#top">6.3</a> <code>/etc/dkimproxy_out.conf</code></a></h4>
+<p><small>
+<em>File Permissions</em>: <code>-rw-r--r--   1 root  wheel</code>
+</small></p>
+<pre><code>    listen    127.0.0.1:10027
+    relay     127.0.0.1:10028
+    domain    puffysecurity.com,venona.nl
+    signature dkim(c=relaxed)
+    signature domainkeys(c=nofws)
+    keyfile   /var/dkimproxy/default.private
+    selector  default
+</code></pre>
+<hr />
+<h3><a id="7"><a href="#top">7</a> Configure Dovecot for IMAP</a></h3>
+<h4><a id="7.1"><a href="#top">7.1</a> <code>/etc/dovecot/dovecot.conf</code></a></h4>
+<p><small>
+<em>File Permissions</em>: <code>-rw-r--r--   1 root  wheel</code>
+</small></p>
+<pre><code>    protocols = imap lmtp
+    listen = *, ::
+    base_dir = /var/dovecot/
+    login_greeting = IMAP Server Ready.
+    dict {
+        #quota = mysql:/etc/dovecot/dovecot-dict-sql.conf.ext
+        #expire = sqlite:/etc/dovecot/dovecot-dict-sql.conf.ext
+    }
+    !include conf.d/*.conf
+    !include_try local.conf
+</code></pre>
+<h4><a id="7.2"><a href="#top">7.2</a> <code>/etc/dovecot/conf.d/10-auth.conf</code></a></h4>
+<p><small>
+<em>File Permissions</em>: <code>-rw-r--r--   1 root  wheel</code>
+</small></p>
+<pre><code>    disable_plaintext_auth = yes
+    auth_cache_size = 10M
+    auth_cache_ttl = 1 hour
+    auth_cache_negative_ttl = 1 hour
+    auth_mechanisms = plain
+    !include auth-system.conf.ext
+</code></pre>
+<h4><a id="7.3"><a href="#top">7.3</a> <code>/etc/dovecot/conf.d/10-mail.conf</code></a></h4>
+<p><small>
+<em>File Permissions</em>: <code>-rw-r--r--   1 root  wheel</code>
+</small></p>
+<pre><code>    mail_location = maildir:/var/mail/%u/Inbox
+    namespace inbox {
+        inbox = yes
+    }
+    mmap_disable = yes
+    first_valid_uid = 1000
+    mail_plugin_dir = /usr/local/lib/dovecot
+    mbox_write_locks = fcntl
+</code></pre>
+<h4><a id="7.4"><a href="#top">7.4</a> <code>/etc/dovecot/conf.d/10-ssl.conf</code></a></h4>
+<p><small>
+<em>File Permissions</em>: <code>-rw-r--r--   1 root  wheel</code>
+</small></p>
+<pre><code>    ssl_cert = &lt;/etc/ssl/puffysecurity.com.crt
+    ssl_key = &lt;/etc/ssl/private/puffysecurity.com.pem
+    ssl_dh_parameters_length = 4096
+</code></pre>
+<h6># vim: set ts=4 sw=4 tw=80 et :</h6>    </td>
+  </tr>
+    <tr>
+      <td bgcolor="#ffffff" valign="bottom">
+      <table border=0 width="100%"><tr>
+      <td>
+        <center>
+          <small>
+            <hr>
+            Powered By:
+            <a target="_blank" href="http://www.openbsd.org"><b><i>Open</i>BSD</b></a>,
+            <a target="_blank" href="http://www.openntpd.org"><b><i>Open</i>NTPD</b></a>,
+            <a target="_blank" href="http://www.openiked.org"><b><i>Open</i>IKED</b></a>,
+            <a target="_blank" href="http://www.openssh.org"><b><i>Open</i>SSH</b></a>,
+            <a target="_blank" href="http://www.opensmtpd.org"><b><i>Open</i>SMTPD</b></a>,
+            <a target="_blank" href="http://www.libressl.org"><b>Lib<i>re</i>SSL</b></a>, <i>and</i>
+            <a target="_blank" href="http://mdocml.bsd.lv/"><b>mandoc</b></a>
+            <br>
+            <em>This site Copyright &copy; 2015 Thomas Dwyer .</em><br>
+            <br>
+          </small>
+        </center>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+
