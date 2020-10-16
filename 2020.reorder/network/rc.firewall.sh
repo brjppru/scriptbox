@@ -1,4 +1,7 @@
 #!/bin/bash
+
+exit 0
+
 # License: GPL3
 # Author: Dmitri Gribenko <gribozavr@gmail.com>
 

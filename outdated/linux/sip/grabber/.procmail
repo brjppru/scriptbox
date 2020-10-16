@@ -1,6 +1,0 @@
-LOGFILE=/tmp/.bzz.log
-MAILDIR=/tmp/sba.su
-VERBOSE=on
-
-:0
-Maildir/

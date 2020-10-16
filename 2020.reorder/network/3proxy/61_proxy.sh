@@ -1,3 +1,5 @@
+@echo off
+
 yum update
 yum install gcc
 yum install libc.so.6
