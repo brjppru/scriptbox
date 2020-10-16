@@ -1,0 +1,12 @@
+Windows Registry Editor Version 5.00
+ 
+[HKEY_USERS\.DEFAULT\Keyboard Layout\Preload]
+"1"="00000409";EN
+"2"="00000419";RU
+ 
+;Disallow copying of user input methods to the system account for sign in
+[HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Control Panel\International]
+"BlockUserInputMethodsForSignIn"=dword:00000001
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Keyboard Layout]
+"IgnoreRemoteKeyboardLayout"=dword:00000001
