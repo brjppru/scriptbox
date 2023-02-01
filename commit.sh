@@ -1,7 +1,7 @@
 #!/bin/sh
 
 #
-# git push linux-mint-brjed to github.lo
+# git push scriptbox repo to githublo
 #
 
 dated=`date +%Y-%m-%d-%H%M%S`
