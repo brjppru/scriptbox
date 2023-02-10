@@ -11,7 +11,7 @@ git add .
 
 echo run git push on ${dated} ${commt}
 
-git rm `git status | grep deleted | awk '{print $2}'`
+for i in `git status | grep deleted | awk '{print $2}'`; do git rm $i; done
 
 git commit -m "$dated $commt"
 
