@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 #
 # git push scriptbox repo to githublo
