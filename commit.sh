@@ -8,6 +8,9 @@ dated=$(date +%Y-%m-%d-%H%M%S)
 commt=$(curl -L --proxy http://192.168.0.11:3129 -s http://whatthecommit.com/index.txt)
 
 echo $dated
+echo $commt
+
+
 
 git add .
 
