@@ -12,7 +12,8 @@ echo run git push on ${dated}
 
 for i in `git status | grep deleted | awk '{print $2}'`; do git rm $i; done
 
-git commit -m "$dated $(curl -s http://whatthecommit.com/index.txt)"
+# hardcode proxy, becouse banned in russia :-(
+git commit -m "$dated $(curl -L http://192.168.0.11:3129 -s http://whatthecommit.com/index.txt)"
 
 git push -u origin main
 
