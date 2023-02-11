@@ -1,0 +1,3 @@
+#!/bin/bash
+
+curl -s http://whatthecommit.com/ | grep "<p>" | sed 's/<p>//' | sed 's/^/"/' | sed 's/$/"/' | xargs git commit -m
