@@ -1,0 +1,12 @@
+CLS
+110 OPEN "b:\sprtv.fil" FOR INPUT AS #1
+130 LOCATE 1, 1: LINE INPUT #1, film$(1)
+150 LOCATE 1, 1: LINE INPUT #1, f$
+690 COLOR 14
+FOR i = 76 TO 4 STEP -1
+a = LEN(f$)
+LOCATE 13, i: PRINT LEFT$(f$, 80 - i - 4) + " "
+LOCATE 13, 80: PRINT "s"
+FOR t = 1 TO 100: NEXT
+NEXT
+

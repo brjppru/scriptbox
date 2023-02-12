@@ -1,0 +1,79 @@
+(20)   Sun 21 Oct 90 23.20   Rcvd: Fri 2 Nov  5.08   
+By: Madis Kaal
+To: Miko Raud
+Re: ScreamTracker
+St: Rcvd  
+------------------------------------------------------------------------------
+@MSGID: 2:490/30 aa96f3c7
+Hi, Mix.
+
+  Aare teadis, et sa olevat enesele selgeks teinud ScremTrackeri 
+STM failide formaadi. Ole lahke ja jaga oma teadmisi teistelegi. 
+Kui k¢igile ei taha, jaga siis privaatselt.
+
+ Muide siin on infi k¢igile, see skeem realiseerib R-2R D/A 
+muunduri, v„ljundpinge on sobiv n„iteks 250mV sisendi jaoks: 
+PRINTER PORT
+ÄÄÄÄÄ¿                             ANALOG
+     ³   15k   ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ> OUT
+   9 ³ÄÄÛÛÛÛÛÄÄÁÄÄÛÛÛÛÛÄ¿7.5k
+     ³   15k   ÚÄÄÄÄÄÄÄÄÙ
+   8 ³ÄÄÛÛÛÛÛÄÄÁÄÄÛÛÛÛÛÄ¿7.5k
+     ³   15k   ÚÄÄÄÄÄÄÄÄÙ          test: mov dx,3bch
+   7 ³ÄÄÛÛÛÛÛÄÄÁÄÄÛÛÛÛÛÄ¿7.5k            xor al,al
+     ³   15k   ÚÄÄÄÄÄÄÄÄÙ          more: cli
+   6 ³ÄÄÛÛÛÛÛÄÄÁÄÄÛÛÛÛÛÄ¿7.5k      loop: out dx,al
+     ³   15k   ÚÄÄÄÄÄÄÄÄÙ                inc al
+   5 ³ÄÄÛÛÛÛÛÄÄÁÄÄÛÛÛÛÛÄ¿7.5k            jnz loop
+     ³   15k   ÚÄÄÄÄÄÄÄÄÙ                sti
+   4 ³ÄÄÛÛÛÛÛÄÄÁÄÄÛÛÛÛÛÄ¿7.5k            jmp more
+     ³   15k   ÚÄÄÄÄÄÄÄÄÙ
+   3 ³ÄÄÛÛÛÛÛÄÄÁÄÄÛÛÛÛÛÄ¿7.5k
+     ³   15k            ³
+   2 ³ÄÄÛÛÛÛÛÄÄÄÂÄÄÄÄÄÄÄÙ
+     ³         ÞÛÝ
+     ³         ÞÛÝ15k
+  18 ³ÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ> GND
+ÄÄÄÄÄÙ
+
+--- FD 1.99c
+ * Origin: Mail Shark ---Mast--- (2:490/30)
+@PATH: 490/30 10 
+
+SEEN-BY: 490/1 10 30 60 
+------------------------------------------------------------------------------
+(27)   Mon 5 Nov 90 18.29                              
+By: Sulo Kallas
+To: Madis Kaal
+Re: ScreamTracker
+St: 
+------------------------------------------------------------------------------
+@EID:21ea 01427c31
+@MSGID: 2:490/20 b2922397
+@REPLY: 2:490/30 aa96f3c7
+Heippa.
+
+ > PRINTER PORT
+ > ÄÄÄÄÄ¿                             ANALOG
+ >      ³   15k   ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ> OUT
+ >    9 ³ÄÄÛÛÛÛÛÄÄÁÄÄÛÛÛÛÛÄ¿7.5k
+
+Minu meelest sobib sinna lih„sti veel:
+
+ÄÄÄ>ÄÄÄ´ÃÄÄÄÂÄÄÄÄ> ANALOG
+      +     ³      OUT
+      10uF  Û 1M
+     *6.3V  ³
+            ³
+           GND
+
+Nimelt kuna v“imude sisendis on tihti lyyt, ja kui sinna anda 
+alalispingekomponent v“ib see lyytidele alvasti m“juda...
+
+<^_^>
+
+
+--- TosScan 1.00
+ * Origin: Estonia, Goodwin BBS (2:490/20)
+@PATH: 490/20
+SEEN-BY: 490/1 20 80 

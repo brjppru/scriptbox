@@ -1,0 +1,305 @@
+ Program Muson;
+ Uses Music,crt,dos;
+ var f:file;
+     s:string;
+     p:pointer;
+     l:longint;
+     a,b,c,z, i:integer;
+     h, m, x, hund : Word;
+     cb : Boolean;
+     u:array[1..8] of word;
+     u1:array[1..8] of word;
+     r:registers;
+     var S1: PathStr;
+     var k:integer;
+    var f1:file of integer;
+
+
+label 30,20;
+
+function MousePressed(var x,y : integer) : integer;
+ var
+  regs     : Registers;
+begin
+   regs.bx := 0;
+   regs.ax := 3;
+   Intr($33,regs);
+   MousePressed := regs.bx;
+   X := regs.cx;
+   Y := regs.dx;
+end;
+
+
+procedure copyscreen;
+ external;
+{$l copy.obj}
+const
+  j:pointer=addr(copyscreen);
+
+function LeadingZero(w : Word) : String;
+var s : String;
+begin
+  Str(w:0,s);
+  if Length(s) = 1 then  s := '0' + s; LeadingZero := s;
+end;
+
+begin
+  S1:= FSearch('musview.set',GetEnv('PATH'));
+  if S1 = '' then
+    begin
+clrscr;
+writeln('Чайник !!! А где musview.set ');
+readln;
+goto 20;
+    end
+
+    else
+    begin
+    assign(f1,FExpand(S1));
+    reset(f1);
+    b:=0;
+    read(f1,b);
+    close(f1);
+    end;
+z:=0;
+u[1]:=mem[61440:65525];
+u[2]:=mem[61440:65526];
+u[3]:=mem[61440:65527];
+u[4]:=mem[61440:65528];
+u[5]:=mem[61440:65529];
+u[6]:=mem[61440:65530];
+u[7]:=mem[61440:65531];
+u[8]:=mem[61440:65532];
+
+for i:=1 to 8 do
+begin
+z:=z+u[i];
+end;
+
+if z=b then
+begin
+  s:=paramstr(1);
+if s='' then goto 30;
+
+ assign(f,s);
+ reset(f,1);
+ l:=FileSize(f);
+ GetMem(p,word(l));
+ BlockRead(f,p^,word(l));
+ Close(f);
+ SetMusic(p^);
+ RunMusic(1,SizeMusic);
+
+ clrscr;
+move(j^,mem[$b800:0],4000);
+gotoxy(32,2);
+TEXTBACKGROUND(0);
+textcolor(0);
+
+writeln('                     ');
+ gotoxy(1,7);
+TEXTBACKGROUND(1);
+textcolor(15);
+for z:=2 to 78 do
+begin
+gotoxy(z,21);
+write(' ');
+gotoxy(z,22);
+write(' ');
+gotoxy(z,23);
+write(' ');
+gotoxy(z,24);
+write(' ');
+end;
+
+TEXTBACKGROUND(1);
+textcolor(7);
+
+{палки}
+ for z:=2 to 79 do
+ begin
+ if z=40 then
+ begin
+  gotoxy(z,20);
+ write('╦');
+ gotoxy(z,25);
+ write('╩');
+ end
+ else
+ gotoxy(z,20);
+ write('═');
+ gotoxy(z,25);
+ write('═');
+ end;
+ gotoxy(40,25);
+ write('╩');
+for z:=21 to 24 do
+begin
+gotoxy(1,z);
+write('║');
+gotoxy(40,z);
+write('║');
+gotoxy(79,z);
+write('║');
+end;
+
+{углы}
+ gotoxy(1,20);
+ write('╔');
+ gotoxy(1,25);
+ write('╚');
+ gotoxy(79,20);
+ write('╗');
+ gotoxy(79,25);
+ write('╝');
+
+
+textcolor(15);
+TEXTBACKGROUND(9);
+gotoxy(4,21);
+write('Просл:',s,' ',word(l),' байт');
+gotoxy(5,23);
+textcolor(14);
+TEXTBACKGROUND(0);
+write('░░░░░░░░░░░░░░░░░░░░░░░░░░');
+gotoxy(1,1);
+textcolor(0);
+TEXTBACKGROUND(1);
+for z:=0 to 79 do begin gotoxy(z,1); write(' '); end;
+textcolor(7);
+gotoxy(14,1);
+write('MUSVIEW версия 2.00 (C)Copyrigth 1995,Bogdanov Roman');
+TEXTBACKGROUND(0);
+textcolor(14);
+gotoxy(15,17);
+writeln('Выход из плеера правая кнопка мыши или любая клавиша');
+TEXTBACKGROUND(1);
+gotoxy(43,21);
+textcolor(15);
+writeln('Время :');
+gotoxy(43,23);
+writeln('Игра ноты #');
+gotoxy(59,23);
+writeln('Осталось:');
+gotoxy(74,23);
+writeln('Нот');
+gotoxy(43,22);
+writeln('Проигранно :');
+gotoxy(71,22);
+write('сек.');
+gotoxy(1,2);
+GetCBreak(cb);
+if cb=false then cb:=cb else begin cb:=false; SetCBreak(cb);end;
+
+
+
+repeat
+if MousePressed(z,z)=2 then goto 20;
+{time}
+ gotoxy(50,21);
+ GetTime(h,m,x,hund);
+ Write(LeadingZero(h),':',LeadingZero(m),':',LeadingZero(x),'.',LeadingZero(hund));
+ gotoxy(54,23);
+ writeln(wheremusic);
+ gotoxy(69,23);
+ writeln(sizemusic-wheremusic,' ');
+{%}
+ z:=round(wheremusic*10/sizemusic*10);
+ gotoxy(55,22);
+ write(z,'%');
+ textcolor(14);
+ gotoxy(34,23);
+ write(z,'%');
+ textcolor(0);
+ z:=round(z/4);
+ gotoxy(4+z,23);
+ textcolor(14);
+TEXTBACKGROUND(8);
+ writeln('█');
+ textcolor(14);
+TEXTBACKGROUND(1);
+ gotoxy(60,22);
+ write('за ',hi(timecounter),'.',lo(timecounter));
+
+
+
+ until (WhereMusic=0) or (keypressed) ;
+ HaltMusic;
+ textcolor(7);
+
+ TEXTBACKGROUND(0);
+ TEXTCOLOR(14);
+goto 20;
+end
+else
+begin
+TEXTBACKGROUND(10);
+textcolor(0);
+
+clrscr;
+writeln('                                        "Я, например,');
+writeln('                                        на  свете лучшей книгой');
+writeln('                                        считаю кодекс уголовный наш.');
+writeln('                                        ...............................');
+writeln('                                        Открою кодекс на любой странице');
+writeln('                                        и не могу - читаю до конца !"');
+writeln('                                                 Владимир Высоцкий');
+writeln('');
+writeln('                Право распостранения программы.');
+writeln('               ────────────────────────────────');
+writeln('           В СНГ нет защиты авторских прав. У нас в стране (так');
+writeln('      более понятнее) воровство называют нелегальным копированием');
+writeln('      программных продуктов. И в уголовном кодексе, например Рос-');
+writeln('      сии, есть целый букет статей посвященных воровству и ни од-');
+writeln('      ной - "нелегальному копированию" - такому же воровству -');
+writeln('      фантастика да и только ! Посмотрите на математическое обес-');
+writeln('      печение Вашего персонального компьютера. Там ПОЧТИ вся мате-');
+writeln('      матика сворована - Ваша организация, где Вы работаете, не');
+writeln('      заплатила за нее ни копейки. Да она и не знает кому, на ка-');
+writeln('      ком основании, чем и за что надо платить. А надо бы !');
+writeln;
+textcolor(16);
+writeln('             Не законная копия программы MUSMAKER V 2.00');
+textcolor(0);
+writeln;
+write('                            Нажмите ENTER');
+readln;
+{intr($18,r);}
+goto 20;
+end;
+
+30:
+TEXTBACKGROUND(0);
+textcolor(7);
+clrscr;
+textcolor(15);
+TEXTBACKGROUND(1);
+writeln('╔═════════════════════════════════╗');
+writeln('║ (C) Центр Самоходнопередвижного ║');
+writeln('║      Програмого обеспечения     ║');
+writeln('║        Имени Дяди Вунькиса      ║');
+writeln('╚═════════════════════════════════╝');
+TEXTBACKGROUND(0);
+textcolor(7);
+writeln;
+writeln('Плеер музыкальных файлов программы MUSMAKER ');
+writeln('Версия 2.00 (С)Сделал Богданов Роман .(ярый поклонник компьютерной музыки)');
+writeln;
+writeln('Musview Имя файла (для прослушивания *.mus ) ');
+write('Нажмите любую клавишу');
+readln;
+goto 20;
+
+20:
+ HaltMusic;
+TEXTBACKGROUND(0);
+textcolor(7);
+clrscr;
+textcolor(10);
+TEXTBACKGROUND(4);
+textcolor(15);
+write('Bye-Bye.');
+TEXTBACKGROUND(0);
+textcolor(7);
+
+ end.

@@ -1,0 +1,198 @@
+
+                  ﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂ
+                      SOURCER DEFINITION FILE - SAMPLE1
+                  ‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹
+
+
+   ±±±±±±±±±±±±±±±±±± Section 1   CONTROL INFORMATION   ±±±±±±±±±±±±±±±±±±
+
+   Enter any of the following options, starting in the 1st column
+    (for no options enter "none" )  Only the first letter of the
+    command is necessary.
+
+   Analysis flag = xxxxx       Any flag letters A-Z can be used.  Upper
+                                case indicates turn flag on, lower case
+                                turns the flag off.   See manual for a
+                                complete list of flags.
+                                  I - Inhibit graphics characters
+                                  L - use for MASM versions prior to 4.5
+                                  M - use for MASM versions prior to 4.5
+   Code style = xxx            Code style types include:
+                                com, exe, fragment, zero start, 
+                                device driver, or overlay
+   Drive = x                   Disk drive for output (letter a-z)
+   Format = xxx                Output format ASM or LST for source code or
+                                listing output (LST is the default)
+   Go                          When the .def file has loaded, go
+   Header = xxxxxx xxxx xxxx   Enter the ascii header string (32 char max)
+   Input filename = xxxx       filename for input (may include disk & path)
+   Keep segments = xxx         When loading a file, use the file defined
+                                segments (FILE), use the def file segments
+                                in section 2 (DEF) or use both (BOTH)
+                                NOTE: Specify this option prior to file input
+                                      BOTH is the default, used in most cases
+   Label = xxxxx               Select label type, Decimal, Zero fill,
+                                Segment & offset, Letter segment & offset
+   Math on                     Use the math co-processor instruction set
+   None                        Use default commands only
+   Output filename = xxxx      filename for output (may include drive & path)
+   Passes = x                  Select the number of passes from 2 to 5
+   Remark = xxxxx              Select remarks to be included: All, None,
+                                Data remarks only, Interrupts & I/O only,
+                                Others only, Except Data, Except Interrupts,
+                                Except Others
+   Segment display off         Turn off the display of segments on listings
+   Tabs off                    Only use spaces, no tabs
+   uP = xxxxx                  Select the uP from:
+                                8088, 80186, 80286, P80286, V20/V30
+                                or AUTO for automatic (default)
+   Vertical lines/page = xxx   For listings, select the number of lines per
+                                page from 10 to 255 (default is 59)
+   Words to upper case         Set upper case style (lower case is default)
+   Xref = xx                   ON or OFF (selecting ON sets passes to 5)
+
+ ------------------ control commands ------------------
+
+        <<<<<  Insert commands here (start in column 1)
+
+
+
+   ±±±±±±±±±±±±±±±±±± Section 2    RANGE DEFINITION     ±±±±±±±±±±±±±±±±±±
+
+   segment:offset = start processing location (hex)
+                      see note 3 at end on referencing loaded file segments
+   end offset     = ending location for segment
+   default ds, es = default used when not overwritten by in-line code
+   segment type   = auto  - code/data, full data resolving
+                    code  - code, limited data resolving
+                    data  - data, no code processed
+                    stack - stack, no code processed
+                    rauto - ROM code/data (same as "auto") in ROM
+                    rcode - ROM code (same as "code") in ROM
+
+  begin    end  default  seg
+ seg:off   off  ds   es  type     remarks in this area ignored
+ -------  ---- ---- ---- ----
+
+        <<<<<  Insert ranges here (start in column 1)
+
+
+
+   ±±±±±±±±±±±±±±±±±± Section 3  REFERENCE DEFINITIONS ±±±±±±±±±±±±±±±±±±
+
+   segment:offset = absolute location of item (hex)
+                     see note 3 at end on referencing loaded file segments
+
+   typ            = type field
+                     DB = data byte
+                     DW = data word
+                     DD = double word
+                     DA = ascii text byte(s)
+                     DS = data structure
+                     SUB = subroutine reference (S can also be used)
+                     LOC = location reference   (L can also be used)
+                     FORCE = forced function    (F can also be used)
+
+   options (indicate one or more options with a comma separator)
+
+      data options:  , C xxx    comment number xxx (from 1 to 3FF)
+                     , EQU      treat label as an equate
+                     , DUP      duplicate same bytes/words R times
+                     , INDEX    replace a index of the same value
+                     , MULTI    multi-defined label
+                     , OSN      offset sub_xxx               (Sub Near)
+                     , OSF      offset sub_xxx, seg sub_xxx  (Sub Far)
+                     , OLN      offset loc_xxx               (Loc Near)
+                     , OLF      offset loc_xxx, seg loc_xxx  (Loc Far)
+                     , ODN      offset data_xxx              (Data Near)
+                     , ODF      offset data_xx, seg data_xx  (Data Far)
+                     , R xxxx   repeat 0 to FFFF, (FFFF bytes max)
+                                  (i.e. dw, R 4    indicates 8 bytes)
+                     , UNUSED   if item is never referenced, then do not use
+
+       Location      , C xx     comment number xx (from 1 to FF)
+          options:   , EXT      external entry point to program
+                     , FAR      far procedure
+                     , NEAR     near procedure
+                                  Note: EXT, FAR & NEAR all reset the simulator
+                     , UNUSED   if item is never referenced, then do not use
+
+       Subroutine    , C xx     comment number xx (from 1 to FF)
+          options:   , FAR      subroutine is defined as FAR
+                     , TERM     subroutine terminates (does not return to
+                                  caller)
+                     , UNUSED   if item is never referenced, then do not use
+
+        Forced       , CODE     switch to code mode
+           options:  , DATA     switch to data mode
+                     , ENDP     force a endp to appear after instruction
+                     , AX=xxxx  change the value of any simulation 
+                                  register ax/bx/cx/dx/bp/si/di/sp/ds/es/ss
+                     , EAx      LEA instruction's reference item type
+                                  EAS for sub, EAL for location, EAD for data
+                                  optional segment follows
+                     , Ox       convert immediate value to offset 
+                                  OS for sub, OL for location, OD for data
+                                  optional segment follows (cs segment default)
+                     , REG      display the internal simulation registers
+
+                             Forced index table analysis for calls & jumps
+                     , SN       table type "offset sub_xx"
+                     , SF       table type "offset sub_xxx, seg sub_xxx"
+                     , LN       table type "offset loc_xx"
+                     , LF       table type "offset loc_xxx, seg loc_xxx"
+                             format: "sega:xxxx  f, sn 1234:22 34"
+                                where 1234:22 is the location of the table
+                                with 34h entries
+
+   label field    = enter label up to 15 digits long (label ignored for forced
+                      functions; do not place a comma before or inside label)
+
+   comment field  = a short comment can be included here (64 characters max)
+                    if a semi-colon appears, the balance of the line is ignored
+
+ seg:off type   options & label & comments
+ -------  -- --------------------------------
+
+        <<<<<  Insert new reference definitions here (start in column 1)
+
+
+
+  Notes:
+     1) Must have at least one entry in each section to operate properly.
+          Use "none" if no entries are needed for a section.
+          Separate each section with at least one line with a space in
+          column 1.
+
+     2) Order of entries within each section is unimportant.
+
+     3) When a filename is specified in section 1, it is loaded and the
+          first 250 segments can be referenced as "sega" to "segz" and
+          "sgaa" to "sgaz" through to the 250th segment "sgio".  These can
+          be used anywhere a segment is required.  For example a location
+          label can be defined as:
+
+                        6234:0124 loc, Ext, C 2  temp_value_a
+                  or:   segb:0124 loc, Ext, C 2  temp_value_a
+
+          The second entry will use the 2nd segment within the loaded file
+          An error will be generated if a segment is used beyond those 
+          specified by the file load (Consult manual for more information).
+
+     4) Section 3 ignores blank lines or lines starting with a space in column
+          1, or the balance of a line where a semicolon occurs.
+
+     5) The following examples show acceptable forms for the same function,
+          a location entry as a external entry point with comment #2:
+
+             6234:0124 loc, Ext, C 2  temp_value_a
+             6234:0124 l, Ext, C 2  temp_value_a
+             6234:0124 l, E, C=2  temp_value_a      ;notes can follow
+             6234:0124 l, External, C 2       temp_value_a
+             6234:0124 Location, Ext, C 02   temp_value_a
+             6234:0124 L, e, c 2 temp_value_a        
+
+     6) Upper and lower case will have no effect (except for analysis flags),
+          but is preserved for labels.
+
+

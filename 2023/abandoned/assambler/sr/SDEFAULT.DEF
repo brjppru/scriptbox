@@ -1,0 +1,24 @@
+
+   ออออต SOURCER DEFAULT DEFINITION FILE ฦออออออออออออออออออออออออออออออออ
+
+   ฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑ Section 1   CONTROL INFORMATION   ฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑ
+
+ ------------------ control commands ------------------
+input filename = ?            (? = use command line entry if provided)
+uP = 8088
+
+
+   ฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑ Section 2    RANGE DEFINITION     ฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑ
+
+  begin    end  default  seg
+ seg:off   off  ds   es  type    remarks in this area ignored
+ -------  ---- ---- ---- ----
+none
+
+
+   ฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑ Section 3  REFERENCE DEFINITIONS ฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑ
+
+ seg:off type   options & label
+ -------  -- -------------------------
+none
+

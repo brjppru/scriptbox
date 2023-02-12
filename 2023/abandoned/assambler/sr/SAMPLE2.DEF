@@ -1,0 +1,16 @@
+uP = 8088
+input filename = testyn
+header = TESTYN with sample2.def file
+xref = on
+
+none
+
+sega:0028 loc  begin_program
+sega:0043 loc  exit
+segc:0000 sub  beeper           Beep the speaker once    
+segc:002C da   yes_no_message   ;(note: No "R" option on "da" will set
+                                  the length by finding the first 0 or "$")
+segc:0038 dw  speaker_port      I/O port for the speaker
+segc:003A dw  on_off_time       Duration of speaker on/off
+segc:003C dw  beep_cycles       Number of on/off cycles
+

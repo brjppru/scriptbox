@@ -1,0 +1,505 @@
+
+
+                  哌哌哌哌哌哌哌哌哌哌哌哌哌哌哌哌哌哌哌哌哌
+                    SOURCER DEFINITION FILE - BIOS VERSION
+                  苘苘苘苘苘苘苘苘苘苘苘苘苘苘苘苘苘苘苘苘苘
+
+
+   北北北北北北北北北 Section 1   CONTROL INFORMATION   北北北北北北北北北
+
+   Enter any of the following options, starting in the 1st column
+    (for no options enter "none" )  Only the first letter of the
+    command is necessary.
+
+   Analysis flag = xxxxx      Any flag letters A-T can be used.  Upper
+                               case indicates turn flag on, lower case
+                               turns the flag off.   See manual for a
+                               complete list of flags.
+                                 I - Inhibit graphics characters
+                                 K - display jmp & call absolute comment
+                                 L - use for MASM version 5.0 only
+                                 N - look for remarks file (xxx.REM)
+   Code style = xxx           Code style types include:
+                                 com, exe, fragment, zero start, 
+                                 device driver, or overlay
+   Drive = x                   Disk drive for output (letter a-z)
+   Format = xxx                Output format ASM or LST for source code or
+                                 listing output (LST is the default)
+   Go                          When the .def file has loaded, go
+   Header = xxxxxx xxxx xxxx   Enter the ascii header string (32 char max)
+   Input filename = xxxx       filename for input (may include disk & path)
+   Keep segments = xxx         When loading a file, use the file defined
+                                segments (FILE), use the def file segments
+                                in section 2 (DEF) or use both (BOTH)
+                                NOTE: Specify this option prior to file input
+   Lower case off              Select upper case
+   Math on                     Use the math co-processor instruction set
+   None                        Use default commands only
+   Output filename = xxxx      filename for output (may include drive & path)
+   Passes = x                  Select the number of passes from 2 to 5
+   Remark for data off         Turn off data location & value remarks
+   Segment display off         Turn off the display of segments on listings
+   Tabs off                    Only use spaces, no tabs
+   uP = xxxxx                  Select the uP from:
+                                  8088, 80186, 80286, P80286, V20/V30
+                                  or AUTO for automatic (default)
+   Vertical lines/page = xxx   For listings, select the number of lines per
+                                  page from 10 to 255 (default is 60)
+   Xref = xx                   ON or OFF (selecting ON sets passes to 5)
+
+ ------------------ control commands ------------------
+analysis flags = K N    
+uP = Maximum
+math on
+code style = exe
+xref = on
+
+
+
+   北北北北北北北北北 Section 2    RANGE DEFINITION     北北北北北北北北北
+
+   segment:offset = start processing location (hex)
+                      see note 3 at end on referencing loaded file segments
+   end offset     = ending location for segment
+   default ds, es = default used when not overwritten by inline code
+   segment type   = auto  - code/data, full data resolving
+                    code  - code, limited data resolving
+                    data  - data, no code processed
+                    stack - stack, no code processed
+                    rauto - ROM code/data (same as "auto") in ROM
+                    rcode - ROM code (same as "code") in ROM
+
+  begin    end  default  seg
+ seg:off   off  ds   es  type     remarks in this area ignored
+ -------  ---- ---- ---- ----
+0040:0000 00FF 0000 0000 data       BIOS data segment
+0050:0000 0001 0000 0000 data       BIOS data segment
+F000:8000 FFFF F000 F000 rauto      Code segment and defaults
+
+
+   北北北北北北北北北 Section 3  REFERENCE DEFINITIONS 北北北北北北北北北
+
+   segment:offset = absolute location of item (hex)
+                     see note 3 at end on referencing loaded file segments
+
+   typ            = type field
+                     DB = data byte
+                     DW = data word
+                     DD = double word
+                     DA = ascii text byte(s)
+                     DS = data structure
+                     SUB = subroutine reference (S can also be used)
+                     LOC = location reference   (L can also be used)
+                     FORCE = forced function    (F can also be used)
+
+   options (indicate one or more options with a comma separator)
+
+      data options:  , C xxx    comment number xxx (from 1 to 3FF)
+                     , DUP      duplicate same bytes/words
+                     , INDEX    replace a index of the same value
+                     , MULTI    multi-defined label
+                     , OSN      offset sub_xxx               (Sub Near)
+                     , OSF      offset sub_xxx, seg sub_xxx  (Sub Far)
+                     , OLN      offset loc_xxx               (Loc Near)
+                     , OLF      offset loc_xxx, seg loc_xxx  (Loc Far)
+                     , ODN      offset data_xxx              (Data Near)
+                     , ODF      offset data_xx, seg data_xx  (Data Far)
+                     , R xxxx   repeat 0 to FFFF, (FFFF bytes max)
+                                  (i.e. dw, R 4    indicates 8 bytes)
+                     , UNUSED   if item is never referenced, then do not use
+
+       Location      , C xx     comment number xx (from 1 to FF)
+          options:   , EXT      external entry point to program
+                     , UNUSED   if item is never referenced, then do not use
+
+       Subroutine    , C xx     comment number xx (from 1 to FF)
+          options:   , FAR      subroutine is defined as FAR
+                     , TERM     subroutine terminates (does not return to
+                                  caller)
+                     , UNUSED   if item is never referenced, then do not use
+
+        Forced       , CODE     switch to code mode
+           options:  , DATA     switch to data mode
+                     , ENDP     force a endp to appear after instruction
+                     , AX=xxxx  change the value of any simulation 
+                                  register ax/bx/cx/dx/bp/si/di/sp/ds/es/ss
+                     , EAx      LEA instruction's reference item type
+                                  EAS for sub, EAL for location, EAD for data
+                                  optional segment follows (EAD using the CS
+                                  register is the default)
+                     , Ox       convert immediate value to offset 
+                                  OS for sub, OL for location, OD for data
+                                  optional segment follows (cs segment default)
+                     , REG      display the internal simulation registers
+
+                             Forced index table analysis for calls & jumps
+                     , SN       table type "offset sub_xx"
+                     , SF       table type "offset sub_xxx, seg sub_xxx"
+                     , LN       table type "offset loc_xx"
+                     , LF       table type "offset loc_xxx, seg loc_xxx"
+                             format: "sega:xxxx  f, sn 1234:22 34"
+                                where 1234:22 is the location of the table
+                                with 34h entries
+
+   label field    = enter label up to 15 digits long (label ignored for forced
+                      functions; do not place a comma before or inside label)
+
+
+ seg:off type   options & label
+ -------  -- -------------------------
+0000:0008 dw, U      vector_2h_off         Interrupt vector references
+0000:000A dw, U      vector_2h_seg
+0000:0014 dw, U      vector_5h_off
+0000:0016 dw, U      vector_5h_seg
+0000:001C dw, U      vector_7h_off
+0000:001E dw, U      vector_7h_seg
+0000:0020 dw, U      vector_8h_off
+0000:0022 dw, U      vector_8h_seg
+0000:0024 dw, U      vector_9h_off
+0000:0026 dw, U      vector_9h_seg
+0000:0040 dw, U      vectr_10h_off
+0000:0042 dw, U      vectr_10h_seg
+0000:004C dw, U      vectr_13h_off
+0000:004E dw, U      vectr_13h_seg
+0000:0074 dw, U      video_hdw_off
+0000:0076 dw, U      video_hdw_seg
+0000:0078 dw, U      disk_parm_off
+0000:007A dw, U      disk_parm_seg
+0000:007C dw, U      graph_tbl_off
+0000:007E dw, U      graph_tbl_seg
+0000:0100 dw, U      vectr_40h_off
+0000:0102 dw, U      vectr_40h_seg
+0000:0104 dw, U      hdsk1_parm_off
+0000:0106 dw, U      hdsk1_parm_seg
+0000:010C dw, U      vid_g_tbl_off
+0000:010E dw, U      vid_g_tbl_seg
+0000:0118 dw, U      hdsk2_parm_off
+0000:011A dw, U      hdsk2_parm_seg
+0000:01D8 dw, U      vectr_76h_off
+0000:01DA dw, U      vectr_76h_seg
+0000:0400 dw, M      @rs232_port_1         Duplicate data items of
+0000:0402 dw, M      @rs232_port_2           range 0040:0000
+0000:0404 dw, M      @rs232_port_3
+0000:0406 dw, M      @rs232_port_4
+0000:0408 dw, M      @prn_port_1
+0000:040A dw, M      @prn_port_2
+0000:040C dw, M      @prn_port_3
+0000:040E dw, M      BIOS_data_seg
+0000:0410 dw, M      equip_bits
+0000:0412 db, M      init_test_flag
+0000:0413 dw, M      main_ram_size
+0000:0415 dw, M      chan_io_size
+0000:0417 db, M      keybd_flags_1
+0000:0418 db, M      keybd_flags_2
+0000:0419 db, M      keybd_alt_num
+0000:041A dw, M      keybd_q_head
+0000:041C dw, M      keybd_q_tail
+0000:041E dw, M,R 10 keybd_queue
+0000:043C dw, M      keybd_q_end
+0000:043E db, M      dsk_recal_stat
+0000:043F db, M      dsk_motor_stat
+0000:0440 db, M      dsk_motor_tmr
+0000:0441 db, M      dsk_ret_code
+0000:0442 db, M      dsk_status_1
+0000:0443 db, M      dsk_status_2
+0000:0444 db, M      dsk_status_3
+0000:0445 db, M      dsk_status_4
+0000:0446 db, M      dsk_status_5
+0000:0447 db, M      dsk_status_6
+0000:0448 db, M      dsk_status_7
+0000:0448 db, M      dsk_ctrl_last
+0000:0449 db, M      video_mode
+0000:044A dw, M      video_columns
+0000:044C dw, M      video_buf_siz
+0000:044E dw, M      video_segment
+0000:0450 dw, M      vid_curs_pos0
+0000:0452 dw, M      vid_curs_pos1
+0000:0454 dw, M      vid_curs_pos2
+0000:0456 dw, M      vid_curs_pos3
+0000:0458 dw, M      vid_curs_pos4
+0000:045A dw, M      vid_curs_pos5
+0000:045C dw, M      vid_curs_pos6
+0000:045E dw, M      vid_curs_pos7
+0000:0460 dw, M      vid_curs_mode
+0000:0462 db, M      video_page
+0000:0463 dw, M      @video_port
+0000:0465 db, M      video_mode_reg
+0000:0466 db, M      video_color
+0000:0467 dw, M      @gen_io_ptr
+0000:0469 dw, M      @gen_io_seg
+0000:046B db, M      gen_int_occured
+0000:046C dw, M      timer_low
+0000:046E dw, M      timer_hi
+0000:0470 db, M      timer_rolled
+0000:0471 db, M      keybd_break
+0000:0472 dw, M      warm_boot_flag
+0000:0474 db, M      hdsk_status_1
+0000:0475 db, M      hdsk_count
+0000:0476 db, M      hdsk_head_ctrl
+0000:0477 db, M      hdsk_ctrl_port
+0000:0478 db, M      prn_timeout_1
+0000:0479 db, M      prn_timeout_2
+0000:047A db, M      prn_timeout_3
+0000:047B db, M      prn_timeout_4
+0000:047C db, M      rs232_timeout_1
+0000:047D db, M      rs232_timeout_2
+0000:047E db, M      rs232_timeout_3
+0000:047F db, M      rs232_timeout_4
+0000:0480 dw, M      @keybd_begin
+0000:0482 dw, M      @keybd_end
+0000:0484 db, M      video_rows
+0000:0485 dw, M      video_pixels
+0000:0487 db, M      video_options
+0000:0488 db, M      video_switches
+0000:0489 db, M      video_1_reservd
+0000:048A db, M      video_2_reservd
+0000:048B db, M      dsk_data_rate
+0000:048C db, M      hdsk_status_2
+0000:048D db, M      hdsk_error
+0000:048E db, M      hdsk_int_flags
+0000:048F db, M      hdsk_options
+0000:0490 db, M      hdsk0_media_st
+0000:0491 db, M      hdsk1_media_st
+0000:0492 db, M      hdsk0_start_st
+0000:0493 db, M      hdsk1_start_st
+0000:0494 db, M      hdsk0_cylinder
+0000:0495 db, M      hdsk1_cylinder
+0000:0496 db, M      keybd_flags_3
+0000:0497 db, M      keybd_flags_4
+0000:0498 dw, M      @timer_wait_off
+0000:049A dw, M      @timer_wait_seg
+0000:049C dw, M      timer_clk_low
+0000:049E dw, M      timer_clk_hi
+0000:04A0 dw, M      timer_clk_flag
+0000:04A1 db, M      lan_1
+0000:04A2 db, M      lan_2
+0000:04A3 db, M      lan_3
+0000:04A4 db, M      lan_4
+0000:04A5 db, M      lan_5
+0000:04A6 db, M      lan_6
+0000:04A7 db, M      lan_7
+0000:04A8 dd, M      @video_parm_tbl
+0000:04AC dd, M      @video_sav1area
+0000:04B0 dd, M      @video_text_tbl
+0000:04B4 dd, M      @vid_grph_tbl
+0000:04B8 dd, M      @video_sav2area
+0000:04CE dw, M     days_since_1_80
+0000:D8A8 dw, U      GDT_info_tbl
+0000:D8B0 dw, U      IDT_info_tbl
+0000:D8FA dw, U      GDT_stack_1
+0000:D8FC dw, U      GDT_stack_2
+0040:0000 dw, C 01   @rs232_port_1         Start of primary BIOS RAM
+0040:0002 dw         @rs232_port_2
+0040:0004 dw         @rs232_port_3
+0040:0006 dw         @rs232_port_4
+0040:0008 dw, C 02   @prn_port_1
+0040:000A dw         @prn_port_2
+0040:000C dw         @prn_port_3
+0040:000E dw, C 8A   BIOS_data_seg
+0040:0010 dw, C 03   equip_bits
+0040:0012 db, C 04   init_test_flag
+0040:0013 dw, C 05   main_ram_size
+0040:0015 dw, C 06   chan_io_size
+0040:0017 db, C 07   keybd_flags_1
+0040:0018 db, C 08   keybd_flags_2
+0040:0019 db, C 09   keybd_alt_num
+0040:001A dw, C 0A   keybd_q_head
+0040:001C dw, C 0B   keybd_q_tail
+0040:001E dw, R 10, C 0C  keybd_queue
+0040:003E db, C 0E   dsk_recal_stat
+0040:003F db, C 0F   dsk_motor_stat
+0040:0040 db, C 10   dsk_motor_tmr
+0040:0041 db, C 11   dsk_ret_code
+0040:0042 db, C 12   dsk_status_1
+0040:0043 db         dsk_status_2
+0040:0044 db         dsk_status_3
+0040:0045 db         dsk_status_4
+0040:0046 db         dsk_status_5
+0040:0047 db         dsk_status_6
+0040:0048 db         dsk_status_7
+0040:0049 db, C 14   video_mode
+0040:004A dw, C 15   video_columns
+0040:004C dw, C 16   video_buf_siz
+0040:004E dw, C 17   video_segment
+0040:0050 dw, C 18   vid_curs_pos0
+0040:0052 dw, C 19   vid_curs_pos1
+0040:0054 dw, C 1A   vid_curs_pos2
+0040:0056 dw, C 1B   vid_curs_pos3
+0040:0058 dw, C 1C   vid_curs_pos4
+0040:005A dw, C 1D   vid_curs_pos5
+0040:005C dw, C 1E   vid_curs_pos6
+0040:005E dw, C 1F   vid_curs_pos7
+0040:0060 dw, C 20   vid_curs_mode
+0040:0062 db, C 21   video_page
+0040:0063 dw, C 22   @video_port
+0040:0065 db, C 23   video_mode_reg
+0040:0066 db, C 24   video_color
+0040:0067 dw, C 25   @gen_io_ptr
+0040:0069 dw, C 26   @gen_io_seg
+0040:006B db, C 27   gen_int_occured
+0040:006C dw, C 28   timer_low
+0040:006E dw, C 29   timer_hi
+0040:0070 db, C 2A   timer_rolled
+0040:0071 db, C 2B   keybd_break
+0040:0072 dw, C 2C   warm_boot_flag
+0040:0074 db, C 2D   hdsk_status_1
+0040:0075 db, C 2E   hdsk_count
+0040:0076 db, C 2F   hdsk_head_ctrl
+0040:0077 db, C 30   hdsk_ctrl_port
+0040:0078 db, C 31   prn_timeout_1
+0040:0079 db, C 32   prn_timeout_2
+0040:007A db         prn_timeout_3
+0040:007B db         prn_timeout_4
+0040:007C db, C 33   rs232_timeout_1
+0040:007D db, C 34   rs232_timeout_2
+0040:007E db         rs232_timeout_3
+0040:007F db         rs232_timeout_4
+0040:0080 dw, C 35   @keybd_begin
+0040:0082 dw, C 36   @keybd_end
+0040:0084 db, C 37   video_rows
+0040:0085 dw, C 38   video_pixels
+0040:0087 db, C 39   video_options
+0040:0088 db, C 3A   video_switches
+0040:0089 db, C 3B   video_1_reservd
+0040:008A db, C 3C   video_2_reservd
+0040:008B db, C 3D   dsk_data_rate
+0040:008C db, C 3E   hdsk_status_2
+0040:008D db, C 3F   hdsk_error
+0040:008E db, C 40   hdsk_int_flags
+0040:008F db, C 41   hdsk_options
+0040:0090 db, C 42   hdsk0_media_st
+0040:0091 db, C 43   hdsk1_media_st
+0040:0092 db, C 44   hdsk0_start_st
+0040:0093 db, C 45   hdsk1_start_st
+0040:0094 db, C 46   hdsk0_cylinder
+0040:0095 db, C 47   hdsk1_cylinder
+0040:0096 db, C 48   keybd_flags_3
+0040:0097 db, C 49   keybd_flags_4
+0040:0098 dw, C 4A   @timer_wait_off
+0040:009A dw, C 4B   @timer_wait_seg
+0040:009C dw, C 4C   timer_clk_low
+0040:009E dw, C 4D   timer_clk_hi
+0040:00A0 dw, C 4E   timer_clk_flag
+0040:00A1 db, C 4F   lan_1
+0040:00A2 db         lan_2
+0040:00A3 db         lan_3
+0040:00A4 db         lan_4
+0040:00A5 db         lan_5
+0040:00A6 db         lan_6
+0040:00A7 db         lan_7
+0040:00A8 dd, C 51   @video_parm_tbl
+0040:00AC dd, C 52   @video_sav1area
+0040:00B0 dd, C 53   @video_text_tbl
+0040:00B4 dd, C 54   @vid_grph_tbl
+0040:00B8 dd, C 55   @video_sav2area
+0040:00CE dw, U,C 56 days_since_1_80
+0040:0100 db, U, M   prn_scren_stat
+0050:0000 db, C 57   prn_scren_stat
+B800:0000 d?, U      video_dply_area
+C000:0000 dw, U      rom_chk_word
+C000:0002 db, U      rom_chk_size
+F000:EFC7 db, C 5D   dsk_info_1            Start of ROM BIOS data areas
+F000:EFC8 db, C 5E   dsk_info_2
+F000:EFC9 db, C 5F   dsk_motor_delay
+F000:EFCA db, C 60   dsk_sectr_bytes
+F000:EFCB db, C 61   dsk_sector_trac
+F000:EFCC db, C 62   dsk_head_gap
+F000:EFCD db, C 63   dsk_data_length
+F000:EFCE db, C 64   dsk_format_gap
+F000:EFCF db, C 65   dsk_format_byte
+F000:EFD0 db, C 66   dsk_settlg_time
+F000:EFD1 db, C 67   dsk_startup_tim
+F000:F0A4 db, R 10, C 68  video_hdwr_tbl1
+F000:F0B4 db, R 10, C 69  video_hdrw_tbl2
+F000:F0C4 db, R 10, C 6A  video_hdwr_tbl3
+F000:F0D4 db, R 10, C 6B  video_hdwr_tbl4
+F000:F0E4 dw, C 6C   video_buf_size1
+F000:F0E6 dw, C 6D   video_buf_size2
+F000:F0E8 dw, C 6E   video_buf_size3
+F000:F0EA dw, C 6F   video_buf_size4
+F000:F0EC db, R 8, C 70  video_columntbl
+F000:F0F4 db, R 8, C 71  video_hdwr_mode
+F000:E3D1 dw, C 72   hdsk_cylinders
+F000:E3D3 db, C 73   hdsk_heads
+F000:E3D4 dw, C 74   hdsk_lo_wrt_cyl
+F000:E3D6 dw, C 75   hdsk_precompcyl
+F000:E3D8 db, C 76   hdsk_err_length
+F000:E3D9 db, C 77   hdsk_misl_bits
+F000:E3DA db, C 78   hdsk_timeout
+F000:E3DB db, C 79   hdsk_fmt_timout
+F000:E3DC db, C 7A   hdsk_chk_timout
+F000:E3DD dw, C 7B   hdsk_parkng_cyl
+F000:E3DF db, C 7C   hdsk_sectr_trac
+F000:E3E0 db, C 7D   hdsk_unused
+F000:E3E1 db, R 0310,C 7E  hdsk_tables
+F000:FA6E db, R 400,C 7F   video_char_tbl
+F000:FEF3 dw, oln,R 0015,C 87  int_vec_table
+F000:FF1D dw, odn,R 2          int_data_table
+F000:FF21 dw, R 1          video_ptr
+F000:FF23 dw, oln,R 0008   int_vec_table_2
+F000:8000 da, R 006C       begin_text
+F000:FFF5 da, R 9, C 88    rom_versn_date
+F000:FFFE db, C 89   model_type
+F000:FFFF db         model_sub_type
+
+F000:EC5C loc, Ext, C 05 int_5_prn_scrn
+F000:FF54 loc, Ext, C 2A int_5_entry
+F000:EB43 loc, Ext, C 06 int_6_unused
+F000:EAEB loc, Ext, C 07 int_7_unused
+F000:ECE7 loc, Ext, C 08 int_8_timer
+F000:FEA5 loc, Ext, C 2A int_8_entry
+F000:92F4 loc, Ext, C 09 int_9_keyboard
+F000:E987 loc, Ext, C 2A int_9_entry
+F000:E831 loc, Ext, C 0E int_0Eh_floppy
+F000:EF57 loc, Ext, C 2A int_0Eh_entry
+F000:F84D loc, Ext, C 11 int_11h_equip
+F000:F841 loc, Ext, C 12 int_12h_memsiz
+F000:AA8A loc, Ext, C 13 int_13h_floppy
+F000:EC59 loc, Ext, C 2A int_13h_entry
+F000:F8E2 loc, Ext, C 14 int_14h_RS232
+F000:E739 loc, Ext, C 2A int_14h_entry
+F000:D17D loc, Ext, C 15 int_15h_servics
+F000:F859 loc, Ext, C 2A int_15h_entry
+F000:9873 loc, Ext, C 16 int_16h_keybd
+F000:E82E loc, Ext, C 2A int_16h_entry
+F000:F85C loc, Ext, C 17 int_17h_printer
+F000:EFD2 loc, Ext, C 2A int_17h_entry
+F000:E005 loc, Ext, C 18 int_18h_basic
+F000:E000 loc, Ext, C 2A int_18h_entry
+F000:F74A loc, Ext, C 19 int_19h_bootup
+F000:E6F2 loc, Ext, C 2A int_19h_entry
+F000:ED39 loc, Ext, C 1A int_1Ah_RTC
+F000:FE6E loc, Ext, C 2A int_1Ah_entry
+F000:EA42 loc, Ext, C 1E int_70h_clock
+F000:EECF loc, Ext, C 1F int_71h_LAN
+F000:EED8 loc, Ext, C 23 int_75h_80287
+F000:E845 loc, Ext, C 24 int_76h_hddone
+F000:FF53 loc, Ext, C 00 int_return           User interrupts (set to an iret intruction)
+F000:F065 loc, Ext, C 27 int_unused            Unused (bios unsupported) interrupts
+02AB:04D4 loc, Ext, C 29 system_reset
+F000:FFF0 loc, Ext, C 2A power_on_reset
+FFFF:0000 loc, U         power_on_reset
+
+
+  Notes:
+     1) Must have at least one entry in each section to operate properly.
+          Use "none" if no entries are needed for a section.
+
+     2) Order of entries within each section is unimportant.
+
+     3) When a filename is specified in section 1, it is loaded and the
+          first 26 segments can be referenced as "sega" to "segz" within
+          the balance of this definition file.  This allows label addresses 
+          to be automatically determined.  (i.e. a location label can be
+          defined as:
+
+                        6234:0124 loc, Ext, C 2  temp_value_a
+                  or:   segb:0124 loc, Ext, C 2  temp_value_a
+
+          The second entry will use the 2nd segment within the loaded file)
+          An error will be generated if a segment is used beyond those 
+          specified by the file load (Consult manual for more information).
+
+     4) Section 3 allows def file comments to the right of the label or on
+          separate lines if column 1 is blank.
+

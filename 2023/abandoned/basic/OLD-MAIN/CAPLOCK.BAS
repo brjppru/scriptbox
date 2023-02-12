@@ -1,0 +1,3 @@
+    DEF SEG = 0
+    POKE &H417, 193 '193 ON 129 OFF
+

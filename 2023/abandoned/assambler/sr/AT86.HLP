@@ -1,0 +1,263 @@
+     AT86 has a built-in context-sensitive help facility.  Just type "?" atç
+any point, and you'll see a pop up window that attempts to clarify whatever isç
+going on.  The current screen is automatically displayed when you type "help"ç
+in COMMAND MODE instead of typing "?".  This file is an ordinary ASCII fileç
+called AT86.HLP which should reside in the same (sub)directory AT86.COMç
+resides in, since then AT86 knows how to find it.  Currently this file tellsç
+you the meaning of a number of non-DEBUG.COM like commands.  To see more thanç
+the present screen, type down arrow to get one more line, or PgDn to get theç
+next screen.  Special commands to be typed in COMMAND MODE are:
+
+bye		return to DOS
+chdir path	change directory to pathname path
+cls		clear screen
+cont		continue execution at full speed (not tracing)
+cpu		display info on CPU, RAM, ROM, serial, parallel, speed
+delete num	delete instruction at offset num
+dir template	list directory with template specified
+edit num	edit statement at offset num
+erase file	erase file with filename file
+files template	list directory with template specified
+insert num	insert instruction(s) starting at offset num
+kill file	kill (erase) file with filename file
+list [num]	list (display) program from start [from offset num]
+llist [num]	print program from start [from offset num]
+load file	load file with filename file.com
+new		delete all labels, restore initial registers values
+pause n		set pause interval to n/10 seconds (for demo's)
+quit		return to DOS
+run		run program from start at full speed (not trace)
+save file	save file with filename file.com
+system		return to DOS
+trace [num]	trace program from start [from offset num]
+type file	type (display) file with filename file
+width 4 or 8	set screen width to 40 or 80 columns
+
+     These commands exist in similar forms in DOS or BASIC.  AT86 acceptsç
+relaxed syntax.  For example, on the files command, you can enclose theç
+filename template in double quotes or not as you choose.  The insert commandç
+is added since legal line numbers always correspond to addresses of currentç
+instructions.  On the other hand, renumbering is automatic, so BASIC'sç
+renumber command is superfluous.
+     In addition to these commands, you have, of course, the standard AT86ç
+commands, which can also be useful, particularly the A (assemble) and Tç
+(trace) commands.
+
+
+		AT86 ASSEMBLY LANGUAGE INTERPRETER
+
+     The AT86 debug program has a built-in simple assembly-languageç
+interpreter facility.  In several ways AT86 mimics the BASIC interpreter,ç
+except that it expects assembly language statements instead of BASICç
+statements.  It also differs from previous interpreters in a number of ways,ç
+such as having the full power of a screen debugger and using native machineç
+code as the intermediate interpreter language, which can lead to fasterç
+programs than those from compilers let alone usual interpreters.
+     The BASIC-like word commands coexist with the DEBUG-style single letterç
+commands remarkably peacefully.  Words like load, save, list, llist, run, andç
+delete are syntactically illegal from DEBUG's point of view, and hence can beç
+used unambiguously directly in AT86's COMMAND MODE.  The BASIC command "new"ç
+is ambiguous, since to debug it means name the file called ew, but if youç
+really want to name such a file you could type n ew, which is not recognizedç
+as new.
+     BASIC uses statement line numbers for branching and editing purposes, andç
+the AT86 instructions are automatically located in memory and can be referredç
+to by their hexadecimal memory offset values.  You use these offset valuesç
+like line numbers to insert, delete, edit, trace, and execute instructions. ç
+Since many instructions are longer than one byte, there are many illegal "lineç
+numbers" referring to the middles of instructions.  AT86 tells you if you tryç
+to refer to one of these illegal numbers.  To make sure that it knows what'sç
+an instruction without undue overhead, AT86 insists that its code area (codeç
+segment) contains only instructions.  It has a very fast algorithm forç
+scanning through a program up to the END statement that allows it to check forç
+legal line numbers.  This same algorithm is used to insert, delete andç
+overtype instructions, all of which can involve shifting the code up or downç
+in memory.  When you make a change in a program, AT86 "reassembles" the codeç
+at about 11,000 instructions a second on an ordinary PC.  Actually it doesn'tç
+have to completely reassemble the code; it only has to shift the code asç
+needed and update all relative offsets in jmp and call instructionsç
+appropriately.
+     AT86 allows the use of labels for referring to variables and jumpç
+addresses.  As you type in or list a program, references to undefined labelsç
+are stamped with a "U" to the left of the corresponding machine code.  Whenç
+you resolve these references by typing in a statement with a missing label,ç
+the references are filled in.   For example, you can type in "call alpha",ç
+where alpha hasn't been defined previously, and then later type in theç
+subroutine called alpha.  If you subsequently delete with instruction with theç
+label alpha, all corresponding references are stamped as Undefined, until youç
+redefine their target again.
+     AT86 accepts all instructions in the 8086/80186/80286/8087 repertoire.  Aç
+special pseudo op, "end" is used to specify the end of the code.  Typicallyç
+you don't have to use the end pseudo op, since AT86 knows where your codeç
+ends.  However if you want to delete the code from some point through the endç
+of what you've typed in, you can type end in sooner.  To start over, youç
+should use the word "new" instead, since that also deletes the labels you'veç
+typed in.
+
+
+			AT86 EDIT FACILITY
+
+     AT86 has a line edit facility patterned after the PMATE editor that worksç
+both in COMMAND and ASSEMBLE MODEs.  While typing in a command or assemblyç
+language statement, you can use the left anf right arrow keys to move aroundç
+the line.  Typing ordinary characters simply inserts them at the cursorç
+position.  Keystrokes are identified as follows:
+
+Home		move cursor to beginning of line
+End		move cursor to end of line
+Ctrl-O		move one word left  (Ctrl-left- arrow is an alias)
+Ctrl-P		move one word right (Ctrl-right-arrow is an alias)
+Ctrl-Q		delete word to left
+Ctrl-W		delete word to right
+Ctrl-K		delete (Kill) from cursor to end of line
+Del		deletes character under cursor
+Backspace	deletes character before cursor
+
+     To edit a line, type
+
+-edit line_number
+
+in COMMAND MODE.  This switches to ASSEMBLE MODE and automatically calls upç
+the line with the line_number (instruction offset) specified.  Make theç
+changes you want and type <cr> to go onto the next line.  To quit editing,ç
+type Esc, which returns to COMMAND MODE
+
+
+			AT86 8087 CALCULATOR
+
+     AT86 has an 8087 reverse-Polish-notation (RPN) floating point calculatorç
+that supports +-*/^%, trig, hyperbolic, exponential, and other functionsç
+described below.  The calculator requires the presence of the 8087 numericç
+coprocessor and issues a message encouraging you to install one if youç
+haven't.  The calculator has four major advantages over a pocket calculator:ç
+1) the large screen allows substantially more information to be displayed, 2)ç
+it's much faster, 3) it produces 16-decimal place answers (unless you specifyç
+less precision), and 4) in AT86 resident mode, the result of a calculation canç
+be inserted directly into the keyboard input queue as if you had typed it. ç
+This last feature adds speed and accuracy to your calculator functions.  Theç
+8087 has 8 stack locations, and AT86's 8087 calculator is limited to thisç
+depth.  Some functions, such as sin and cos require a total of three stackç
+locations, which must come from the 8.
+     For quick calculations, you can use the calculator directly in COMMANDç
+MODE by starting the line with a "."  For example,
+
+-.16 2^
+
+displays
+
+-.16 2^= 65536
+
+and
+
+-. 45 sin <CR>
+
+displays
+
+-. 45 sin= 0.707106781186548
+
+Trig functions assume that their arguments are in degrees until instructedç
+otherwise by the rad command.  For quick help on the calculator mode while inç
+COMMAND MODE, type ".?"
+     For more extended calculations, switch into the 8087 CALCULATOR MODE, byç
+typing "." in COMMAND MODE followed by <CR>.  In CALCULATOR MODE, the leadingç
+period is not used and a special menu line shows some calculator functionsç
+along with the degree/radian and stack status's.  CALCULATOR MODE remains onç
+until you type the Esc key.  For quick help, just type "?" at any time.
+     When AT86 is resident (AT86/R), type Ctrl-. to interrupt the programç
+you're running and enter CALCULATOR MODE directly.  Perform whateverç
+calculations you want and return to your program by typing the bye command. ç
+If you want to insert the result of the calculation into the keyboard inputç
+queue as if you had typed it in, type the <Ins> key.  This inserts the resultç
+accordingly and returns to your program.  For example, to insert the value ofç
+pi (3.141592653589793) accurate to 16 decimal places at the cursor position inç
+your word processor, type Ctrl-., pi <Ins>.  Done!  In fact that's exactlyç
+what I just did to get that value into this help file.
+     Ordinarily the 8087 calculator works with its own stack, saving theç
+complete 8087 state before using the 8087 and restoring the 8087 state whenç
+the calculation is completed.  Alternatively, the stack-on command uses theç
+current user 8087 stack and status.  This stack-on mode is handy forç
+manipulating the 8087 stack while debugging, and it displays the stackç
+continually.  The user stack is the one examined by the z command andç
+displayed by the 7 option in TRACE MODE.
+     For either 8087 stack, the xn function eXchanges the stack top with theç
+nth stack location.  For example, x1 exchanges the stack top with the nextç
+stack location.  Calling the stack top x and the next location y, the x1ç
+command exchanges the contents of x and y.  For either 8087 stack, the pnç
+command pushes the value of the nth stack location onto the stack.  Inç
+particular, p0 duplicates the stack top.
+     In the stack-on mode, sn works the same way as pn, but in the stack-offç
+mode, sn pushes the nth user stack location.  This allows you to use the userç
+8087 stack for input without affecting that stack.  You can also store aç
+result back into the nth (0 <= n <= 7) user stack location by typing sn=.
+     If you type in an integer with no functions or operators, the calculatorç
+displays it in hexadecimal.  To convert from hex to decimal, type in theç
+hexadecimal number followed by "h" <CR>.  The advantage of using the 8087ç
+calculator instead of the usual AT86 hex calculator is that full 64-bitç
+arithmetic is supported instead of 32-bit.
+     To get an idea of how to use the calculator, enter CALCULATOR MODE andç
+start typing commands.  Note that if you push too many values onto the stack,ç
+you'll start seeing ??, meaning "Not a Number" (NaN), which is one of severalç
+illegitimate values tagged by the 8087.  Similarly once you get an infiniteç
+answer (perhaps by dividing by 0), subsequent functions continue to yieldç
+infinity even if you divide it into a finite number.  You can pop illegalç
+values off the stack using the pop command, or store new values on the stackç
+with the = command.  To reinitialize the user stack (all stack locationsç
+empty), type init.
+     The following gives a brief description of the built-in 8087 functions. ç
+In the discussion, x refers to the 8087 stack top, while y refers to the nextç
+stack location.  For example, "x = absolute value of x" means that theç
+absolute value of the stack top replaces the stack top.  Push value pushes theç
+value indicated onto the 8087 stack.  Thus pi pushes the value of piç
+(3.141592653589793) onto the stack.
+
+abs	x = absolute value of x
+acos	x = arc cos(x)
+acosh	x = arc cosh(x)
+asin	x = arc sin(x)
+asinh	x = arc sinh(x)
+atan	x = arc tan(x)
+atanh	x = arc tanh(x)
+bye	return to DOS, or if resident, return to interrupted program
+cabs	x = x*x + y*y, and stack is popped once
+cexp	x = cos(x), y = sin(x)  (stack is pushed once)
+chs	x = -x
+cls	clear screen
+cos	x = cos(x)
+cosh	x = cosh(x)
+cot	x = cot(x)
+csc	x = csc(x)
+deg	interpret trig arguments in degrees (default)
+e	push e (2.718281828459045)
+exp	x = exp(x)
+hex	display x in hex (automatic if you type in a number alone)
+init	reinitialize the user stack
+int	x = integer(x) (chopped down)
+inv	x = 1/x  (INVerse)
+ln	x = ln(x)
+log2	x = log base 2 (x)
+log	x = log base 10 (x)
+in	push number typed in by user
+pi	push pi (3.141592653589793)
+pop	pop stack (throw away x, so that y becomes x)
+prec	set display precision = x
+rad	interpret trig arguments in radians
+ranf	push next random number in sequence determined by seed
+sec	x = sec(x)
+sech	x = sech(x)
+seed	seed for random numbers = x
+sin	x = sin(x)
+sinh	x = sinh(x)
+sq	x = x*x
+sr	push x from last calculation
+sqrt	x = sqrt(x)
+stack	on (off) - turn user 8087 stack on (off)
+tan	x = tan(x)
+tanh	x = tanh(x)
+todeg	x = 180*x/pi
+topol	x = sqrt(x*x + y*y),  y = atan(y/x)
+torad	x = pi*x/180
+torec	x = x*cos(y), y = x*sin(y)
+z	display full 8087 status/stack values
+
+     The % operator computes the percent difference between x and y, that is,ç
+y = 100*(x-y)/y, and then it pops the stack.
