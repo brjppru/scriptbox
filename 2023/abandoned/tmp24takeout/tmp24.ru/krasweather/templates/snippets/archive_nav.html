@@ -1,0 +1,62 @@
+<table class="table table-condensed" style="margin-bottom: 50px;">
+    <tr>
+        <td>Год:</td>
+        <td colspan="12" class="nopad">
+            <table class="table nopad">
+                <tr>
+                    {% for y in range(now.year - 3, now.year + 4) %}
+                        <td {% if year == y %}class="selected" {% endif %}style="width: 8%">
+                            {% if y in years %}
+                                {% if year == y %}
+                                    <a class="year" href="{{ url_for('year_archive', year=y) }}">{{ y }}</a>
+                                {% else %}
+                                    <a class="year" href="{{ url_for('year_archive', year=y) }}">{{ y }}</a>
+                                {% endif %}
+                            {% else %}
+                                <span style="color: #ddd">{{ y }}</span>
+                            {% endif %}
+                        </td>
+                    {% endfor %}
+                </tr>
+            </table>
+        </td>
+    </tr>
+
+    <tr style="border-bottom: 1px solid #ddd">
+        <td>Месяц:</td>
+        {% for m in range(1, 13) %}
+            <td{% if month == m %} class="selected"{% endif %}>
+                {% if m in months %}
+                    {% if month == m %}
+                        <a href="{{ url_for('month_archive', year=year, month=m) }}">{{ m|month_name }}</a>
+                    {% else %}
+                        <a href="{{ url_for('month_archive', year=year, month=m) }}">{{ m|month_name }}</a>
+                    {% endif %}
+                {% else %}
+                    <span style="color: #ddd">{{ m|month_name }}</span>
+                {% endif %}
+            </td>
+        {% endfor %}
+    <tr>
+
+    {% if days %}
+        <tr style="border-bottom: 1px solid #ddd">
+            <td>День:</td>
+            <td colspan="12" class="nopad">
+                <table class="table" style="margin-bottom: 0">
+                    <tr>
+                        {% for d in range(1, monthrange[1] + 1) %}
+                            <td{% if day == d %} class="selected"{% endif %} style="width: 3%;">
+                            {% if d in days %}
+                                <a href="{{ url_for('day_archive', year=year, month=month, day=d) }}">{{ d }}</a>
+                            {% else %}
+                                <span style="color: #ddd">{{ d }}</span>
+                            {% endif %}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    {% endif %}
+</table>

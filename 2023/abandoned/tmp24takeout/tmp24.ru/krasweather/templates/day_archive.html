@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <div id="archive" class="page">
+        <div class="box">
+            <h1>{{ title }}</h1>
+
+            {% include "snippets/archive_nav.html" %}
+
+            <div id="day-chart" class="chart"></div>
+
+            <table class="table table-bordered table-condensed" style="width: 75%; margin:0 auto;">
+                {% for row in data|batch(6, None) %}
+                    <tr>
+                        {% for item in row %}
+                            {% if not item is none %}
+                                <td style="width: 16%"><strong>{{ item[0] }}:00</strong></td>
+                            {% else %}
+                                <td></td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        {% for item in row %}
+                            {% if not item is none %}
+                                <td class="t">{{ item[1] }}</td>
+                            {% else %}
+                                <td></td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                {% include "snippets/total.html" %}
+            </table>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block extrascripts %}
+<script>
+    $(document).ready(function(){
+        day_chart({{ year }}, {{ month }}, {{ day }}, 'day-chart', '');
+    });
+</script>
+{% endblock extrascripts %}

@@ -1,0 +1,9 @@
+SHELL=/bin/sh
+
+#Our virtualenv dir must be first item in path or we can start wrong python!
+PATH=/srv/virtualenv/bin:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+SITE_ADMIN_SCRIPT = /srv/krasweather/manage.py
+
+# m h dom mon dow user  command
+# Run once in an hour to make sure if something fails first time we still get forecast data.
+0 * * * * tmp24 python $SITE_ADMIN_SCRIPT getforecast

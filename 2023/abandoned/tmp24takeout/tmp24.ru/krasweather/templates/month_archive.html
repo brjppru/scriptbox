@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <div id="archive" class="page">
+        <div class="box">
+            <h1>{{ title }}</h1>
+
+            {% include "snippets/archive_nav.html" %}
+
+            <div id="month-chart" class="chart"></div>
+
+            <table class="table table-bordered table-condensed" style="width: 80%; margin:0 auto;">
+                {% for row in data|batch(7, '') %}
+                    <tr>
+                        {% for item in row %}
+                            {% if item %}
+                                <td><strong>{{ item.day }}</strong></td>
+                            {% else %}
+                                <td></td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        {% for item in row %}
+                            {% if item %}
+                                <td class="t">{{ item.avg|round(2) }}</td>
+                            {% else %}
+                                <td></td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                {% include "snippets/total.html" %}
+            </table>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block extrascripts %}
+<script>
+    $(document).ready(function(){
+        month_chart({{ year }}, {{ month }}, 'month-chart', '');
+    });
+</script>
+{% endblock extrascripts %}

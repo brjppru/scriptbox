@@ -1,0 +1,17 @@
+<tr>
+    <td colspan="{{ data|list()|length() }}" class="nopad">
+        <table class="table nopad transparent">
+            <tr>
+                <td class="noborder">
+                  Минимальная температура: {{ min_temp }}
+                </td>
+                <td>
+                    Средняя температура: {{ avg_temp }}
+                </td>
+                <td>
+                    Максимальная температура: {{ max_temp }}
+                </td>
+            </tr>
+        </table>
+    </td>
+</tr>

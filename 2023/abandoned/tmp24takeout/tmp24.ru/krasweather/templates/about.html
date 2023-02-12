@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <div class="row-fluid">
+        <div class="span8 offset2 box">
+
+            <h1>{{ title }}</h1>
+            <h2><a href="http://tmp24.ru/">tmp24.ru</a>&nbsp;— проект по сбору показания температурных датчиков в г. Красноярске. </h2>
+
+            <h2>Ответы на часто задаваемые вопросы:</strong></h2>
+            <ul>
+                <li>Красноярск&nbsp;— один из городов&nbsp;<a href="http://lurkmore.to/%D0%A1%D0%B8%D0%B1%D0%B8%D1%80%D1%8C">Сибири</a>, и при этом географический центр этой вашей РФ.</li>
+                <li>Погоду в&nbsp;<a href="http://lurkmore.ru/%D0%9A%D1%80%D0%B0%D1%81%D0%BD%D0%BE%D1%8F%D1%80%D1%81%D0%BA">Красноярске</a>&nbsp;предоставляет небесная канцелярия.</li>
+                <li>В городе круглый год царит жуткий ебун, иногда бывает двухнедельная жара летом.</li>
+                <li>Проект не гарантирует достоверность метеоданных.</li>
+                <li>Вся отображаемая на сайте информация выводится только на основании сведений о текущих параметрах температуры, передаваемых с клиентских устройств данного сервиса.</li>
+                <li>Базовый функционал сайта является БЕСПЛАТНЫМ для частного некоммерческого использования.</li>
+                <li>Датчик установлен: 660022, г. Красноярск, улица Партизана Железняка, 16Д</li>
+                <li>Координаты: Широта: 56°1′46.31″N (56.029531) Долгота: 92°54′43.69″E (92.912137)</li>
+            </ul>
+
+            <div id="map_canvas" style="width: 60%; height: 300px; margin: 2em;"></div>
+
+            <div style="width: 90%; margin-left: 2em;">
+                <ul class="unstyled">
+                    <li class="loose"><strong>Работает проект (хостинг) <a href="http://firstvds.ru/?from=17843">вот тут</a>
+                        вот <a href="http://firstvds.ru/?from=17843">на этой платформе</a>,
+                        реферальный код 64817843. <br>Ввел, купил сервер и получил себе скидку в 25%.</strong></li>
+                    <li class="loose">Фотография Красноярска любезно предоставлена фотографом "<a href="http://imgsrc.ru/main/user.php?user=l0ner">Иваныч</a>".</li>
+                    <li class="loose">По вопросам размещения рекламы на проекте:&nbsp;<a href="mailto:tmp24ru@yandex.ru">tmp24ru@yandex.ru</a></li>
+                    <li class="loose">Погода иногда бывает недостаточно хорошей, а ещё бывает неподходящая к погоде одежда.</li>
+                    <li class="loose">Богатырского здоровья и успехов.</li>
+                    <li class="loose">Спасибо, что посетили этот сайт.</li>
+                    <li class="loose"><a href="http://brj.pp.ru/">Roman Y. Bogdanov</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block scripts %}
+    <script src="http://api-maps.yandex.ru/2.0-stable/?load=package.standard&lang=ru-RU" type="text/javascript"></script>
+    {{ super() }}
+{% endblock scripts %}

@@ -1,0 +1,47 @@
+{% macro navbar_menuitem(href, description, prefix='//') -%}
+{% if href == '/' and request.path != '/' %}
+  <li><a href="{{ href }}">{{ description }}</a>
+{% else %}
+  <li{% if request.path is startswith(href) or request.path is startswith(prefix) %} class="active"{% endif %}><a href="{{ href }}">{{ description }}</a>
+{% endif %}
+{% endmacro %}
+
+
+{% macro navbar() -%}
+<nav class="nav-top">
+    <div class="navbar navbar-fixed-top" id="topnavbar">
+      <!-- navbar-fixed-top -->
+      <div class="navbar-inner" id="navbartop">
+            <div id="clock">
+                <span id="clock_hour"></span><span class="blink">:</span><span id="clock_minute"></span>
+            </div>
+            <div id="main-nav" class="scroller-spy">
+                <nav class="nav-collapse collapse" >
+                    <ul class="nav" id="nav">
+
+                        {{ navbar_menuitem('/', 'Погода') }}
+                        {{ navbar_menuitem(url_for('year_archive', year=today.year), 'Архив', '/archive/')}}
+                        {{ navbar_menuitem('/status/', 'Состояние') }}
+                        {% for page in menu_flatpages %}
+                          {{ navbar_menuitem(url_for('flatpage', slug=page.slug), page.menu_text) }}
+                        {% endfor %}
+                        {% if current_user.is_authenticated() %}
+                          {{ navbar_menuitem('/logout/', 'Выход') }}
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+            <div id="temp">
+                {% if current_temp %}
+                  <div id="current_temp">{{ current_temp }}°C</div>
+                  <div class="text-small">Последнее обновление:<br>{{ last_update.date|date}}
+                    <span class="lastupdate" data-date="{{ last_update.date }}"></span>
+                  </div>
+                {% else %}
+                  <div class="text-small">Нет данных с датчиков.<br>Похоже что-то сломалось</div>
+                {% endif %}
+            </div>
+      </div>
+    </div>
+</nav>
+{%- endmacro %}

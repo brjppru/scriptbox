@@ -1,0 +1,72 @@
+{% extends "layout.html" %}
+
+{% macro fail() %}
+    <td><div class="fail"></div></td>
+{% endmacro %}
+
+{% macro online() %}
+    <td><div class="online"></div></td>
+{% endmacro %}
+
+{% macro offline() %}
+    <td><div class="offline"></div></td>
+{% endmacro %}
+
+{% macro row(day, data) %}
+    <tr>
+        <td>{{ day|date }}</td>
+        {% if day in data %}
+            {% for hour in range(24) %}
+                {% if hour in data[day] %}
+                    {{ online() }}
+                {% else %}
+                    {% if today == day and now.hour < hour %}
+                        <td><div class="offline"></div></td>
+                    {% else %}
+                        {{ fail() }}
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            {% for hour in range(24) %}
+                {{ fail() }}
+            {% endfor %}
+        {% endif %}
+    </tr>
+{% endmacro %}
+
+{% macro status_box(title, days) %}
+    <div id="system" class="box">
+        <h1 class="center">{{ title }}</h1>
+        <table id="system-status-info" class="table table-condesed table-bordered">
+            <tr>
+                <th rowspan="2">Дата</th>
+                <th colspan="23">Время</th>
+            </tr>
+            <tr>
+                {% for hour in range(24) %}
+                    <th class="center">{{ hour }}</th>
+                {% endfor %}
+            <tr>
+            {% for day in days %}
+                {{ row(day, data) }}
+            {% endfor %}
+        </table>
+    </div>
+{% endmacro %}
+
+{% block content %}
+    <div id="status" class="page">
+
+        {{ status_box('Состояние системы сегодня', days[0:1]) }}
+        {{ status_box(title, days[1:]) }}
+
+        <div class="box">
+            <ul class="unstyled" style="padding-top: 15px; padding-left: 5em;">
+                <li><div class="online pull-left"></div>&nbsp;&nbsp;-&nbsp;Все работает</li>
+                <li><div class="fail pull-left"></div>&nbsp;&nbsp;-&nbsp;Все сломалось</li>
+                <li><div class="offline pull-left"></div>&nbsp;&nbsp;-&nbsp;Еще не известно</li>
+            </ul>
+        </div>
+    </div>
+{% endblock content %}

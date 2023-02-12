@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name[en_US]=Custom Command
+Comment[en_US]=/opt/telegram/telegram -noupdate
+Exec=/opt/telegram/telegram -noupdate
+Icon=application-default-icon
+X-GNOME-Autostart-enabled=true
+Type=Application

@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <div id="archive" class="page">
+        <div class="box">
+            <h1>{{ title }}</h1>
+
+            {% include "snippets/archive_nav.html" %}
+
+            <div id="year-chart" class="chart"></div>
+
+            <table class="table table-bordered table-condensed">
+                <tr>
+                    {% for item in data %}
+                        <th class="center">{{ item.month|month_name }}</th>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    {% for item in data %}
+                        <td>{{ item.avg|round(2) }}</td>
+                    {% endfor %}
+                </tr>
+                {% include "snippets/total.html" %}
+            </table>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block extrascripts %}
+<script>
+    $(document).ready(function(){
+        year_chart({{ year }}, 'year-chart', '');
+    });
+</script>
+{% endblock extrascripts %}

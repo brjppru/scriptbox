@@ -1,0 +1,3 @@
+#!/bin/sh
+
+mysqldump --database tmp24ru --add-drop-table --lock-tables --host=localhost --user=tmp24ru --password=chieng1tat > databasedump.txt

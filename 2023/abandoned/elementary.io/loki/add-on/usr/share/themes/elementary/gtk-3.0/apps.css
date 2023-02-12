@@ -1,0 +1,25 @@
+--- /usr/share/themes/elementary/gtk-3.0/apps.css.old	2017-06-07 19:46:46.776016828 +0700
++++ /usr/share/themes/elementary/gtk-3.0/apps.css	2017-06-07 19:49:45.637477194 +0700
+
+ .panel {
+-    background-color: transparent;
++    background-color: alpha(#000, 0.2);
+     transition: all 100ms ease-in-out;
+ }
+ 
+ .panel.maximized {
+-    background-color: #000;
++    background-color: alpha(#000, 0.2);
+ }
+ 
+ .panel.translucent {
+-    background-color: alpha(#000, 0.5);
++    background-color: alpha(#000, 0.2);
+ }
+ 
+ .menubar.panel,
+
+.composited-indicator .keyboard {
+    background-color: #fff;
++    border-radius: 10px;
+

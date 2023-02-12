@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name[en_US]=Custom Command
+Comment[en_US]=/usr/bin/rescuetime 
+Exec=/usr/bin/rescuetime 
+Icon=application-default-icon
+X-GNOME-Autostart-enabled=true
+Type=Application

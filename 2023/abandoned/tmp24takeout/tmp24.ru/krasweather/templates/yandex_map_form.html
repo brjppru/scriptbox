@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+{% import 'snippets/forms.html' as forms %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="span8 offset2">
+                <div class="box">
+                    <form id="yandex-map-form" method="post" action="" class="form-horizontal">
+                        {{ form.hidden_tag() }}
+                        <fieldset>
+                            <legend>Параметры контейнера</legend>
+                            {{ forms.field(form.id) }}
+                            {{ forms.field(form.width) }}
+                            {{ forms.field(form.height) }}
+                        </fieldset>
+                        <fieldset>
+                            <legend>Карта</legend>
+                            {{ forms.field(form.center_lat) }}
+                            {{ forms.field(form.center_lng) }}
+                            {{ forms.field(form.zoom) }}
+                        </fieldset>
+                        <fieldset>
+                            <legend>Маркер</legend>
+                            {{ forms.field(form.placemark_lat) }}
+                            {{ forms.field(form.placemark_lng) }}
+                        </fieldset>
+                        <div id="result" class="center hide">
+                            * Для размещения карты на странице необходимо вставить в html редакторе следующий тэг: <br>
+                            <span id="code"></span>
+                        </div>
+                        <div class="form-actions">{{ forms.submit('Сохранить') }}</div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

@@ -1,0 +1,9 @@
+export http_proxy="http://192.168.11.236:3128"
+export https_proxy="http://192.168.11.236:3128"
+export ftp_proxy="http://192.168.11.236:3128"
+
+
+export LANGUAGE=en_US.UTF-8
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+

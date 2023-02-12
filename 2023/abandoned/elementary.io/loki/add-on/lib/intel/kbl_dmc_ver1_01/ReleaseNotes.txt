@@ -1,0 +1,4 @@
+Version: 1.01
+Date   : 02/04/2016
+Notes:
+This is the first version of the FW for KBL.

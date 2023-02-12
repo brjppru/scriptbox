@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name[en_US]=Custom Command
+Comment[en_US]=/usr/bin/pantheon-terminal
+Exec=/usr/bin/pantheon-terminal
+Icon=application-default-icon
+X-GNOME-Autostart-enabled=true
+Type=Application

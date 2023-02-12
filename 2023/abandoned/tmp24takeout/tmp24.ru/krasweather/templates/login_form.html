@@ -1,0 +1,20 @@
+{% if not request.is_xhr %}{% extends "layout.html" %}{% endif %}
+{% import 'snippets/forms.html' as forms %}
+
+{% block content %}
+    <div class="row">
+        <div class="span6 offset4">
+            <div class="box">
+                {% call forms.form(id='login-form', legend=title, class='form-horizontal', action='') %}
+                    {{ form.hidden_tag() }}
+
+                    {{ forms.field(form.username) }}
+                    {{ forms.field(form.password) }}
+                    {{ forms.field(form.remember) }}
+
+                    <div class="form-actions">{{ forms.submit('Вход') }}</div>
+                {% endcall %}
+            </div>
+        </div>
+    </div>
+{% endblock content %}

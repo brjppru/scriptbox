@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <title>Погода в Красноярске</title>
+        <meta charset="UTF-8" />
+    </script>
+    </head>
+    <body>
+        <form method="POST" action=".">
+            <ul>
+                <li>{{ form.date.label }} {{ form.date }} (Формат: YEAR-MONTH-DAY HOUR:MINUTE:SECOND)</li>
+                <li>{{ form.temp.label }} {{ form.temp }}</li>
+            </ul>
+            <button type="submit">Сохранить</button>
+
+            {% for field in form %}
+                {% if field.errors %}
+                    <ul>
+                    {% for error in field.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endfor %}
+        </form>
+    </body>
+</html>

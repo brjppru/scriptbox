@@ -1,0 +1,89 @@
+{% macro form(id='', legend='', method='POST', action='.', class='', enctype='application/x-www-form-urlencoded') -%}
+    <form{% if id %} id="{{ id }}"{% endif %} method="{{ method }}" action="{{ action }}"{% if class %} class="{{ class }}"{% endif %} enctype="{{ enctype }}">
+        <fieldset>
+            {% if legend %}<legend>{{ legend }}</legend>{% endif %}
+            {{ caller() }}
+        </fieldset>
+    </form>
+{%- endmacro %}
+
+{% macro text_input(field, buttons=[]) -%}
+    <div class="control-group{% if field.errors %} error{% endif %}">
+        {% if not 'hide_label' in field.flags %}
+            {{ field.label(class="control-label") }}
+        {% endif %}
+        <div class="controls">
+            {{ field(**kwargs) }}
+
+            {% for button in buttons %}
+                {{ button }}
+            {% endfor %}
+
+            {% for error in field.errors %}
+                 <span class="help-inline">{{ error }}</span>
+            {% endfor %}
+        </div>
+    </div>
+{%- endmacro %}
+
+{% macro checkbox(field, buttons=[]) -%}
+    <div class="control-group{% if field.errors %} error{% endif %}">
+        <div class="controls">
+            <label class="checkbox" for="{{ field.name }}">{{ field.label.text }}
+            {{ field(**kwargs) }}
+
+            {% for button in buttons %}
+                {{ button }}
+            {% endfor %}
+
+            {% for error in field.errors %}
+                 <span class="help-inline">{{ error }}</span>
+            {% endfor %}
+            </label>
+        </div>
+    </div>
+{%- endmacro %}
+
+{% macro hidden(field) -%}
+    <div class="hide">{{ field(**kwargs) }}</div>
+{%- endmacro %}
+
+{% macro field(field, buttons=[]) -%}
+    {% if field.type == 'BooleanField' %}
+        {{ checkbox(field, buttons, **kwargs) }}
+    {% elif field.type == 'HiddenField' %}
+        {{ hidden(field) }}
+    {% else %}
+        {{ text_input(field, buttons, **kwargs) }}
+    {% endif %}
+{%- endmacro %}
+
+{% macro button(type, text, class='', id='', href='') -%}
+    {% if type == 'link' %}
+        <a {% if id %}id="{{ id }}" {% endif %} class="btn{% if class %} {{ class }}{% endif %}" href="{{ href }}">{{ text|safe }}</a>
+    {% else %}
+        <button {% if id %}id="{{ id }}" {% endif %}type="{{ type }}" class="btn{% if class %} {{ class }}{% endif %}">{{ text }}</button>
+    {% endif %}
+{%- endmacro %}
+
+{% macro submit(text) -%}
+    <button type="submit" class="btn btn-primary">{{ text }}</button>
+{%- endmacro %}
+
+{% macro modal(id='', legend='', method='POST', action='.', class='') -%}
+    <div id="{{ id }}" class="modal hide fade">
+        <form{% if id %} id="{{ id }}"{% endif %} method="{{ method }}" action="{{ action }}" class="modal-form{% if class %} {{ class }}{% endif %}">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3>{{ legend }}</h3>
+            </div>
+            <div class="modal-body">
+                {{ caller() }}
+            </div>
+            <div class="modal-footer">
+                <a href="#" data-dismiss="modal" class="btn">Отмена</a>
+                <a href="#" data-dialog="save" class="btn btn-primary">Сохранить</a>
+            </div>
+        </form>
+    </div>
+{%- endmacro %}

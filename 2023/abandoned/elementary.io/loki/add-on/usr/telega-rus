@@ -1,0 +1,3 @@
+#!/bin/bash
+
+curl -O https://tlgrm.ru/files/locales/tdesktop/Russian.strings

@@ -1,0 +1,8 @@
+MySQL-python
+Flask
+Flask-Assets
+Flask-Script
+Flask-SQLAlchemy
+Flask-Uploads
+Flask-WTF
+alembic

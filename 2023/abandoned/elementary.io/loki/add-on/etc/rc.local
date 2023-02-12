@@ -1,0 +1,8 @@
+#!/bin/sh -e
+#
+# rc.local
+#
+
+powertop --auto-tune
+
+exit 0

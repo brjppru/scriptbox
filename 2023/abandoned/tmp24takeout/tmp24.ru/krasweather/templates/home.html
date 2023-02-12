@@ -1,0 +1,64 @@
+{% extends "layout.html" %}
+
+{% macro chart(id, caption, prefix) %}
+    <div class="box">
+        <div class="chart box">
+            <div id="{{ id }}" class="chart" data-caption="{{ caption }}"></div>
+        </div>
+
+        <div id="{{ prefix }}_total">
+            <table class="table table-bordered table-condensed">
+                <tr>
+                    <td class="center">
+                      Минимальная температура: <span id="{{ prefix }}_min"></span>
+                    </td>
+                    <td class="center">
+                        Средняя температура: <span id="{{ prefix }}_avg"></span>
+                    </td>
+                    <td class="center">
+                        Максимальная температура: <span id="{{ prefix }}_max"></span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+{% endmacro %}
+
+{% block content %}
+<div id="homepage" class="page">
+    {% if (now - last_update.date).days >= 1 %}
+    <div class="box center">
+        <div>
+            <a href="http://www.kinopoisk.ru/film/6877/">
+                <img src="{{ url_for('static', filename='img/fail.jpg') }}" alt="Все сломалось">
+            </a>
+        </div>
+        <h2>Опаньки что-то совсем не так, мы скоро все починим.</h2>
+    </div>
+    {% else %}
+        <div class="box">
+            <div class="center">
+                <h1 class="text-big bold">{{ title }}</h1>
+                <div>Последнее обновление: {{ last_update.date|date }}
+                    <span class="lastupdate" data-date="{{ last_update.date }}"></span>
+                </div>
+            </div>
+        </div>
+
+        <div id="charts">
+            {{ chart('day-chart', 'Температура за 24 часа', 'day') }}
+
+            <div class="box center">
+                <script type="text/javascript" src="//yandex.st/share/share.js" charset="utf-8"></script> <div class="yashare-auto-init" data-yashareL10n="ru" data-yashareType="link" data-yashareQuickServices="yaru,vkontakte,facebook,twitter,odnoklassniki,moimir,lj"></div>
+            </div>
+
+            {{ chart('week-chart', 'Температура за 7 дней.', 'week') }}
+        </div>
+    {% endif %}
+</div>
+{% endblock content %}
+
+{% block scripts %}
+    <script src="http://api-maps.yandex.ru/2.0-stable/?load=package.standard&lang=ru-RU" type="text/javascript"></script>
+    {{ super() }}
+{% endblock scripts %}

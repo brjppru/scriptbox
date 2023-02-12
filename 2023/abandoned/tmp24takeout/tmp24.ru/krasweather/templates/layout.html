@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <title>{{ title }}</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        {% if page_description %}<meta name="description" content="{{ page_description }}">{% endif %}
+
+        {% block styles %}
+            {% assets "styles" %}<link rel="stylesheet"  href="{{ ASSET_URL }}" />{% endassets %}
+            {% block extrastyles %}{% endblock extrastyles %}
+        {% endblock %}
+        <!--[if lt IE 9]>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/ie.css') }}" />
+        <![endif]-->
+        {% block scripts %}
+            {% assets "js" %}<script src="{{ ASSET_URL }}"></script>{% endassets %}
+            {% block extrascripts %}{% endblock extrascripts %}
+        {% endblock scripts %}
+
+        <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+        <!--[if lt IE 9]>
+          <script src="../assets/js/html5shiv.js"></script>
+        <![endif]-->
+
+        <!-- Fav and touch icons -->
+        {#
+        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
+        <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
+        <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
+        <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
+        #}
+        {% assets 'favicon' %}<link rel="shortcut icon" href="{{ ASSET_URL }}">{% endassets %}
+
+        <!-- brj hack for Open Graph Protocol -->
+        <meta property="og:title" content="{{ title }}" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="{{ request.url }}" />
+        <meta property="og:site_name" content="Температура в Красноярске" />
+        <meta property="og:title" content="{{ title }}">
+        <meta property="og:description" content="{{ title }}">
+        <meta property="og:image" content="{{ url_for('static', filename='img/logo.jpg', _external=True) }}">
+        <meta property="article:author" name="author" content="http://brj.pp.ru/wiki/brj/about-me">
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="@tmp24ru">
+        <meta name="twitter:creator" content="@tmp24ru">
+        <meta name="twitter:url" content="{{ request.url }}">
+        <meta name="twitter:title" content="{{ title }}">
+        <meta name="twitter:description" content="{{ title }}">
+        <!-- brj hack for Open Graph Protocol -->
+    </head>
+    <body>
+        {% import 'navbar.html' as navbar with context %}{{ navbar.navbar() }}
+        <div id="content">
+            {% include 'snippets/messages.html' %}
+            {% block content %}{% endblock %}
+        </div>
+
+        <!--Openstat-->
+        <span id="openstat2304646"></span>
+        <script type="text/javascript">
+        var openstat = { counter: 2304646, next: openstat };
+        (function(d, t, p) {
+        var j = d.createElement(t); j.async = true; j.type = "text/javascript";
+        j.src = ("https:" == p ? "https:" : "http:") + "//openstat.net/cnt.js";
+        var s = d.getElementsByTagName(t)[0]; s.parentNode.insertBefore(j, s);
+        })(document, "script", document.location.protocol);
+        </script>
+        <!--/Openstat-->
+        <!-- Yandex.Metrika counter --><script type="text/javascript">var yaParams = {/*Здесь параметры визита*/};</script><script type="text/javascript">(function (d, w, c) { (w[c] = w[c] || []).push(function() { try { w.yaCounter20024131 = new Ya.Metrika({id:20024131, webvisor:true, clickmap:true, trackLinks:true, accurateTrackBounce:true, trackHash:true,params:window.yaParams||{ }}); } catch(e) { } }); var n = d.getElementsByTagName("script")[0], s = d.createElement("script"), f = function () { n.parentNode.insertBefore(s, n); }; s.type = "text/javascript"; s.async = true; s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js"; if (w.opera == "[object Opera]") { d.addEventListener("DOMContentLoaded", f, false); } else { f(); } })(document, window, "yandex_metrika_callbacks");</script><noscript><div><img src="//mc.yandex.ru/watch/20024131" style="position:absolute; left:-9999px;" alt="" /></div></noscript><!-- /Yandex.Metrika counter -->
+    </body>
+</html>

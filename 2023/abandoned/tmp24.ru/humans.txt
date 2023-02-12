@@ -1,0 +1,9 @@
+/* the humans responsible & colophon */
+/* humanstxt.org */
+
+/* TEAM */
+  Developer: Roman Y. Bogdanov
+  Contact: r.bogdanov [at] outlook.com
+  Site: brj.pp.ru
+  Twitter: @brjppru
+  From: Krasnoyarsk, Russia

@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+{% import 'snippets/forms.html' as forms %}
+
+{% block extrastyles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='redactor/redactor.css') }}" />
+{% endblock extrastyles %}
+
+{% block extrascripts %}
+    <script type="text/javascript" src="{{ url_for('static', filename='redactor/redactor.min.js') }}"></script>
+    <script>
+    $(document).ready(function(){
+        $('#text').redactor({
+            autoresize: false,
+            imageUpload: '/upload/',
+            imageGetJson: '/redactor/images/',
+            convertDivs: false
+        });
+    });
+    </script>
+{% endblock extrascripts %}
+
+{% block content %}
+<div id="flatpage-editor">
+    <div class="container">
+        <div class="row">
+            <div class="span12">
+                <div class="box">
+                    {% call forms.form(id='flatpage-form', legend=title, class='form-horizontal', action='') %}
+                        {{ form.hidden_tag() }}
+
+                        {{ forms.field(form.slug) }}
+                        {# {{ forms.field(form.width) }} #}
+                        {{ forms.field(form.title) }}
+                        {{ forms.field(form.menu_text) }}
+                        {{ forms.field(form.menu_order) }}
+                        {{ forms.field(form.description) }}
+                        {{ forms.field(form.yandex_maps) }}
+
+                        {{ form.text }}
+                        <div class="form-actions">{{ forms.submit('Сохранить') }}</div>
+                    {% endcall %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block scripts %}
+    <script src="http://api-maps.yandex.ru/2.0-stable/?load=package.standard&lang=ru-RU" type="text/javascript"></script>
+    {{ super() }}
+{% endblock scripts %}

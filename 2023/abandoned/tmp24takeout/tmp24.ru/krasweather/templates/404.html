@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <div class="row">
+        <div class="offset2 span10">
+            <div class="box">
+                <h1 class="center">{{ title }}</h1>
+
+                <div class="center">
+                    <img src="{{ url_for('static', filename='img/404.jpg') }}" alt="404 Страница не найдена">
+                </div>
+
+
+                <p class="center"><strong> Воспользуйтесь этим обстоятельством,
+                    чтобы отдохнуть от посещения сайта.</strong><br></p>
+
+                <p><strong>Как я сюда попал? Куда всё делось?</strong><br></p>
+                <p>
+                    Вы сейчас на странице «Страница 404» или «ошибка 404» — это такая страница,
+                        на которую попадают набрав неправильный адрес.<br>
+
+                    К сожалению, такой страницы сегодня не существует.<br>
+
+                    Вероятно, она была удалена мной с сервера, либо её здесь никогда не было.<br>
+                </p>
+
+                <p><strong>И что теперь делать?</strong></p>
+
+                <ul class="unstyled">
+                    <li><a href="{{ url_for('year_archive', year=today.year) }}">Посмотреть архив</a></li>
+                    <li><a href="{{ url_for('status') }}">Посмотреть статус проекта</a></li>
+                    <li><a href="{{ url_for('flatpage', slug='donate') }}">Поддержать проект в развитии</a></li>
+                </ul>
+
+                <p>Работает проект (хостинг) <a href="http://firstvds.ru/?from=17843">вот тут</a>
+                    вот <a href="http://firstvds.ru/?from=17843">на этом</a></p>
+
+                <p>Собственно всё.</p>
+
+                <p>Спасибо, что посетили мой сайт.</p>
+
+                <p>Богатырского здоровья и успехов.</p>
+
+                <p><a href="http://about.me/brj/">Roman Y. Bogdanov</a></p>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

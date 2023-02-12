@@ -1,0 +1,13 @@
+{% macro alert(class, message, header='') -%}
+    <div class="alert alert-block {{ class }}">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+
+        {% if header %}<h4>{{ header }}</h4>{% endif %}
+
+        {{ message }}
+    </div>
+{%- endmacro %}
+
+{% macro info(message, header='') -%}
+    {{ alert('alert-info', message, header) }}
+{%- endmacro %}

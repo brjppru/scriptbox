@@ -1,0 +1,7 @@
+base   brj404
+author Roman Y. Bogdanov
+email  sam@brj.pp.ru
+date   2015-03-13
+name   brj404 Plugin
+desc   Redirect to notfound namespace
+url    https://www.dokuwiki.org/plugin:brj404

@@ -1,0 +1,14 @@
+{% import 'snippets/alerts.html' as alerts %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="container">
+            <div class="row">
+                <div class="span8 offset2">
+                    {% for category, message in messages %}
+                        {{ alerts.alert('alert-' + category, message) }}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endwith %}

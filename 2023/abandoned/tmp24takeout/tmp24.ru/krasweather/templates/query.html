@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <title>Погода в Красноярске</title>
+        <meta charset="UTF-8" />
+    </head>
+    <body>
+        <table>
+            <tr><th>Sensor</th><th>Date/Time</th><th>Value</th></tr>
+            {% for row in data %}
+                <tr><td>{{ row.sensor_id }}</td><td>{{ row.date }}</td><td>{{ row.temp }}</td></tr>
+            {% endfor %}
+        </table>
+    </body>
+</html>

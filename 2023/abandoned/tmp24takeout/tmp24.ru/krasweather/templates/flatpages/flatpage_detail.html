@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <div class="page">
+        <div class="box">
+            <h1>{{ title }}</h1>
+
+            {{ flatpage.text_data|safe }}
+        </div>
+    </div>
+{% endblock content %}
+
+{% block scripts %}
+    {% if flatpage.yandex_maps %}
+        <script src="http://api-maps.yandex.ru/2.0-stable/?load=package.standard&lang=ru-RU" type="text/javascript"></script>
+    {% endif %}
+    {{ super() }}
+{% endblock scripts %}
