@@ -1,5 +1,9 @@
 # Windows 
 
+# Подвести время
+
+Иногда часы убегают. Как подвести время? start -> search timedate.cpl -> выполнить от администратора, можно настроить другие часы и таймзоны заодно. Отчасти перекликается с настройкой User Account Control: Admin Approval Mode for the Built-in Administrator account.
+
 ## EDGE plugins
 
 - imagus -> http://forum.ru-board.com/topic.cgi?forum=5&topic=50874&start=0&limit=1&m=4#1
