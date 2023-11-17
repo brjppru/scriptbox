@@ -9,7 +9,11 @@
 
 ### Клавиатура
 
-Хоткеи: ⇧ = Shift, ⌃ = Control, ⌘ = Command, ⌥ = Option / Alt.
+ - Хоткеи: ⇧ = Shift, ⌃ = Control, ⌘ = Command, ⌥ = Option / Alt.
+
+####  mail.app
+
+- для перемешения почты Control-Command-2
 
 ### boot flash / reinstall
 
@@ -23,11 +27,7 @@ brjppru@Romans-MacBook-Air ~ % sudo /Applications/Install\ macOS\ Monterey.app/C
 sudo scutil --set HostName
 ```
 
-### NTFS
-
-проверить драйвер [https://www.seagate.com/ru/ru/support/software/paragon/](ntfs)
-
-## hw
+## hardware
 
 MacBook Air (M1, 2020 г.) - Спецификации -> 13,3-inch (2560 × 1600) -> https://support.apple.com/kb/SP825?locale=ru_RU
 
@@ -52,11 +52,8 @@ here is
 ## softinstall
 
 - cyberduck
-- the unarchiver
-- tailscale
-- qbittorent 
+- microsoft todo
 - anydesk
-- adguard
 - copyclip
 - microsoft RDP
 - virtual dj
@@ -65,7 +62,6 @@ here is
 - Rectangle
 - CheatSheet
 - numi
-- The Unarchiver
 - https://sponsor.ajay.app
 - cheatsheet
 - clipy
@@ -77,13 +73,53 @@ here is
 - numi
 - rectangle
 - sublime-text
+- foxit pdf reader
+- audacity
+- cron.app
+- kepassxc
+- vscode 
+- trhunderbird
+- xmind
+- telephone 
+- flycut
+- currency
+- RDM
+
 
 ## brew
 
 - ncdu
 - mtr
-- ffmpeg
 - fdupes
-- marta
-- borgbackup
+- duf
+- htop
+- ipcalc
+- sevenzip
+- syncthing
 
+## casc
+
+- anydesk
+- audacity
+- cron (calendar)
+- cyberduck
+- font-jetbrains-mono
+- foxitreader
+- google-chrome
+- iterm2
+- keepassxc
+- rectangle
+- remote-desktop-manager-free
+- sublime-text
+- telegram
+- thunderbird
+- visual-studio-code
+- vlc
+- wine-crossover
+- xmind
+
+
+## download scatic
+ - ffprobe release as zip: https://evermeet.cx/ffmpeg/getrelease/ffprobe/zip
+  - ffmpeg release as zip: https://evermeet.cx/ffmpeg/getrelease/zip
+  - https://github.com/yt-dlp/yt-dlp/releases
