@@ -1,17 +1,15 @@
-# про макосю (macOS zverdvd)
+# macos
 
-- Про EOS, EOL и [https://computing.cs.cmu.edu/desktop/os-lifecycle/](жизненный цикл)
-- https://www.amazon.com/macOS-Mojave-Missing-Manual-should/dp/1492040401
-- https://support.apple.com/en-us/HT201236
-- https://dortania.github.io/OpenCore-Legacy-Patcher/INSTALLER.html#downloading
-- https://github.com/artginzburg/MiddleClick-BigSur
-- https://computing.cs.cmu.edu/desktop/os-lifecycle
+## zverdvd edition
 
-### Клавиатура
+- EOL + EOS on macos -> https://endoflife.date/macosПро
+- hot keys -> https://support.apple.com/en-us/HT201236
+
+## Клавиатура
 
  - Хоткеи: ⇧ = Shift, ⌃ = Control, ⌘ = Command, ⌥ = Option / Alt.
 
-####  mail.app
+###  mail.app
 
 - для перемешения почты Control-Command-2
 
@@ -120,6 +118,6 @@ here is
 
 
 ## download scatic
- - ffprobe release as zip: https://evermeet.cx/ffmpeg/getrelease/ffprobe/zip
+  - ffprobe release as zip: https://evermeet.cx/ffmpeg/getrelease/ffprobe/zip
   - ffmpeg release as zip: https://evermeet.cx/ffmpeg/getrelease/zip
   - https://github.com/yt-dlp/yt-dlp/releases
