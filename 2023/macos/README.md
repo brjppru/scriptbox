@@ -115,6 +115,7 @@ here is
 - vlc
 - wine-crossover
 - xmind
+- FSnotes
 
 
 ## download scatic
