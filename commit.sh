@@ -3,9 +3,11 @@
 #
 # git push scriptbox repo to githublo
 #
+# 2024.04.25 fix script for a days
+#
 
 dated=$(date +%Y-%m-%d-%H%M%S)
-commt=$(curl -L --proxy http://192.168.0.11:3129 -s http://whatthecommit.com/index.txt)
+commt=$(curl -L -s http://whatthecommit.com/index.txt)
 
 git add .
 
