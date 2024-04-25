@@ -1,22 +1,23 @@
-# macos
+# brj@macos X configuration
 
 ## zverdvd edition
 
-- EOL + EOS on macos -> https://endoflife.date/macosПро
+- EOL + EOS on macos -> https://endoflife.date/macos
 - hot keys -> https://support.apple.com/en-us/HT201236
 
 ## Клавиатура
 
  - Хоткеи: ⇧ = Shift, ⌃ = Control, ⌘ = Command, ⌥ = Option / Alt.
+ - Shift-Command-G: Open a Go to Folder window.
 
-###  mail.app
+##  mail.app
 
-- для перемешения почты Control-Command-2
+- для перемешения почты по favorites папкам Control-Command-2
 
 ### boot flash / reinstall
 
 ```
-brjppru@Romans-MacBook-Air ~ % sudo /Applications/Install\ macOS\ Monterey.app/Contents/Resources/createinstallmedia --volume /volumes/macos12
+brjed@air ~ % sudo /Applications/Install\ macOS\ Monterey.app/Contents/Resources/createinstallmedia --volume /volumes/macos12
 ```
 
 ### hostname
@@ -25,9 +26,9 @@ brjppru@Romans-MacBook-Air ~ % sudo /Applications/Install\ macOS\ Monterey.app/C
 sudo scutil --set HostName
 ```
 
-## hardware
+## my hardware
 
-MacBook Air (M1, 2020 г.) - Спецификации -> 13,3-inch (2560 × 1600) -> https://support.apple.com/kb/SP825?locale=ru_RU
+ - MacBook Air (M1, 2020 г.) - 16G/1tb -> Спецификации -> 13,3-inch (2560 × 1600) -> https://support.apple.com/kb/SP825?locale=ru_RU
 
 ## Как переустановить ОС macOS? 
 
@@ -53,42 +54,21 @@ here is
 defaults write com.apple.dock persistent-apps -array-add '{"tile-type"="small-spacer-tile";}'; killall Dock
 ```
 
-## softinstall
+## daily driver
 
 - cyberduck
-- microsoft todo
-- anydesk
-- copyclip
-- microsoft RDP
 - virtual dj
 - vlc
-- iterm2
+- kitty (see addons)
 - Rectangle
-- CheatSheet
 - numi
 - https://sponsor.ajay.app
-- cheatsheet
-- clipy
-- fsnotes
-- id3-editor
-- ioquake3
-- iterm2
-- marta
-- numi
-- rectangle
+- pasta (appstore)
 - sublime-text
-- foxit pdf reader
 - audacity
 - cron.app
 - kepassxc
-- vscode 
-- trhunderbird
-- xmind
 - telephone 
-- flycut
-- currency
-- RDM
-
 
 ## brew
 
@@ -98,33 +78,44 @@ defaults write com.apple.dock persistent-apps -array-add '{"tile-type"="small-sp
 - duf
 - htop
 - ipcalc
-- sevenzip
+- sevenzi
+- rar
 - syncthing
+- font-jetbrains-mono (pached)
+- helix
+- htop
+- midnight-commander
 
-## casc
+## brew cascs 
 
-- anydesk
-- audacity
-- cron (calendar)
-- cyberduck
-- font-jetbrains-mono
-- foxitreader
-- google-chrome
-- iterm2
+- android-platform-tools
+- arc
+- cloudflare-warp
+- coconutbattery
+- imazing
 - keepassxc
+- kitty
+- localsend
+- numi
+- rar
 - rectangle
-- remote-desktop-manager-free
+- remote-desktop-manager
 - sublime-text
-- telegram
-- thunderbird
-- visual-studio-code
+- telegram-desktop
+- termius
+- thunderbird (for calendar printing)
 - vlc
-- wine-crossover
-- xmind
-- FSnotes
 
+## localsend
 
-## download scatic
+- brew tap localsend/localsend
+- brew install localsend
+
+## ioquake3 files
+
+-  ~/Library/Application Support/Quake3/baseq3/
+
+## no brew, static binares
   - ffprobe release as zip: https://evermeet.cx/ffmpeg/getrelease/ffprobe/zip
   - ffmpeg release as zip: https://evermeet.cx/ffmpeg/getrelease/zip
   - https://github.com/yt-dlp/yt-dlp/releases
