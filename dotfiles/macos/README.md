@@ -115,6 +115,21 @@ defaults write com.apple.dock persistent-apps -array-add '{"tile-type"="small-sp
 
 -  ~/Library/Application Support/Quake3/baseq3/
 
+## zsh
+
+```
+git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+```
+
+```
+git clone https://github.com/TamCore/autoupdate-oh-my-zsh-plugins $ZSH_CUSTOM/plugins/autoupdate
+```
+
+```
+git clone https://github.com/zdharma-continuum/fast-syntax-highlighting.git \
+ ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fast-syntax-highlighting
+```
+
 ## no brew, static binares
   - ffprobe release as zip: https://evermeet.cx/ffmpeg/getrelease/ffprobe/zip
   - ffmpeg release as zip: https://evermeet.cx/ffmpeg/getrelease/zip
