@@ -105,6 +105,7 @@ defaults write com.apple.dock persistent-apps -array-add '{"tile-type"="small-sp
 - termius
 - thunderbird (for calendar printing)
 - vlc
+- macs-fan-control
 
 ## localsend
 
