@@ -1,0 +1,67 @@
+#!/bin/bash
+
+# brj@convertor
+# 2024.04.25 Woman That Rolls
+
+# convert any video files in current directory to
+
+dumba() {
+
+orig=`du orig | awk {'print $1'}`
+code=`du  code | awk {'print $1'}`
+perc=`echo "100-(($code*100)/$orig)" | bc`
+
+echo "$perc% compressed" | figlet
+echo "original is $orig, compressed is $code, compression $perc%"
+
+}
+
+# to cut
+# ffmpeg -i filer.mp4 -ss 01:24:22 -t 00:09:30 -async 1 -strict -2 -vn -filter:a dynaudnorm 1.spx
+
+# exit on error
+set -e
+
+# extended globbing
+shopt -s extglob
+shopt -s nullglob
+
+# video files
+videos=*(*.opus|*.mp3|*.MOV|*.amr|*.ogg|*.aac|*.wma|*.WMA|*.flv|*.mp4|*.avi|*.mkv|*.wav|*.m4a|*.m4v|*.webm|*.wmv|*.3gp|*.3GP|*.MP4|*.mov|*.ts|*.MKV|*.ra)
+
+# grab convert
+
+for file in $videos; do
+    cowsay -d "$file convert"
+
+    mkdir -p code
+    mkdir -p orig
+
+    case $1 in
+	"x265")	echo "x265";
+        		outputname="code/${file%.*}.mkv";
+			nice -9 ffmpeg -hide_banner -i "$file" -c:v libx265 -vtag hvc1 -c:a aac -filter:a dynaudnorm "$outputname";; 
+        "mp3")		echo "mp3 coding" | figlet; 
+			outputname="code/${file%.*}.mp3";
+			ffmpeg -i "$file" -vn -acodec libmp3lame -ab 128k -ar 44100 -ac 1 -f mp3 -filter:a dynaudnorm "$outputname";;
+        "wav")		echo "wav decoding" | figlet; 
+			outputname="code/${file%.*}.wav";
+			ffmpeg -i "$file" "$outputname";;
+        "mp4")		echo "mp4 recoding" | figlet;
+        		outputname="code/${file%.*}.mp4";
+			ffmpeg -hide_banner -i "$file" -filter:a dynaudnorm "$outputname";;
+    esac
+
+    mv "$file" "orig/"
+
+    chmod -R 777 code
+    chmod -R 777 orig
+
+    dumba;
+
+done
+
+echo "all done!" | cowsay -d
+#dumba;
+
+sync

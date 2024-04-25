@@ -1,0 +1,15 @@
+#!/bin/sh
+
+# brj@scrcpy
+
+# 2024.04.25 Woman That Rolls
+
+scrcpy --stay-awake --show-touches --forward-all-clicks \
+    --legacy-paste --disable-screensaver
+
+killall -9 adb
+killall -9 adb
+
+#scrcpy --shortcut-mod=rctrl --stay-awake --show-touches --raw-key-events --forward-all-clicks \
+#    --turn-screen-off --power-off-on-close --legacy-paste --disable-screensaver --hid-keyboard
+
