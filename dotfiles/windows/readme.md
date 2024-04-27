@@ -1,15 +1,10 @@
-# windows 10
+# Windows 
 
-version update 2023.01.07
+## install tip&trick
 
-## Где скачать windows10 без регистрации и sms?
+version update 2024.04.27
 
-- 10 мифов Windows 10 LTSC, которые никогда не умрут -> - http://www.outsidethebox.ms/19882/
-- Как бесплатно скачать свежий установочный диск Windows 10 -> http://www.outsidethebox.ms/17430/
-- Чем является и чем не является Windows 10 LTSB/LTSC -> https://interface31.ru/tech_it/2020/06/chem-yavlyaetsya-i-chem-ne-yavlyaetsya-windows-10-ltsbltsc.html
-- Утилита Media Creation Tool (MCT) -> https://www.microsoft.com/ru-ru/software-download/windows10
-
-## Запустить в виртуалке
+### Запустить в виртуалке
 
 Припасу, а то забываю где гвест агент и драва качать qemu-ga-x64.msi should be the latest -> https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/latest-virtio/
 
@@ -19,22 +14,26 @@ version update 2023.01.07
 - https://docs.microsoft.com/en-us/windows-server/get-started/kms-client-activation-keys
 - https://technet.microsoft.com/en-us/library/dn385360(v=office.16).aspx
 
+### актуалочка
+
+- https://github.com/massgravel/Microsoft-Activation-Scripts -> MAS A Windows and Office activator using HWID / Ohook / KMS38 / Online KMS activation methods, with a focus on open-source code and fewer antivirus detections.
+
 ### ltsc пуньк
 
 ```
 slmgr /dli
 slmgr -ipk M7XTQ-FN8P6-TTKYV-9D4CC-J462D
-slmgr.vbs -skms 192.168.0.238
+slmgr.vbs -skms 192.168.0.40
 slmgr /ato
 ```
 
 ```
 cd "C:\Program Files\Microsoft Office\Office16"
-cscript ospp.vbs /sethst:192.168.0.238
+cscript ospp.vbs /sethst:192.168.0.240
 cscript ospp.vbs /inpkey:KDX7X-BNVR8-TXXGX-4Q7Y8-78VT3
 cscript ospp.vbs /puserops
 ```
-## Слетела активация
+### Наглухо отлетела активация
  
 Слетела активация винды, ничо не помогает. Как чинить?
 
@@ -47,21 +46,7 @@ slmgr -rilc
 slmgr /ato
 ```
 
-## Что надо для 10тки?
-
-- https://docs.microsoft.com/en-us/windows-hardware/design/device-experiences/oem-highly-secure
-
-### А конфиг?
-
-Оптимальная минимальная аппаратная конфигурация для Windows 10 выглядит на 2020/10 как минимум следующим образом:
-
-- Процессор: Intel 8-го поколения (Intel i3 / i5 / i7 / i9-7x)
-- Core M3-7xxx, Xeon E3-xxxx и Xeon E5-xxxx, AMD 8-го поколения (A-серии Ax-9xxx, E-Series Процессоры Ex-9xxx, FX-9xxx)
-- ARM64 (Snapdragon SDM850 или более поздняя версия)
-- Оперативная память: 4 гигабайта (ГБ) для 32-битной или 16 ГБ для 64-битной
-- SSD / NVMe: не менее 128 ГБ для 64-битной и 32-битной ОС
-- Видеокарта: DirectX 9 или более поздняя
-- UEFI + TPM + Сешуребут
+## Features
 
 ## Windows Features applet
 
@@ -78,18 +63,20 @@ Manage optional features using the Windows Features applet. Press the Win + R ke
 - Type alt+d to move to the address bar in Windows Explorer. This is useful for selecting the path to copy and paste into another application.
 - During text entry, type <key>Windows<key> logo key   + . (period)
 
-# power burnin
+## power burnin
 
 Сжечь процессор. Ха-ха. C1 стейт еще поставить.
 
 ```
 C:\Windows\system32>powercfg -duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61
 Power Scheme GUID: 300e4413-8397-4359-870b-f68fdfe41e78  (Ultimate Performance)
+```
 
+```
 disable -> powercfg –restoredefaultschemes
 ```
 
-# Display switcher
+## Display switcher
 
 ```
 displayswitch.exe /internal Disconnect projector (same as "Show only on 1" from the Display Properties dialog)
@@ -98,7 +85,7 @@ displayswitch.exe /extend    Extend screen
 displayswitch.exe /external Projector only (disconnect local) (same as "Show only on 2" from the Display Properties dialog)
 ```
 
-# save drivers
+## save drivers
 
 ```
 Export-WindowsDriver —Online —Destination c:\temp\drivers
@@ -113,14 +100,13 @@ netsh advfirewall show all
 netsh advfirewall set allprofiles state on
 ```
 
-# Magazinen
-
-## fuckon on ltsb
+## Magazinen fuckon on ltsb
 
 ```
 wsreset -i
 ```
-## fuckoff
+
+## Magazinen unfuckoff
 
 remove all-shit-from-market
 
@@ -128,13 +114,13 @@ remove all-shit-from-market
 Get-AppxPackage -AllUsers | where-object {$_.name –notlike "*store*"} | Remove-AppxPackage
 ```
 
-updated for win 11
+updated for windows 11
 
 ```
 Get-AppxPackage -AllUsers | Where-Object { $_.IsFramework -eq $false -and $_.Name -notlike "*store*" } | Remove-AppxPackage
 ```
 
-# ssh addon
+## ssh addon
 
 ```
 Get-Service ssh-agent | Select StartType
@@ -143,7 +129,7 @@ Get-Service -Name ssh-agent | Set-Service -StartupType Manual
 Start-Service ssh-agent
 ```
 
-# WSL2 (windows subsystem for linux)
+## WSL2 (windows subsystem for linux)
 
 ```
 dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
@@ -156,7 +142,7 @@ Visit https://aka.ms/wsl2kernel to download a .msi package, install it, and then
 wsl --set-default-version 2
 ```
 
-#### Конвертация wsl1 в wsl2
+## Конвертация wsl1 в wsl2
 
 ```
 wsl.exe -l
@@ -164,7 +150,7 @@ wsl.exe --set-version Ubuntu-20.04 2
 wsl.exe --set-version Debian 2
 ```
 
-#### export / import wsl
+## export / import wsl
 
 ```
 wsl.exe --export Ubuntu-20.04 C:\temp\brjed-ubuntu2004.tar
@@ -177,7 +163,7 @@ cd \\wsl$\brjedubuntu2004
 wsl --shutdown
 ```
 
-# Sandbox
+## Sandbox
 
 ```
 Enable-WindowsOptionalFeature -FeatureName "Containers-DisposableClientVM" –Online
@@ -187,11 +173,11 @@ Dism /online /Enable-Feature /FeatureName:"Containers-DisposableClientVM" -All
   - Windows Sandbox Editor -> https://gallery.technet.microsoft.com/Windows-Sandbox-Configurati-f2c863dc
   - https://gallery.technet.microsoft.com/Windows-Sandbox-Configurati-f2c863dc/file/221934/3/Sandbox_EXE.zip
 
-# Powershell
+## Powershell
 
 https://github.com/PowerShell/PowerShell
 
-# terminal
+## terminal
 
 - https://www.microsoft.com/en-us/p/windows-terminal/9n0dx20hk701?activetab=pivot:overviewtab
 - https://github.com/microsoft/terminal/releases
@@ -216,6 +202,7 @@ https://github.com/microsoft/terminal/releases
 
 - install language (fix for oem)
 - install langulage for non utf8 to russian
+- activate 
 - force for wumt_x64
 - reboot here
 
@@ -246,14 +233,13 @@ https://github.com/microsoft/terminal/releases
 - install https://keystore-explorer.org/downloads.html
 - install https://github.com/namazso/OpenHashTab
 - install https://github.com/buptczq/WinCryptSSHAgent/releases
- - https://github.com/rcmaehl/MSEdgeRedirect/releases
- - https://github.com/Genymobile/scrcpy/blob/master/doc/windows.md
- - https://github.com/lostindark/DriverStoreExplorer/releases
+
+- https://github.com/rcmaehl/MSEdgeRedirect/releases
+- https://github.com/Genymobile/scrcpy/blob/master/doc/windows.md
+- https://github.com/lostindark/DriverStoreExplorer/releases
 
 
-# OneDrive
-
-## fuck
+## fuck OneDrive
 
 ```
 ps onedrive | Stop-Process -Force
@@ -275,13 +261,13 @@ If the OneDrive icon does not reappear in the System Tray on the far right side 
 ```
 to start OneFuckingDrive manually
 
-### reinstall onedrive
+## refuck onedrive
 
 ```
 taskkill /f /im OneDrive.exe
 ```
 
-### powershell refuck one drive
+## powershell refuck one drive
 
 ```
 Stop-Process -processname "OneDrive" -ErrorAction SilentlyContinue
