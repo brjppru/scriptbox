@@ -4,6 +4,19 @@
 
 version update 2024.04.27
 
+
+### preinstall gpt
+
+GPT. В окне управления дисками нажмите  shift + F10, в командной строке очистите диск и конвертируйте в GPT, потом обновите информацию в окне.
+
+```
+diskpart
+sel dis 0
+clean
+convert gpt
+exit
+```
+
 ### Запустить в виртуалке
 
 Припасу, а то забываю где гвест агент и драва качать qemu-ga-x64.msi should be the latest -> https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/latest-virtio/
@@ -62,6 +75,24 @@ Manage optional features using the Windows Features applet. Press the Win + R ke
 - To Take a Screenshot of Part of Your Screen -> Press “Windows + Shift + S”
 - Type alt+d to move to the address bar in Windows Explorer. This is useful for selecting the path to copy and paste into another application.
 - During text entry, type <key>Windows<key> logo key   + . (period)
+
+## сменить яркость
+
+```
+(Get-WmiObject -Namespace root/WMI -Class WmiMonitorBrightnessMethods).WmiSetBrightness(1,45)
+```
+
+## windows compression
+
+```
+compact /s /c /i /f /a /exe:lzx
+```
+
+Опция LZX доступна только для ядра Windows Server 2016 и 2019 и 10тки, системные файлы сжимаются только на этих редакциях, поэтому если вы хотите сэкономить место, выбор не велик.
+
+````
+compact /Compactos:always
+````
 
 ## power burnin
 
@@ -331,3 +362,132 @@ icacls <foldername> /grant administrators:F /T
 ```
 (Get-VMNetworkAdapter -ManagementOS | Set-VMNetworkAdapter -StaticMacAddress "....")
 ```
+# hyper-v travarsal nat
+
+add internal switch and setup travarsal nat
+
+```
+New-NetNat -Name nat-my -InternalIPInterfaceAddressPrefix 10.11.12.0/24
+Add-NetNatStaticMapping -ExternalIPAddress "0.0.0.0/24" -ExternalPort 25  -Protocol TCP -InternalIPAddress "10.11.12.2" -InternalPort 25 -NatName nat-my
+Add-NetNatStaticMapping -ExternalIPAddress "0.0.0.0/24" -ExternalPort 465 -Protocol TCP -InternalIPAddress "10.11.12.2" -InternalPort 465 -NatName nat-my
+Add-NetNatStaticMapping -ExternalIPAddress "0.0.0.0/24" -ExternalPort 993 -Protocol TCP -InternalIPAddress "10.11.12.2" -InternalPort 993 -NatName nat-my
+
+Add-NetNatStaticMapping -ExternalIPAddress "0.0.0.0/24" -ExternalPort 80  -Protocol TCP -InternalIPAddress "10.11.12.3" -InternalPort 80 -NatName nat-my
+Add-NetNatStaticMapping -ExternalIPAddress "0.0.0.0/24" -ExternalPort 443 -Protocol TCP -InternalIPAddress "10.11.12.3" -InternalPort 443 -NatName nat-my
+
+```
+# Windows server 2019
+
+## English
+
+# set time zone in utc
+
+- run as admin (search timedate.cpl)
+
+# secpol
+
+- Нажимаем Win + R или кликаем правой кнопкой мыши по иконке меню и выбираем пункт "Run"
+- В строке набираем secpol.msc и жмем кнопку "OK"
+- В открывшемся окне переходим "Local Policies" - "Security Options"
+- Ищем "User Account Control: Admin Approval Mode for the Built-in Administrator account"
+- Переключаем в "Enable"
+- Update force policy / reboot / relogon
+
+# password 
+- Password must meet complexity requirements
+
+## MTU
+```
+netsh interface ipv4 set subinterface eth0 mtu=1498 store=persistent
+```
+
+## ping
+```
+netsh advfirewall firewall add rule name="ICMP Allow incoming V4 echo request" protocol=icmpv4:8,any dir=in action=allow
+```
+
+## fuck ipv6
+
+```
+reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip6\Parameters" /v DisabledComponents /t REG_DWORD /d 255 /f
+```
+
+# ssh
+
+```
+Get-WindowsCapability -Online | Where-Object Name -like 'OpenSSH*'
+```
+```
+# Install the OpenSSH Client
+Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+
+# Install the OpenSSH Server
+Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
+```
+```
+# Start the sshd service
+Start-Service sshd
+
+# OPTIONAL but recommended:
+Set-Service -Name sshd -StartupType 'Automatic'
+
+# Confirm the Firewall rule is configured. It should be created automatically by setup. Run the following to verify
+if (!(Get-NetFirewallRule -Name "OpenSSH-Server-In-TCP" -ErrorAction SilentlyContinue | Select-Object Name, Enabled)) {
+    Write-Output "Firewall Rule 'OpenSSH-Server-In-TCP' does not exist, creating it..."
+    New-NetFirewallRule -Name 'OpenSSH-Server-In-TCP' -DisplayName 'OpenSSH Server (sshd)' -Enabled True -Direction Inbound -Protocol TCP -Action Allow -LocalPort 22
+} else {
+    Write-Output "Firewall rule 'OpenSSH-Server-In-TCP' has been created and exists."
+}
+```
+
+- C:\ProgramData\ssh\sshd_config
+- C:\Users\brjed\.ssh\authorized_keys
+
+```
+icacls.exe ""administrators_authorized_keys"" /inheritance:r /grant ""Administrators:F"" /grant ""SYSTEM:F""
+icacls.exe ""authorized_keys"" /inheritance:r /grant ""Administrators:F"" /grant ""SYSTEM:F""
+```
+
+```
+Get-Service ssh-agent | Select StartType
+Get-Service -Name ssh-agent | Set-Service -StartupType Auto
+Get-Service -Name ssh-agent | Set-Service -StartupType Manual
+Start-Service ssh-agent
+```
+# ping
+
+```
+netsh advfirewall firewall add rule name="ICMP Allow incoming V4 echo request" protocol=icmpv4:8,any dir=in action=allow
+````
+
+# activaton
+
+```
+slmgr /dli
+slmgr.vbs -skms 192.168.0.40
+slmgr /ipk VDYBN-27WPP-V4HQT-9VMD4-VMK7H
+slmgr /ato
+```
+# windows sql server
+
+port opener
+
+
+```
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned  
+#Enabling SQL Server Ports
+New-NetFirewallRule -DisplayName “SQL Server” -Direction Inbound –Protocol TCP –LocalPort 1433 -Action allow
+New-NetFirewallRule -DisplayName “SQL Admin Connection” -Direction Inbound –Protocol TCP –LocalPort 1434 -Action allow
+New-NetFirewallRule -DisplayName “SQL Database Management” -Direction Inbound –Protocol UDP –LocalPort 1434 -Action allow
+New-NetFirewallRule -DisplayName “SQL Service Broker” -Direction Inbound –Protocol TCP –LocalPort 4022 -Action allow
+New-NetFirewallRule -DisplayName “SQL Debugger/RPC” -Direction Inbound –Protocol TCP –LocalPort 135 -Action allow
+#Enabling SQL Analysis Ports
+New-NetFirewallRule -DisplayName “SQL Analysis Services” -Direction Inbound –Protocol TCP –LocalPort 2383 -Action allow
+New-NetFirewallRule -DisplayName “SQL Browser” -Direction Inbound –Protocol TCP –LocalPort 2382 -Action allow
+#Enabling Misc. Applications
+New-NetFirewallRule -DisplayName “HTTP” -Direction Inbound –Protocol TCP –LocalPort 80 -Action allow
+New-NetFirewallRule -DisplayName “SSL” -Direction Inbound –Protocol TCP –LocalPort 443 -Action allow
+New-NetFirewallRule -DisplayName “SQL Server Browse Button Service” -Direction Inbound –Protocol UDP –LocalPort 1433 -Action allow
+#Enable Windows Firewall
+Set-NetFirewallProfile -DefaultInboundAction Block -DefaultOutboundAction Allow -NotifyOnListen True -AllowUnicastResponseToMulticast True
+``
