@@ -4,10 +4,13 @@
 # git push scriptbox repo to githublo
 #
 # 2024.04.25 fix script for a days
+# 2024.06.22 fix .DS_Store
 #
 
 dated=$(date +%Y-%m-%d-%H%M%S)
 commt=$(curl -L -s http://whatthecommit.com/index.txt)
+
+find . -name ".DS_Store" -delete
 
 git add .
 
