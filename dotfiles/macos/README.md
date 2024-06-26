@@ -1,4 +1,4 @@
-# brj@macos X configuration
+# brj@macos configuration
 
 ## zverdvd edition
 
@@ -28,7 +28,8 @@ sudo scutil --set HostName
 
 ## my hardware
 
- - MacBook Air (M1, 2020 г.) - 16G/1tb -> Спецификации -> 13,3-inch (2560 × 1600) -> https://support.apple.com/kb/SP825?locale=ru_RU
+ - MacBook Air (M1, 2020) -> 16G/1tb -> 13,3" -> (2560 × 1600) -> https://support.apple.com/ru-ru/111883
+ - MacBook Pro (M1 Pro, 2021) -> 16G/512G -> 16,1" -> (3456×2234) -> https://support.apple.com/ru-ru/111901
 
 ## Как переустановить ОС macOS? 
 
@@ -60,7 +61,7 @@ defaults write com.apple.dock persistent-apps -array-add '{"tile-type"="small-sp
 - virtual dj
 - vlc
 - kitty (see addons)
-- Rectangle
+- rectangle
 - numi
 - https://sponsor.ajay.app
 - pasta (appstore)
@@ -86,7 +87,7 @@ defaults write com.apple.dock persistent-apps -array-add '{"tile-type"="small-sp
 - htop
 - midnight-commander
 
-## brew cascs 
+## brew install --cask 
 
 - android-platform-tools
 - arc
@@ -106,6 +107,7 @@ defaults write com.apple.dock persistent-apps -array-add '{"tile-type"="small-sp
 - thunderbird (for calendar printing)
 - vlc
 - macs-fan-control
+- betterdisplay
 
 ## localsend
 
