@@ -1,7 +1,13 @@
 #!/bin/bash
 
-# brj@convertor
+#
+# brj@convertotator
+#
+
 # 2024.04.25 Woman That Rolls
+# 2024.05.13 VideoToolbox is the macOS framework for video decoding and encoding.
+# 2024.05.14 Use the -tag:v hvc1 parameter in your FFmpeg command make your HEVC file work on Apple devices
+# 2024.06.12 remove and fix figlet
 
 # convert any video files in current directory to
 
@@ -11,7 +17,7 @@ orig=`du orig | awk {'print $1'}`
 code=`du  code | awk {'print $1'}`
 perc=`echo "100-(($code*100)/$orig)" | bc`
 
-echo "$perc% compressed" | figlet
+echo "$perc% compressed" 
 echo "original is $orig, compressed is $code, compression $perc%"
 
 }
@@ -32,22 +38,24 @@ videos=*(*.opus|*.mp3|*.MOV|*.amr|*.ogg|*.aac|*.wma|*.WMA|*.flv|*.mp4|*.avi|*.mk
 # grab convert
 
 for file in $videos; do
-    cowsay -d "$file convert"
+    echo "$file convert"
 
     mkdir -p code
     mkdir -p orig
+    mkdir -p log
 
     case $1 in
 	"x265")	echo "x265";
-        		outputname="code/${file%.*}.mkv";
-			nice -9 ffmpeg -hide_banner -i "$file" -c:v libx265 -vtag hvc1 -c:a aac -filter:a dynaudnorm "$outputname";; 
-        "mp3")		echo "mp3 coding" | figlet; 
+        		outputname="code/${file%.*}.mp4";
+#			nice -9 ffmpeg -hide_banner -i "$file" -c:v libx265 -tag:v hvc1 -vtag hvc1 -c:a aac -filter:a dynaudnorm "$outputname";; 
+			nice -9 ffmpeg -hide_banner -i "$file" -report -c:v hevc_videotoolbox -tag:v hvc1 -vtag hvc1 -c:a aac -filter:a dynaudnorm "$outputname";; 
+        "mp3")		echo "mp3 coding";
 			outputname="code/${file%.*}.mp3";
 			ffmpeg -i "$file" -vn -acodec libmp3lame -ab 128k -ar 44100 -ac 1 -f mp3 -filter:a dynaudnorm "$outputname";;
-        "wav")		echo "wav decoding" | figlet; 
+        "wav")		echo "wav decoding";
 			outputname="code/${file%.*}.wav";
 			ffmpeg -i "$file" "$outputname";;
-        "mp4")		echo "mp4 recoding" | figlet;
+        "mp4")		echo "mp4 recoding";
         		outputname="code/${file%.*}.mp4";
 			ffmpeg -hide_banner -i "$file" -filter:a dynaudnorm "$outputname";;
     esac
@@ -61,7 +69,7 @@ for file in $videos; do
 
 done
 
-echo "all done!" | cowsay -d
-#dumba;
+echo "all done!"
+dumba;
 
 sync
