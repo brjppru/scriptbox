@@ -1,0 +1,24 @@
+//
+// brj@zed config
+//
+// documentation: https://zed.dev/docs/configuring-zed
+//
+{
+  "vim_mode": false,
+  "ui_font_size": 18,
+  "autosave": "on_focus_change",
+  "auto_update": false,
+  "buffer_font_size": 18,
+  "theme": "Gruvbox Dark Soft",
+  "current_line_highlight": "all",
+  "blinking": "on",
+  "ui_font_family": "JetBrainsMono Nerd Font Mono",
+  "tab_size": 2,
+  "preferred_line_length": 80,
+  "soft_wrap": "none",
+  "soft_wrap": "preferred_line_length",
+  "terminal": {
+    "font_family": "JetBrainsMono Nerd Font Mono",
+    "blinking": "off"
+  }
+}
