@@ -95,6 +95,12 @@ pgrep syncthing
 brew services start syncthing
 ```
 
+### JetBrainsMono
+
+  - JetBrainsMono -> https://www.nerdfonts.com/font-downloads
+  - download -> https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/JetBrainsMono.zip
+  - copy to ```/Users/brjed/Library/Fonts/```
+
 ### daily driver
 
 - cyberduck
@@ -121,7 +127,6 @@ brew services start syncthing
 - ipcalc
 - sevenzip
 - rar
-- syncthing
 - font-jetbrains-mono (pached)
 - helix ?
 - htop
