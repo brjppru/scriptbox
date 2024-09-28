@@ -85,6 +85,16 @@ brew list --formula | \
     column -t```
 ```
 
+### syncthing
+
+install flat, not casc, http://localhost:8384/
+
+```
+brew services stop syncthing
+pgrep syncthing
+brew services start syncthing
+```
+
 ### daily driver
 
 - cyberduck
