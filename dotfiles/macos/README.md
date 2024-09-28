@@ -10,31 +10,37 @@
  - Хоткеи: ⇧ = Shift, ⌃ = Control, ⌘ = Command, ⌥ = Option / Alt.
  - Shift-Command-G: Open a Go to Folder window.
 
-##  mail.app
+## Как переустановить ОС macOS?
 
-- для перемешения почты по favorites папкам Control-Command-2
-
-### boot flash / reinstall
-
-```
-brjed@air ~ % sudo /Applications/Install\ macOS\ Monterey.app/Contents/Resources/createinstallmedia --volume /volumes/macos12
-```
-
-### hostname
-
-```
-sudo scutil --set HostName
-```
+Используйте возможности восстановления macOS для переустановки операционной системы Mac. -> Процессор Apple -> Нажмите кнопку питания, чтобы включить компьютер Mac, и продолжайте удерживать ее нажатой, пока не отобразится окно с параметрами запуска. Нажмите значок в виде шестеренки (меню «Параметры»), затем нажмите «Продолжить».
 
 ## my hardware
 
  - MacBook Air (M1, 2020) -> 16G/1tb -> 13,3" -> (2560 × 1600) -> https://support.apple.com/ru-ru/111883
  - MacBook Pro (M1 Pro, 2021) -> 16G/512G -> 16,1" -> (3456×2234) -> https://support.apple.com/ru-ru/111901
 
-## Как переустановить ОС macOS? 
+## boot flash / reinstall
 
-Используйте возможности восстановления macOS для переустановки операционной системы Mac. -> Процессор Apple -> Нажмите кнопку питания, чтобы включить компьютер Mac, и продолжайте удерживать ее нажатой, пока не отобразится окно с параметрами запуска. Нажмите значок в виде шестеренки (меню «Параметры»), затем нажмите «Продолжить».
+  - installer docs -> https://support.apple.com/en-us/101578
 
+```
+softwareupdate --list-full-installers
+softwareupdate --fetch-full-installer --full-installer-version 15.0
+```
+
+```
+brjed@air ~ % sudo /Applications/Install\ macOS\ Monterey.app/Contents/Resources/createinstallmedia --volume /volumes/macos12
+```
+
+###  mail.app
+
+- для перемешения почты по favorites папкам Control-Command-2
+
+### hostname
+
+```
+sudo scutil --set HostName
+```
 ## root
 
 ```
@@ -46,16 +52,40 @@ dsenableroot
 Use touchid for sudo
 
 ```
-here is
+sudo su root -c 'chmod +w /etc/pam.d/sudo && echo "auth       sufficient     pam_tid.so\n$(cat /etc/pam.d/sudo)" > /etc/pam.d/sudo && chmod -w /etc/pam.d/sudo'
 ```
-
-## dock space
+## add dock space
 
 ```
 defaults write com.apple.dock persistent-apps -array-add '{"tile-type"="small-spacer-tile";}'; killall Dock
 ```
 
-## daily driver
+## brew
+
+non brew, but installed from app store
+
+```
+find /Applications -path '*Contents/_MASReceipt/receipt' -maxdepth 4 -print |\sed 's#.app/Contents/_MASReceipt/receipt#.app#g; s#/Applications/##'
+```
+
+```
+brew deps --tree --installed
+brew leaves | xargs brew desc --eval-all
+```
+
+```
+brew list --formula | \
+    xargs -n1 -P8 -I {} \
+    sh -c "
+        brew info {} | \
+        egrep '[0-9]* files, ' | \
+        sed 's/^.*[0-9]* files, \(.*\)).*$/{} \1/'
+    " | \
+    sort -h -r -k2 - | \
+    column -t```
+```
+
+### daily driver
 
 - cyberduck
 - virtual dj
@@ -71,7 +101,7 @@ defaults write com.apple.dock persistent-apps -array-add '{"tile-type"="small-sp
 - kepassxc
 - telephone 
 
-## brew
+## brew packages
 
 - ncdu
 - mtr
@@ -79,40 +109,39 @@ defaults write com.apple.dock persistent-apps -array-add '{"tile-type"="small-sp
 - duf
 - htop
 - ipcalc
-- sevenzi
+- sevenzip
 - rar
 - syncthing
 - font-jetbrains-mono (pached)
-- helix
+- helix ?
 - htop
 - midnight-commander
 
 ## brew install --cask 
 
+```brew install --cask --no-quarantine ```
+
 - android-platform-tools
-- arc
-- cloudflare-warp
+- appcleaner
+- brave
+- audacity
+- blackhole-2ch
+- butt
 - coconutbattery
 - imazing
 - keepassxc
 - kitty
-- localsend
 - numi
 - rar
 - rectangle
 - remote-desktop-manager
+- windows app
 - sublime-text
 - telegram-desktop
-- termius
 - thunderbird (for calendar printing)
 - vlc
 - macs-fan-control
 - betterdisplay
-
-## localsend
-
-- brew tap localsend/localsend
-- brew install localsend
 
 ## ioquake3 files
 
@@ -134,6 +163,6 @@ git clone https://github.com/zdharma-continuum/fast-syntax-highlighting.git \
 ```
 
 ## no brew, static binares
-  - ffprobe release as zip: https://evermeet.cx/ffmpeg/getrelease/ffprobe/zip
-  - ffmpeg release as zip: https://evermeet.cx/ffmpeg/getrelease/zip
-  - https://github.com/yt-dlp/yt-dlp/releases
+  - ffprobe release as zip -> https://evermeet.cx/ffmpeg/getrelease/ffprobe/zip
+  - ffmpeg release as zip -> https://evermeet.cx/ffmpeg/getrelease/zip
+  - yt-dlp -> https://github.com/yt-dlp/yt-dlp/releases

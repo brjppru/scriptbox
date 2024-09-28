@@ -1,8 +1,0 @@
-root/.dropbox/*
-root/.dropbox-dist/*
-root/.rsync_tmbackup/*
-root/Dropbox/*
-root/.cache/*
-.dropbox.cache
-backup/*
-Приложении/*

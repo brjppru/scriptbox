@@ -3,6 +3,7 @@
 # brj@.macos X configuration
 
 # 2024.04.25 Woman That Rolls
+# 2024.09.29 Gavin King
 
 # If you want to figure out what default needs changing, do the following:
 #
@@ -12,9 +13,11 @@
 #   4. Store new defaults in file: `defaults read > after`
 #   5. Diff the files: `diff before after`
 #
-# @see: http://secrets.blacktree.com/?showapp=com.apple.finder
-# @see: https://github.com/herrbischoff/awesome-macos-command-line
+# @see ->  http://secrets.blacktree.com/?showapp=com.apple.finder
+# @see ->  https://github.com/herrbischoff/awesome-macos-command-line
+# @see ->  https://git.herrbischoff.com/awesome-macos-command-line/about/
 #
+
 # original via Jeff Geerling
 
 # Warn that some commands will not be run if the script is not run as root.
@@ -213,6 +216,9 @@ defaults write NSGlobalDomain WebKitDeveloperExtras -bool true
 
 # Copy email addresses as `foo@example.com` instead of `Foo Bar <foo@example.com>` in Mail.app
 defaults write com.apple.mail AddressesIncludeNameOnPasteboard -bool false
+
+# Show Attachments as Icons
+defaults write com.apple.mail DisableInlineAttachmentViewing -bool true
 
 ###############################################################################
 # Spotlight                                                                   #
