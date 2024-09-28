@@ -29,7 +29,7 @@ softwareupdate --fetch-full-installer --full-installer-version 15.0
 ```
 
 ```
-brjed@air ~ % sudo /Applications/Install\ macOS\ Monterey.app/Contents/Resources/createinstallmedia --volume /volumes/macos12
+brjed@air ~ % sudo /Applications/Install\ macOS\ Monterey.app/Contents/Resources/createinstallmedia --volume /volumes/macos15
 ```
 
 ###  mail.app
@@ -127,8 +127,6 @@ brew services start syncthing
 - ipcalc
 - sevenzip
 - rar
-- font-jetbrains-mono (pached)
-- helix ?
 - htop
 - midnight-commander
 
