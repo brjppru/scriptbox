@@ -42,13 +42,12 @@ for file in $videos; do
 
     mkdir -p code
     mkdir -p orig
-    mkdir -p log
 
     case $1 in
-	"x265")	echo "x265";
+	"x265")		echo "x265";
         		outputname="code/${file%.*}.mp4";
 #			nice -9 ffmpeg -hide_banner -i "$file" -c:v libx265 -tag:v hvc1 -vtag hvc1 -c:a aac -filter:a dynaudnorm "$outputname";; 
-			nice -9 ffmpeg -hide_banner -i "$file" -report -c:v hevc_videotoolbox -tag:v hvc1 -vtag hvc1 -c:a aac -filter:a dynaudnorm "$outputname";; 
+			nice -9 ffmpeg -hide_banner -i "$file" -report -c:v hevc_videotoolbox -tag:v hvc1 -vtag hvc1 -c:a aac -filter:a dynaudnorm "$outputname";;
         "mp3")		echo "mp3 coding";
 			outputname="code/${file%.*}.mp3";
 			ffmpeg -i "$file" -vn -acodec libmp3lame -ab 128k -ar 44100 -ac 1 -f mp3 -filter:a dynaudnorm "$outputname";;

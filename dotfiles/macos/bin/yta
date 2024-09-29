@@ -1,0 +1,4 @@
+#!/bin/sh
+
+~/bin/yt/yt-dlp -x --cookies-from-browser brave -f ba --extract-audio --audio-format wav $1
+

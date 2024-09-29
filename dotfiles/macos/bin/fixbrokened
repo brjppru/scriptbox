@@ -1,0 +1,12 @@
+#!/bin/sh
+
+for i in `ls -1`
+    do
+
+    echo $i
+
+    ffmpeg -i "$i" -c copy new/new-"$i"
+
+
+    done
+
