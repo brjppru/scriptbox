@@ -1,6 +1,7 @@
 #!/bin/sh
 
 # 2024.06.12 remove and fix figlet
+# 2024.10.02 fix the htong
 
-~/bin/yt/yt-dlp -x --cookies-from-browser brave -f ba --extract-audio --audio-format wav $1
+~/bin/yt-dlp -x --cookies-from-browser brave -f ba --extract-audio --audio-format wav $1
 
