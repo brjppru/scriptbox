@@ -1,4 +1,6 @@
 #!/bin/sh
 
+# 2024.06.12 remove and fix figlet
+
 ~/bin/yt/yt-dlp -x --cookies-from-browser brave -f ba --extract-audio --audio-format wav $1
 
