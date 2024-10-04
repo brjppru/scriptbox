@@ -156,6 +156,7 @@ brew services start syncthing
 - vlc
 - macs-fan-control
 - betterdisplay
+- jordanbaird-ice
 
 ## ioquake3 files
 
