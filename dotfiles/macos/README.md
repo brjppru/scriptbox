@@ -136,6 +136,7 @@ brew services start syncthing
 ```brew install --cask --no-quarantine ```
 
 - android-platform-tools
+- forklift
 - appcleaner
 - brave
 - audacity
