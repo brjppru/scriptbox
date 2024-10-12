@@ -1,0 +1,79 @@
+#!/usr/bin/env python3
+
+# brj@sanitar
+
+# 2024.10.13 Woman That Rolls
+
+import os
+import re
+import sys
+
+def transliterate(text):
+    # Транслитерация русских букв в английские
+    translit_table = {
+        'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'e', 'ж': 'zh',
+        'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o',
+        'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'kh', 'ц': 'ts',
+        'ч': 'ch', 'ш': 'sh', 'щ': 'shch', 'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya',
+        'А': 'A', 'Б': 'B', 'В': 'V', 'Г': 'G', 'Д': 'D', 'Е': 'E', 'Ё': 'E', 'Ж': 'Zh',
+        'З': 'Z', 'И': 'I', 'Й': 'Y', 'К': 'K', 'Л': 'L', 'М': 'M', 'Н': 'N', 'О': 'O',
+        'П': 'P', 'Р': 'R', 'С': 'S', 'Т': 'T', 'У': 'U', 'Ф': 'F', 'Х': 'Kh', 'Ц': 'Ts',
+        'Ч': 'Ch', 'Ш': 'Sh', 'Щ': 'Shch', 'Ъ': '', 'Ы': 'Y', 'Ь': '', 'Э': 'E', 'Ю': 'Yu', 'Я': 'Ya'
+    }
+
+    for cyrillic_char, latin_char in translit_table.items():
+        text = text.replace(cyrillic_char, latin_char)
+
+    return text
+
+def sanitize(filename):
+    # Удаляем недопустимые символы
+    filename = re.sub(r'[<>:"/\\|?*]', '', filename)  		# Удаляем символы, недопустимые ala FAT32
+    filename = re.sub(r'[^A-Za-z0-9._-]', '-', filename)  	# Заменяем другие недопустимые символы
+    filename = re.sub(r'-+', '-', filename)  			# Удаляем дублирующиеся прочерки
+    filename = filename.strip('-')  				# Удаляем прочерки в начале и конце
+    return filename
+
+def process_files(directory, recursive):
+    for entry in os.listdir(directory):
+        path = os.path.join(directory, entry)
+
+        if os.path.isdir(path) and recursive:
+            # Рекурсивно обрабатываем подкаталоги
+            process_files(path, recursive)
+
+        elif os.path.isfile(path):
+            # Основная обработка файла
+            name, ext = os.path.splitext(entry)
+            original_name = name
+
+            # Транслитерация и очистка имени файла
+            name = transliterate(name)
+            sanitized_name = sanitize(name)
+
+            # Проверка, изменилось ли имя
+            if sanitized_name != original_name:
+                new_name = f"{sanitized_name}{ext}"
+                new_path = os.path.join(directory, new_name)
+
+                # Проверка на существование файла
+                if os.path.exists(new_path):
+                    # Добавляем единицу, если файл с таким именем уже существует
+                    count = 1
+                    while os.path.exists(new_path):
+                        new_name = f"{sanitized_name}_{count}{ext}"
+                        new_path = os.path.join(directory, new_name)
+                        count += 1
+
+                # Переименование файла
+                os.rename(path, new_path)
+                print(f"Файл '{entry}' переименован в '{new_name}'")
+
+if __name__ == "__main__":
+    # Проверяем аргументы командной строки
+    recursive_flag = False
+    if len(sys.argv) > 1 and (sys.argv[1] == '-R' or sys.argv[1] == '-r'):
+        recursive_flag = True
+
+    # Запускаем обработку файлов в текущем каталоге
+    process_files('.', recursive_flag)
