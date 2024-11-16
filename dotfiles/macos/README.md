@@ -159,6 +159,10 @@ brew services start syncthing
 - betterdisplay
 - jordanbaird-ice
 
+## brave
+
+No access to local network sites? Go to “Local Network” setting in macOS Privacy settings and enable it. 
+
 ## ioquake3 files
 
 -  ~/Library/Application Support/Quake3/baseq3/
