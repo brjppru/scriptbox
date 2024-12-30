@@ -60,6 +60,11 @@ sudo su root -c 'chmod +w /etc/pam.d/sudo && echo "auth       sufficient     pam
 defaults write com.apple.dock persistent-apps -array-add '{"tile-type"="small-spacer-tile";}'; killall Dock
 ```
 
+## stack's
+
+  - https://www.bluestacks.com/mac
+  - https://orbstack.dev/
+
 ## brew
 
 non brew, but installed from app store
@@ -67,6 +72,16 @@ non brew, but installed from app store
 ```
 find /Applications -path '*Contents/_MASReceipt/receipt' -maxdepth 4 -print |\sed 's#.app/Contents/_MASReceipt/receipt#.app#g; s#/Applications/##'
 ```
+
+```
+Windows App.app
+iMovie.app
+TCAminesweeper.app
+Pasta.app
+Disk Graph.app
+Receiver Radio.app
+```
+
 
 ```
 brew deps --tree --installed
@@ -170,7 +185,7 @@ No access to local network sites? Go to “Local Network” setting in macOS Pri
 
 ## ioquake3 files
 
--  ~/Library/Application Support/Quake3/baseq3/
+```~/Library/Application Support/Quake3/baseq3/```
 
 ## zsh
 
