@@ -1,13 +1,13 @@
-ЗАО "The бырдж"
-===============
+# wow? 
+
+Closed Joint-Stock Company "The brj"
 
 ## what?
-Roman Y. Bogdanov public script svalka storage
+Roman Y. Bogdanov public script ~~svalka~~ monorepo
 
-## Plan
-0. reorder everything
-1. do not try this at home
-2. that's all
+## plan?
 
-## contact
-Roman Y. Bogdanov, http://brj.pp.ru/
+* Reorder everything.
+* Do not try this at home.
+* That’s all.
+
