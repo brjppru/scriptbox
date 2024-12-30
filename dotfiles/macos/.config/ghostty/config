@@ -1,0 +1,13 @@
+font-family = "JetBrainsMono Nerd Font Mono"
+background-opacity = 0.9
+shell-integration = zsh
+cursor-style-blink = true
+window-theme = system
+copy-on-select = true
+theme = dark:catppuccin-mocha,light:catppuccin-latte
+background = 1c2021
+bold-is-bright = true
+window-padding-x = 18
+window-padding-y = 16
+font-size = 18
+title = "Ghostty 👻"

@@ -123,6 +123,10 @@ brew services start syncthing
 - mtr
 - fdupes
 - duf
+- tig
+- zbar
+- yazi
+- hugo
 - htop
 - ipcalc
 - sevenzip
@@ -157,10 +161,12 @@ brew services start syncthing
 - macs-fan-control
 - betterdisplay
 - jordanbaird-ice
+- applite
+- pearcleaner
 
 ## brave
 
-No access to local network sites? Go to “Local Network” setting in macOS Privacy settings and enable it. 
+No access to local network sites? Go to “Local Network” setting in macOS Privacy settings and enable it.
 
 ## ioquake3 files
 
@@ -184,8 +190,6 @@ git clone https://github.com/zdharma-continuum/fast-syntax-highlighting.git \
 ## startup fixes
 
 You likely have an extremely tiny file in /Library/LaunchAgents or /Library/LaunchDeamons that would launch someshit the background if required. Obviously it cant work now since you removed it but the tiny file is still present -> Open Finder -> Under locations select your macbook/macintosh HD/library/LaunchAgents AND also check LaunchDaemons
-
-
 
 ## no brew, static binares for intel
   - ffprobe release as zip -> https://evermeet.cx/ffmpeg/getrelease/ffprobe/zip

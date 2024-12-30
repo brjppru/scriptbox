@@ -2,6 +2,15 @@
 
 # 2024.06.12 remove and fix figlet
 # 2024.10.02 fix the htong
+# 2024.10.25 broken brave cookie integration
+# 2024.11.20 brave cookie restored
 
-yt-dlp -N 5 --restrict-filenames -x --cookies-from-browser brave -f ba --extract-audio --audio-format wav $1
+yt-dlp -4 -x \
+    --trim-filenames 30 \
+    --newline \
+    --audio-quality 0 \
+    --cookies-from-browser brave \
+    --verbose \
+    -f ba --extract-audio --audio-format wav $1
 
+#    --cookies /Users/brjed/Downloads/cookies.txt \

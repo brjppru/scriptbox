@@ -33,7 +33,7 @@ shopt -s extglob
 shopt -s nullglob
 
 # video files
-videos=*(*.opus|*.mp3|*.MOV|*.amr|*.ogg|*.aac|*.wma|*.WMA|*.flv|*.mp4|*.avi|*.mkv|*.wav|*.m4a|*.m4v|*.webm|*.wmv|*.3gp|*.3GP|*.MP4|*.mov|*.ts|*.MKV|*.ra)
+videos=*(*.m4p|*.opus|*.mp3|*.MOV|*.amr|*.ogg|*.aac|*.wma|*.WMA|*.flv|*.mp4|*.avi|*.mkv|*.wav|*.m4a|*.m4v|*.webm|*.wmv|*.3gp|*.3GP|*.MP4|*.mov|*.ts|*.MKV|*.ra)
 
 # grab convert
 
