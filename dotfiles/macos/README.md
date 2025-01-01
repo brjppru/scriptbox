@@ -183,6 +183,16 @@ brew services start syncthing
 
 No access to local network sites? Go to “Local Network” setting in macOS Privacy settings and enable it.
 
+## resign
+
+xattr -cr removes extended attributes (like quarantine flags) from the app to fix "damaged" errors.
+codesign --force --deep --sign - re-signs the app locally to resolve macOS signature issues.
+It's for fixing untrusted or non-Store apps.
+
+```
+/Applications/thebrj.app && codesign --force --deep --sign - /Applications/thebrj.app
+```
+
 ## ioquake3 files
 
 ```~/Library/Application Support/Quake3/baseq3/```
