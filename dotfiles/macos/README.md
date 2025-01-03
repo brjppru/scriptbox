@@ -1,6 +1,8 @@
 # brj@macos configuration
 
-## zverdvd edition
+macos zverdvd 2025 edition
+
+# EOL + EOS
 
 - EOL + EOS on macos -> https://endoflife.date/macos
 - hot keys -> https://support.apple.com/en-us/HT201236
@@ -178,10 +180,19 @@ brew services start syncthing
 - jordanbaird-ice
 - applite
 - pearcleaner
+- macwhisper
 
 ## brave
 
 No access to local network sites? Go to “Local Network” setting in macOS Privacy settings and enable it.
+
+### plugins
+
+  - Imagus mod
+  - SingleFile
+  - Enhancer for YouTube™
+  - SponsorBlock for YouTube
+  - RSS Subscription Extension, Reader
 
 ## resign
 
