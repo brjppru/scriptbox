@@ -1,15 +1,15 @@
 #!/bin/sh
 
-# brj@scrcpy
+# brj@scrspy
 
-# 2024.04.25 Woman That Rolls
-
-scrcpy --stay-awake --show-touches --forward-all-clicks \
-    --legacy-paste --disable-screensaver
+# 2024.04.25 Woman Than Rolls
+# 2025.01.07 fix the mouse
 
 killall -9 adb
+
+scrcpy --stay-awake --show-touches --mouse-bind=++++ --legacy-paste --disable-screensaver
+
 killall -9 adb
 
 #scrcpy --shortcut-mod=rctrl --stay-awake --show-touches --raw-key-events --forward-all-clicks \
-#    --turn-screen-off --power-off-on-close --legacy-paste --disable-screensaver --hid-keyboard
-
+#    --turn-screen-off --power-off-on-close --legacy-paste --disable-screensaver --hid-keyboard 
