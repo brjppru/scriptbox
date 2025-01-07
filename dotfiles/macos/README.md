@@ -181,6 +181,7 @@ brew services start syncthing
 - applite
 - pearcleaner
 - macwhisper
+- fliqlo
 
 ## brave
 
