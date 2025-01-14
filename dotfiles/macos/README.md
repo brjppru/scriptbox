@@ -117,6 +117,7 @@ brew services start syncthing
   - JetBrainsMono -> https://www.nerdfonts.com/font-downloads
   - download -> https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/JetBrainsMono.zip
   - copy to ```/Users/brjed/Library/Fonts/```
+  - or ```brew install --no-quarantine --cask font-jetbrains-mono-nerd-font``
 
 ### daily driver
 
