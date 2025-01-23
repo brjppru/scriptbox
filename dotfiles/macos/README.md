@@ -158,6 +158,7 @@ brew services start syncthing
 
 - android-platform-tools
 - forklift
+- fbreader
 - appcleaner
 - brave
 - audacity
@@ -224,6 +225,10 @@ git clone https://github.com/TamCore/autoupdate-oh-my-zsh-plugins $ZSH_CUSTOM/pl
 git clone https://github.com/zdharma-continuum/fast-syntax-highlighting.git \
  ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fast-syntax-highlighting
 ```
+
+## chattr
+
+chflags uchg file or nouchg -> Prevents changes to the file's contents or metadata. This is similar to the i attribute in chattr.
 
 ## startup fixes
 
