@@ -230,6 +230,16 @@ git clone https://github.com/zdharma-continuum/fast-syntax-highlighting.git \
 
 chflags uchg file or nouchg -> Prevents changes to the file's contents or metadata. This is similar to the i attribute in chattr.
 
+## dd
+
+```
+diskutil list
+sudo diskutil unmountDisk disk4
+xzcat file.img.xz | sudo dd of=/dev/rdisk4 bs=1m
+sudo sync
+```
+
+
 ## startup fixes
 
 You likely have an extremely tiny file in /Library/LaunchAgents or /Library/LaunchDeamons that would launch someshit the background if required. Obviously it cant work now since you removed it but the tiny file is still present -> Open Finder -> Under locations select your macbook/macintosh HD/library/LaunchAgents AND also check LaunchDaemons
