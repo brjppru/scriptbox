@@ -107,6 +107,8 @@ brew list --formula | \
 
 install flat, not casc, http://localhost:8384/
 
+config for Syncthing live in $HOME/Library/Application Support/Syncthing
+
 ```
 brew services stop syncthing
 pgrep syncthing
