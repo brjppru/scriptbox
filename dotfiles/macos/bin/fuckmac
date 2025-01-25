@@ -1,0 +1,5 @@
+#!/bin/sh
+
+find . -type f -name "._*" -size 4096c -delete
+find . -name "*.DS_Store" -type f -delete
+
