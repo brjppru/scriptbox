@@ -143,7 +143,6 @@ brew services start syncthing
 - ncdu
 - zbar
 - yt-dlp
-- wine-stable + winetricks
 - trippy
 - mtr
 - fdupes
@@ -202,6 +201,14 @@ brew services start syncthing
 - https://mixedinkey.com/platinum-notes/
 - microsoft office
 - forklift
+
+## wined
+
+```
+softwareupdate --install-rosetta --agree-to-license
+brew install --cask --no-quarantine wine-stable
+brew install --no-quarantine winetricks
+```
 
 ## brave
 
