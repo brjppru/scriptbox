@@ -1,6 +1,6 @@
 # brj@macos configuration
 
-macos zverdvd 2025 edition
+macos zverdvd 2025 edition(tm)
 
 # EOL + EOS
 
@@ -78,6 +78,7 @@ find /Applications -path '*Contents/_MASReceipt/receipt' -maxdepth 4 -print |\se
 ```
 Windows App.app
 iMovie.app
+Mollama.app
 TCAminesweeper.app
 Pasta.app
 Disk Graph.app
@@ -99,7 +100,7 @@ brew list --formula | \
         sed 's/^.*[0-9]* files, \(.*\)).*$/{} \1/'
     " | \
     sort -h -r -k2 - | \
-    column -t```
+    column -t
 ```
 
 ### syncthing
@@ -115,7 +116,7 @@ brew services start syncthing
 ### JetBrainsMono
 
   - JetBrainsMono -> https://www.nerdfonts.com/font-downloads
-  - download -> https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/JetBrainsMono.zip
+  - download -> https://github.com/ryanoasis/nerd-fonts/releases/download/v3.3.0/JetBrainsMono.zip
   - copy to ```/Users/brjed/Library/Fonts/```
   - or ```brew install --no-quarantine --cask font-jetbrains-mono-nerd-font``
 
@@ -138,8 +139,15 @@ brew services start syncthing
 ## brew packages
 
 - ncdu
+- zbar
+- yt-dlp
+- wine-stable + winetricks
+- trippy
 - mtr
 - fdupes
+- tmux
+- scrcpy
+- midnight-commander
 - duf
 - tig
 - zbar
@@ -148,9 +156,11 @@ brew services start syncthing
 - htop
 - ipcalc
 - sevenzip
-- rar
+- rar unrar
 - htop
+- ffmpeg
 - midnight-commander
+
 
 ## brew install --cask 
 
@@ -185,6 +195,12 @@ brew services start syncthing
 - macwhisper
 - fliqlo
 
+## payed
+
+- https://mixedinkey.com/platinum-notes/
+- microsoft office
+- forklift
+
 ## brave
 
 No access to local network sites? Go to “Local Network” setting in macOS Privacy settings and enable it.
@@ -197,7 +213,7 @@ No access to local network sites? Go to “Local Network” setting in macOS Pri
   - SponsorBlock for YouTube
   - RSS Subscription Extension, Reader
 
-## resign
+## resign the app and attr
 
 xattr -cr removes extended attributes (like quarantine flags) from the app to fix "damaged" errors.
 codesign --force --deep --sign - re-signs the app locally to resolve macOS signature issues.
@@ -206,6 +222,10 @@ It's for fixing untrusted or non-Store apps.
 ```
 /Applications/thebrj.app && codesign --force --deep --sign - /Applications/thebrj.app
 ```
+
+### chattr
+
+chflags uchg file or nouchg -> Prevents changes to the file's contents or metadata. This is similar to the i attribute in chattr.
 
 ## ioquake3 files
 
@@ -226,10 +246,6 @@ git clone https://github.com/zdharma-continuum/fast-syntax-highlighting.git \
  ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fast-syntax-highlighting
 ```
 
-## chattr
-
-chflags uchg file or nouchg -> Prevents changes to the file's contents or metadata. This is similar to the i attribute in chattr.
-
 ## dd
 
 ```
@@ -238,7 +254,6 @@ sudo diskutil unmountDisk disk4
 xzcat file.img.xz | sudo dd of=/dev/rdisk4 bs=1m
 sudo sync
 ```
-
 
 ## startup fixes
 

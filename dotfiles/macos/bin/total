@@ -1,0 +1,3 @@
+#!/bin/sh
+
+LANG=ru_RU.UTF-8 wine /Users/brjed/.wine/drive_c/Program\ Files/totalcmd/TOTALCMD64.EXE

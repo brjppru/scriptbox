@@ -1,0 +1,22 @@
+[user]
+	name = Roman Y. Bogdanov
+	email = sam@brj.pp.ru
+[alias]
+	punch = push --force
+	l = log --oneline --graph
+[color]
+    branch = auto
+    diff = auto
+    interactive = auto
+    status = auto
+    grep = auto
+
+[push]
+    default = simple
+
+[log]
+    decorate = full
+
+[merge]
+    tool = vimdiff
+    log = true
