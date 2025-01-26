@@ -1,4 +1,4 @@
-# wow? 
+# Why?
 
 Closed Joint-Stock Company "The brj"
 
