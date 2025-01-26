@@ -120,7 +120,7 @@ brew services start syncthing
   - JetBrainsMono -> https://www.nerdfonts.com/font-downloads
   - download -> https://github.com/ryanoasis/nerd-fonts/releases/download/v3.3.0/JetBrainsMono.zip
   - copy to ```/Users/brjed/Library/Fonts/```
-  - or ```brew install --no-quarantine --cask font-jetbrains-mono-nerd-font``
+  - or ```brew install --no-quarantine --cask font-jetbrains-mono-nerd-font```
 
 ### daily driver
 
@@ -201,6 +201,25 @@ brew services start syncthing
 - https://mixedinkey.com/platinum-notes/
 - microsoft office
 - forklift
+
+## mas
+
+https://github.com/mas-cli/mas -> 📦 Mac App Store command line interface
+
+```
+brew install mas
+mas signin icloud@icloud.com
+mas search pasta
+mas intall 1438389787
+```
+
+```
+mas install 1438389787
+==> Downloading Pasta - Clipboard Manager (1.4.10)
+==> Downloaded Pasta - Clipboard Manager (1.4.10)
+==> Installing Pasta - Clipboard Manager (1.4.10)
+==> Installed Pasta - Clipboard Manager (1.4.10)
+```
 
 ## wined
 
