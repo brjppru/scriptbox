@@ -195,6 +195,7 @@ brew services start syncthing
 - pearcleaner
 - macwhisper
 - fliqlo
+- kid3
 
 ## payed
 
