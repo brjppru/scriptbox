@@ -17,6 +17,28 @@ macos zverdvd 2025 edition(tm)
  - MacBook Air (M1, 2020) -> 16G/1tb -> 13,3" -> (2560 × 1600) -> https://support.apple.com/ru-ru/111883
  - MacBook Pro (M1 Pro, 2021) -> 16G/512G -> 16,1" -> (3456×2234) -> https://support.apple.com/ru-ru/111901
 
+## Sleeping
+
+https://support.apple.com/en-us/120622
+
+A Mac laptop with Apple silicon automatically turns on and starts up when you open its lid or connect it to power. With macOS Sequoia 15 or later, you can change this behavior without affecting your ability to use your keyboard or trackpad to turn on your Mac.
+
+Make sure that your Mac laptop with Apple silicon is using macOS Sequoia or later.
+
+Open the Terminal app, which is in the Utilities folder of your Applications folder.
+
+Type one of these commands in Terminal, then press Return:
+
+To prevent startup when opening the lid or connecting to power: ```sudo nvram BootPreference=%00```
+
+To prevent startup only when opening the lid: ```sudo nvram BootPreference=%01```
+
+To prevent startup only when connecting to power: ```sudo nvram BootPreference=%02```
+
+Type your administrator password when prompted (Terminal doesn’t show the password as it's typed), then press Return.
+
+To undo any of the previous commands and reenable automatic startup when opening the lid or connecting to power, enter ```sudo nvram -d BootPreference``` in Terminal.
+
 ## Как переустановить ОС macOS?
 
 Используйте возможности восстановления macOS для переустановки операционной системы Mac. -> Процессор Apple -> Нажмите кнопку питания, чтобы включить компьютер Mac, и продолжайте удерживать ее нажатой, пока не отобразится окно с параметрами запуска. Нажмите значок в виде шестеренки (меню «Параметры»), затем нажмите «Продолжить».
