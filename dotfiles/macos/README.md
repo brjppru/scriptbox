@@ -218,6 +218,8 @@ brew services start syncthing
 - macwhisper
 - fliqlo
 - kid3
+- monitorcontrol
+- flameshot
 
 ## payed
 
