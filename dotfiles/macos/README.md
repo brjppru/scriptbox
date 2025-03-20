@@ -220,6 +220,7 @@ brew services start syncthing
 - kid3
 - monitorcontrol
 - flameshot
+- losslesscut
 
 ## payed
 
