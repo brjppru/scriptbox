@@ -88,6 +88,7 @@ defaults write com.apple.dock persistent-apps -array-add '{"tile-type"="small-sp
 
   - https://www.bluestacks.com/mac
   - https://orbstack.dev/
+  - https://github.com/insidegui/VirtualBuddy
 
 ## brew
 
