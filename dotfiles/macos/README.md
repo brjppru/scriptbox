@@ -157,7 +157,7 @@ brew services start syncthing
 - pasta (appstore)
 - sublime-text
 - audacity
-- cron.app
+- notion-calendar
 - kepassxc
 - telephone 
 
@@ -174,7 +174,6 @@ brew services start syncthing
 - midnight-commander
 - duf
 - tig
-- zbar
 - yazi
 - hugo
 - htop
@@ -184,7 +183,6 @@ brew services start syncthing
 - htop
 - ffmpeg
 - midnight-commander
-
 
 ## brew install --cask 
 
@@ -237,7 +235,7 @@ https://github.com/mas-cli/mas -> 📦 Mac App Store command line interface
 brew install mas
 mas signin icloud@icloud.com
 mas search pasta
-mas intall 1438389787
+mas install 1438389787
 ```
 
 ```
@@ -287,6 +285,10 @@ chflags uchg file or nouchg -> Prevents changes to the file's contents or metada
 ```~/Library/Application Support/Quake3/baseq3/```
 
 ## zsh
+
+```
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+```
 
 ```
 git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions

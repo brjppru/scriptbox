@@ -2,14 +2,13 @@
 
 # brj@scrspy
 
-# addon: brew install --cask android-platform-tools
-
 # 2024.04.25 Woman Than Rolls
 # 2025.01.07 fix the mouse
+# 2025.03.09 --keyboard=uhid
 
 killall -9 adb
 
-scrcpy --stay-awake --show-touches --mouse-bind=++++ --legacy-paste --disable-screensaver
+scrcpy --stay-awake --show-touches --mouse-bind=++++ --legacy-paste --disable-screensaver --keyboard=uhid
 
 killall -9 adb
 

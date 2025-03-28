@@ -26,7 +26,6 @@ zstyle :omz:plugins:ssh-agent identities id_oss
 
 zstyle ':omz:update' mode auto      # update automatically without asking
 
-
 source $ZSH/oh-my-zsh.sh
 
 # mc hack
