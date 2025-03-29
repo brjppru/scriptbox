@@ -80,9 +80,19 @@ sudo su root -c 'chmod +w /etc/pam.d/sudo && echo "auth       sufficient     pam
 ```
 ## add dock space
 
+Regular spacer script:
+
+```
+defaults write com.apple.dock persistent-apps -array-add '{"tile-type"="spacer-tile";}'; killall Dock```
+
+```
+Small spacer script:
+
 ```
 defaults write com.apple.dock persistent-apps -array-add '{"tile-type"="small-spacer-tile";}'; killall Dock
 ```
+
+Move the spacer? Drag and drop the spacer to the desired location on your dock. You can delete spacers like any other icon on your dock. Drag the icon off your dock to remove it from your dock or right-click and choose Remove from Dock.
 
 ## stack's
 
