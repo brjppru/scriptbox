@@ -1,6 +1,14 @@
 # brj@macos configuration
 
-macos zverdvd 2025 edition(tm)
+brj@macos zverdvd 2025 edition(tm) -> There are some things in life that just can't be automated... or aren't 100% worth the time ;-(
+
+This document covers that, at least in terms of setting up a brand new Mac out of the box.
+
+  - Sign in to App Store (since mas can't sign in automatically)
+  - Clone this repo, run ```.osx```
+  - Start Synchronization tasks
+  - Configure Time Machine backup drive
+  - Install Wireguard VPN configurations (if needed)
 
 # EOL + EOS
 
@@ -325,6 +333,11 @@ sudo sync
 ## startup fixes
 
 You likely have an extremely tiny file in /Library/LaunchAgents or /Library/LaunchDeamons that would launch someshit the background if required. Obviously it cant work now since you removed it but the tiny file is still present -> Open Finder -> Under locations select your macbook/macintosh HD/library/LaunchAgents AND also check LaunchDaemons
+
+
+## erase old mac
+
+Erase your Mac and reset it to factory settings -> https://support.apple.com/en-au/102664
 
 ## no brew, static binares for intel
   - ffprobe release as zip -> https://evermeet.cx/ffmpeg/getrelease/ffprobe/zip

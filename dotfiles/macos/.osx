@@ -5,6 +5,7 @@
 # 2024.04.25 Woman That Rolls
 # 2024.09.29 Gavin King
 # 2025.01.26 fix ._DS_Store
+# 2025.03.30 EnableStandardClickToShowDesktop
 
 # If you want to figure out what default needs changing, do the following:
 #
@@ -41,6 +42,9 @@ defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool TRUE
 ###############################################################################
 # General UI/UX                                                               #
 ###############################################################################
+
+# Disable click-to-show Desktop:
+defaults write com.apple.WindowManager EnableStandardClickToShowDesktop -bool false
 
 # Expand save panel by default
 defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode -bool true
@@ -233,8 +237,7 @@ defaults write com.apple.mail DisableInlineAttachmentViewing -bool true
 ###############################################################################
 
 if [[ "$RUN_AS_ROOT" = true ]]; then
-  # Disable Spotlight indexing for any volume that gets mounted and has not yet
-  # been indexed before.
+  # Disable Spotlight indexing for any volume that gets mounted and has not yet been indexed before.
   # Use `sudo mdutil -i off "/Volumes/foo"` to stop indexing any volume.
   sudo defaults write /.Spotlight-V100/VolumeConfiguration Exclusions -array "/Volumes"
 
