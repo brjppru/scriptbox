@@ -84,8 +84,7 @@ sudo su root -c 'chmod +w /etc/pam.d/sudo && echo "auth       sufficient     pam
 Regular spacer script:
 
 ```
-defaults write com.apple.dock persistent-apps -array-add '{"tile-type"="spacer-tile";}'; killall Dock```
-
+defaults write com.apple.dock persistent-apps -array-add '{"tile-type"="spacer-tile";}'; killall Dock
 ```
 Small spacer script:
 
