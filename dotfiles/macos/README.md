@@ -16,6 +16,7 @@ macos zverdvd 2025 edition(tm)
 
  - MacBook Air (M1, 2020) -> 16G/1tb -> 13,3" -> (2560 × 1600) -> https://support.apple.com/ru-ru/111883
  - MacBook Pro (M1 Pro, 2021) -> 16G/512G -> 16,1" -> (3456×2234) -> https://support.apple.com/ru-ru/111901
+ - MacBook Pro (M3 Pro, Nov 2023) -> 36G/512G -> 16,1" -> (3456x2234) -> https://support.apple.com/ru-ru/117737
 
 ## Sleeping
 
