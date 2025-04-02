@@ -202,6 +202,7 @@ brew services start syncthing
 - htop
 - ffmpeg
 - midnight-commander
+- connectmenow
 
 ## brew install --cask 
 
