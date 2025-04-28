@@ -196,7 +196,7 @@ brew services start syncthing
 - yazi
 - hugo
 - htop
-- ipcalc
+- sipcalc
 - sevenzip
 - rar unrar
 - htop
