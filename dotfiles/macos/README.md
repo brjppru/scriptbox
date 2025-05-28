@@ -203,6 +203,7 @@ brew services start syncthing
 - ffmpeg
 - midnight-commander
 - connectmenow
+- tablecruncher
 
 ## brew install --cask 
 
