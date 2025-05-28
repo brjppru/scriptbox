@@ -242,6 +242,9 @@ brew services start syncthing
 - flameshot
 - losslesscut
 
+- brew install alienator88/homebrew-cask/sentinel-app
+
+
 ## payed
 
 - https://mixedinkey.com/platinum-notes/
