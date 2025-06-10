@@ -292,13 +292,26 @@ No access to local network sites? Go to “Local Network” setting in macOS Pri
 
 ## resign the app and attr
 
-xattr -cr removes extended attributes (like quarantine flags) from the app to fix "damaged" errors.
-codesign --force --deep --sign - re-signs the app locally to resolve macOS signature issues.
-It's for fixing untrusted or non-Store apps.
+xattr -cr removes extended attributes (like quarantine flags) from the app to fix "damaged" errors. codesign --force --deep --sign - re-signs the app locally to resolve macOS signature issues. It's for fixing untrusted or non-Store apps.
 
 ```
 /Applications/thebrj.app && codesign --force --deep --sign - /Applications/thebrj.app
 ```
+
+or
+
+```
+Game="/Applications/xmind.app"
+sudo xattr -c -r "$Game"
+sudo xattr -r -d com.apple.quarantine "$Game"
+sudo xattr -cr "$Game"
+sudo xattr -rd com.apple.quarantine "$Game"
+chmod +x "$Game"
+```
+
+or 
+
+- brew install alienator88/homebrew-cask/sentinel-app
 
 ### chattr
 
