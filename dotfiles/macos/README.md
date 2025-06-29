@@ -73,8 +73,16 @@ brjed@air ~ % sudo /Applications/Install\ macOS\ Monterey.app/Contents/Resources
 ### hostname
 
 ```
-sudo scutil --set HostName
+FDQN	
+sudo scutil --set HostName pro05.l0.brj.kz
+
+Bonjour hostname	
+sudo scutil --set LocalHostName pro05
+
+computer name	
+sudo scutil --set ComputerName pro05.l0.brj.kz
 ```
+
 ## root
 
 ```
