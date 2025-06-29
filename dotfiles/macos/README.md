@@ -9,6 +9,7 @@ This document covers that, at least in terms of setting up a brand new Mac out o
   - Start Synchronization tasks
   - Configure Time Machine backup drive
   - Install Wireguard VPN configurations (if needed)
+  - Install viscosity (Mac OpenVPN client) (if needed)
   - On the Mac you want to connect to: Go to System Preferences > Sharing -> Enable 'Remote Login' -> You can also enable remote login on the command line: ```sudo systemsetup -setremotelogin on```
 
 # EOL + EOS
