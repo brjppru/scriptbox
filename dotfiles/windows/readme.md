@@ -229,6 +229,18 @@ Add-AppxPackage Microsoft.WindowsTerminal_<versionNumber>.msixbundle
 ```
 https://github.com/microsoft/terminal/releases
 
+# Language ru-RU
+
+Для добавления русской раскладки в английской ОС не надо устанавливать языковой пакет.
+
+```
+Install-Language ru-RU
+Set-Culture ru-RU
+Install-Language ru-RU -ExcludeFeatures
+```
+
+Пакет, ранее установленный в графическом интерфейсе, предварительно удалять не надо. Если вам не требуются дополнительные компоненты для распознавания рукописного и голосового ввода, исключите их.
+
 # Software Intall tips
 
 - install language (fix for oem)
