@@ -28,6 +28,8 @@ This document covers that, at least in terms of setting up a brand new Mac out o
  - MacBook Pro (M1 Pro, 2021) -> 16G/512G -> 16,1" -> (3456×2234) -> https://support.apple.com/ru-ru/111901
  - MacBook Pro (M3 Pro, Nov 2023) -> 36G/512G -> 16,1" -> (3456x2234) -> https://support.apple.com/ru-ru/117737
 
+# PowerHour(tm)
+
 ## Sleeping
 
 https://support.apple.com/en-us/120622
@@ -50,7 +52,19 @@ Type your administrator password when prompted (Terminal doesn’t show the pass
 
 To undo any of the previous commands and reenable automatic startup when opening the lid or connecting to power, enter ```sudo nvram -d BootPreference``` in Terminal.
 
-## Как переустановить ОС macOS?
+## DeepSleep
+
+Got into the classic trap: close the MacBook at night, and in the morning it plays diva — refuses to wake up without a charger. Macs these days just ain’t what they used to be. In fact, I’ve got a ton of terminals, remote desktops and other toys that the Mac kindly remembers and wakes itself up for, all night long.
+
+The trick is dead simple.
+First, ask the Mac how often it twitches:
+```pmset -g log | grep due```
+When you see it wakes up almost every minute, just tell it to stop keeping connections alive:
+```sudo pmset -b tcpkeepalive 0```
+
+Result: the Mac survives the night losing only 1-2% battery. Downside: all connections drop, so after opening the lid you wait about a minute for the world to come back.
+
+## MacOS reinstall
 
 Используйте возможности восстановления macOS для переустановки операционной системы Mac. -> Процессор Apple -> Нажмите кнопку питания, чтобы включить компьютер Mac, и продолжайте удерживать ее нажатой, пока не отобразится окно с параметрами запуска. Нажмите значок в виде шестеренки (меню «Параметры»), затем нажмите «Продолжить».
 
