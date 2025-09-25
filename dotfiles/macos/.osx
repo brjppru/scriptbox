@@ -6,6 +6,7 @@
 # 2024.09.29 Gavin King
 # 2025.01.26 fix ._DS_Store
 # 2025.03.30 EnableStandardClickToShowDesktop
+# 2025.09.25 defaults write -g com.apple.sound.beep.sound "Submerge"
 
 # If you want to figure out what default needs changing, do the following:
 #
@@ -42,6 +43,9 @@ defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool TRUE
 ###############################################################################
 # General UI/UX                                                               #
 ###############################################################################
+
+#Set default beep sound
+defaults write -g com.apple.sound.beep.sound "Submerge"
 
 # Disable click-to-show Desktop:
 defaults write com.apple.WindowManager EnableStandardClickToShowDesktop -bool false
