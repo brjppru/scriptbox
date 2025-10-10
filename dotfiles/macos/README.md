@@ -274,6 +274,10 @@ brew services start syncthing
 - microsoft office
 - forklift
 
+## nut
+
+- https://nutty.pingie.com/ -> network ups tools
+
 ## mas
 
 https://github.com/mas-cli/mas -> 📦 Mac App Store command line interface
