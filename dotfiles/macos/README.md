@@ -70,6 +70,16 @@ Result: the Mac survives the night losing only 1-2% battery. Downside: all conne
 
 ## boot flash / reinstall
 
+```
+softwareupdate --list-full-installers; echo; echo "Please enter version number you wish to download:"; read REPLY; [ -n "$REPLY" ] && softwareupdate --fetch-full-installer --full-installer-version "$REPLY"
+```
+
+Для создания установочной флешки нужен USB накопитель не меньше шестнадцати гигабайт. Его нужно отформатировать в файловую систему Mac OS Extended Journaled c таблицей разделов GUID.
+
+Открыть Disk Utility. В меню View выбрать Show All Devices. Выбрать флешку и нажать Erase. В поле Name указать название например MyUSB. В поле Format выбрать Mac OS Extended Journaled. В поле Scheme выбрать GUID Partition Map. Подтвердить удаление.
+
+By default, Disk Utility only shows partitions -> press Cmd/Win+2 to show all devices (alternatively you can press the View button)
+
   - installer docs -> https://support.apple.com/en-us/101578
 
 ```
