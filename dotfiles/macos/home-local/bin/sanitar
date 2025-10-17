@@ -1,80 +1,154 @@
 #!/usr/bin/env python3
 
 # brj@sanitar
-# brj@mp3fix for dos ecnoding and fat. still use in 2024 ;-)
+# brj@mp3fix for dos encoding and fat. still use in 2024 ;-)
 
 # 2024.10.13 Woman That Rolls
+# 2025.01.27 sanitar v2 version
+# 2025.10.17 sanitar v3 version with AI
 
 import os
 import re
 import sys
+import argparse
+from pathlib import Path
 
-def transliterate(text):
-    # Транслитерация русских букв в английские
-    translit_table = {
-        'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'e', 'ж': 'zh',
-        'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o',
-        'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'kh', 'ц': 'ts',
-        'ч': 'ch', 'ш': 'sh', 'щ': 'shch', 'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya',
-        'А': 'A', 'Б': 'B', 'В': 'V', 'Г': 'G', 'Д': 'D', 'Е': 'E', 'Ё': 'E', 'Ж': 'Zh',
-        'З': 'Z', 'И': 'I', 'Й': 'Y', 'К': 'K', 'Л': 'L', 'М': 'M', 'Н': 'N', 'О': 'O',
-        'П': 'P', 'Р': 'R', 'С': 'S', 'Т': 'T', 'У': 'U', 'Ф': 'F', 'Х': 'Kh', 'Ц': 'Ts',
-        'Ч': 'Ch', 'Ш': 'Sh', 'Щ': 'Shch', 'Ъ': '', 'Ы': 'Y', 'Ь': '', 'Э': 'E', 'Ю': 'Yu', 'Я': 'Ya'
-    }
+TRANSLIT_MAP = {
+    'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'e',
+    'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm',
+    'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u',
+    'ф': 'f', 'х': 'h', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'sch',
+    'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya',
+    'А': 'A', 'Б': 'B', 'В': 'V', 'Г': 'G', 'Д': 'D', 'Е': 'E', 'Ё': 'E',
+    'Ж': 'Zh', 'З': 'Z', 'И': 'I', 'Й': 'Y', 'К': 'K', 'Л': 'L', 'М': 'M',
+    'Н': 'N', 'О': 'O', 'П': 'P', 'Р': 'R', 'С': 'S', 'Т': 'T', 'У': 'U',
+    'Ф': 'F', 'Х': 'H', 'Ц': 'Ts', 'Ч': 'Ch', 'Ш': 'Sh', 'Щ': 'Sch',
+    'Ъ': '', 'Ы': 'Y', 'Ь': '', 'Э': 'E', 'Ю': 'Yu', 'Я': 'Ya'
+}
 
-    for cyrillic_char, latin_char in translit_table.items():
-        text = text.replace(cyrillic_char, latin_char)
+# FAT32 forbidden characters and control characters (0-31, 127-255)
+FAT32_FORBIDDEN = re.compile(r'[<>:"/\\|?*\x00-\x1f\x7f-\xff]')
+# All characters except allowed ones (a-zA-Z0-9._-)
+ALLOWED_CHARS = re.compile(r'[^a-zA-Z0-9._-]')
 
-    return text
+def transliterate(name: str) -> str:
+    """Transliterate Russian letters to English."""
+    return ''.join([TRANSLIT_MAP.get(c, c) for c in name])
 
-def sanitize(filename):
-    # Удаляем недопустимые символы
-    filename = re.sub(r'[<>:"/\\|?*]', '', filename)  		# Удаляем символы, недопустимые ala FAT32
-    filename = re.sub(r'[^A-Za-z0-9._-]', '-', filename)  	# Заменяем другие недопустимые символы
-    filename = re.sub(r'-+', '-', filename)  			# Удаляем дублирующиеся прочерки
-    filename = filename.strip('-')  				# Удаляем прочерки в начале и конце
-    return filename
+def sanitize_filename(name: str) -> str:
+    """Sanitize filename by applying transliteration and removing forbidden characters."""
+    # Apply transliteration
+    name = transliterate(name)
+    
+    # Replace FAT32 forbidden characters with dash
+    name = FAT32_FORBIDDEN.sub('-', name)
+    
+    # Replace any other non-allowed characters with dash
+    name = ALLOWED_CHARS.sub('-', name)
+    
+    # Remove duplicate dashes
+    name = re.sub(r'-+', '-', name)
+    
+    # Remove dashes from beginning and end
+    return name.strip('-')
 
-def process_files(directory, recursive):
-    for entry in os.listdir(directory):
-        path = os.path.join(directory, entry)
+def split_stem_suffix(filename: str) -> tuple:
+    """Split filename into stem and suffix, handling edge cases."""
+    if '.' in filename and filename != '.':
+        stem, suffix = filename.rsplit('.', 1)
+        return (stem, f'.{suffix}')
+    return (filename, '')
 
-        if os.path.isdir(path) and recursive:
-            # Рекурсивно обрабатываем подкаталоги
-            process_files(path, recursive)
+def make_unique_name(path: Path, new_name: str) -> str:
+    """Generate unique filename if target already exists."""
+    if not path.exists():
+        return new_name
 
-        elif os.path.isfile(path):
-            # Основная обработка файла
-            name, ext = os.path.splitext(entry)
-            original_name = name
+    counter = 1
+    stem, suffix = split_stem_suffix(new_name)
+    
+    while True:
+        unique_name = f"{stem}_{counter}{suffix}"
+        unique_path = path.with_name(unique_name)
+        if not unique_path.exists():
+            return unique_name
+        counter += 1
 
-            # Транслитерация и очистка имени файла
-            name = transliterate(name)
-            sanitized_name = sanitize(name)
+def process_entry(entry: Path):
+    """Process a single file entry."""
+    original = entry.name
+    sanitized = sanitize_filename(original)
+    
+    # Check if name changed
+    if sanitized == original:
+        return
 
-            # Проверка, изменилось ли имя
-            if sanitized_name != original_name:
-                new_name = f"{sanitized_name}{ext}"
-                new_path = os.path.join(directory, new_name)
+    # Generate unique name if needed
+    new_name = make_unique_name(entry.parent / sanitized, sanitized)
+    
+    try:
+        entry.rename(entry.parent / new_name)
+        print(f"Renamed: {original} → {new_name}")
+    except Exception as e:
+        print(f"Error renaming {original}: {str(e)}")
 
-                # Проверка на существование файла
-                if os.path.exists(new_path):
-                    # Добавляем единицу, если файл с таким именем уже существует
-                    count = 1
-                    while os.path.exists(new_path):
-                        new_name = f"{sanitized_name}_{count}{ext}"
-                        new_path = os.path.join(directory, new_name)
-                        count += 1
+def process_directory(root: Path, recursive: bool):
+    """Process directory with bottom-up recursion."""
+    # First, process subdirectories recursively (bottom-up)
+    if recursive:
+        for entry in root.iterdir():
+            if entry.is_dir():
+                process_directory(entry, recursive)
+    
+    # Then process files in current directory
+    for entry in root.iterdir():
+        if entry.is_file():
+            process_entry(entry)
 
-                # Переименование файла
-                os.rename(path, new_path)
-                print(f"Файл '{entry}' переименован в '{new_name}'")
+def main():
+    """Main entry point."""
+    parser = argparse.ArgumentParser(description='Sanitize filenames for FAT32 compatibility')
+    parser.add_argument('-R', action='store_true', help='Process directories recursively')
+    args = parser.parse_args()
+    
+    try:
+        process_directory(Path.cwd(), args.R)
+    except KeyboardInterrupt:
+        print("\nOperation cancelled by user")
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        sys.exit(1)
 
 if __name__ == "__main__":
-    # Проверяем аргументы командной строки
-    recursive_flag = False
-    if len(sys.argv) > 1 and (sys.argv[1] == '-R' or sys.argv[1] == '-r'):
-        recursive_flag = True
+    main()
 
-    # Запускаем обработку файлов в текущем каталоге
-    process_files('.', recursive_flag)
+# =============================================================================
+# PROMPT TO RECREATE THIS SCRIPT:
+# =============================================================================
+# 
+# "Create a Python script that sanitizes filenames for FAT32 compatibility.
+# 
+# Requirements:
+# 1. Accept one parameter: -R (case insensitive) for recursive directory processing
+# 2. Process files in current directory (and subdirectories if -R flag is used)
+# 3. For each file, apply the following transformations:
+#    - Transliterate Russian letters to English using standard transliteration table
+#    - Replace FAT32 forbidden characters (< > : " / \ | ? *) with dash (-)
+#    - Replace control characters (0-31) and extended characters (127-255) with dash (-)
+#    - Replace any characters except a-zA-Z0-9._- with dash (-)
+#    - Remove duplicate dashes and dashes from beginning/end of filename
+#    - Apply these transformations to the ENTIRE filename including extension
+# 4. If filename changes after sanitization:
+#    - Check if target filename already exists
+#    - If exists, add _1, _2, etc. before extension to make it unique
+#    - Rename the file
+# 5. Use bottom-up recursion: process subdirectories first, then current directory
+# 6. Use pathlib.Path for POSIX compatibility (Linux, FreeBSD, macOS)
+# 7. Use argparse for command line argument parsing
+# 8. Handle exceptions gracefully
+# 9. Print progress messages for renamed files
+# 
+# Key understanding: The script should sanitize the ENTIRE filename (including 
+# extension), not just the stem. This was the main issue in the original version."
+# 
+# =============================================================================
