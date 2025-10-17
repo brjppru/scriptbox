@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
 
-# brj@.macos X configuration
+# brj@.macos X configuration - USER LEVEL SETTINGS
+# For root-level settings, see .osx.root
 
 # 2024.04.25 Woman That Rolls
 # 2024.09.29 Gavin King
 # 2025.01.26 fix ._DS_Store
 # 2025.03.30 EnableStandardClickToShowDesktop
 # 2025.09.25 defaults write -g com.apple.sound.beep.sound "Submerge"
+# 2025.10.17 remove root command's to separate file
 
 # If you want to figure out what default needs changing, do the following:
 #
@@ -23,15 +25,8 @@
 
 # original via Jeff Geerling
 
-# Warn that some commands will not be run if the script is not run as root.
-if [[ $EUID -ne 0 ]]; then
-  RUN_AS_ROOT=false
-  printf "Certain commands will not be run without sudo privileges. To run as root, run the same command prepended with 'sudo', for example: $ sudo $0\n\n" | fold -s -w 80
-else
-  RUN_AS_ROOT=true
-  # Update existing `sudo` timestamp until `.osx` has finished
-  while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
-fi
+# This script contains user-level settings only
+# For root-level settings, run: sudo ./osx.root.sh
 
 ###############################################################################
 # Network
@@ -62,10 +57,7 @@ defaults write NSGlobalDomain NSDocumentSaveNewDocumentsToCloud -bool false
 # Automatically quit printer app once the print jobs complete
 defaults write com.apple.print.PrintingPrefs "Quit When Finished" -bool true
 
-# Restart automatically if the computer freezes
-if [[ "$RUN_AS_ROOT" = true ]]; then
-  systemsetup -setrestartfreeze on
-fi
+# Restart automatically if the computer freezes (moved to .osx.root)
 
 # Disable smart quotes as they’re annoying when typing code
 defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false
@@ -156,8 +148,7 @@ defaults write NSGlobalDomain com.apple.springing.enabled -bool true
 # Remove the spring loading delay for directories
 defaults write NSGlobalDomain com.apple.springing.delay -float 0.1
 
-# Avoid creating .DS_Store files on network volumes
-defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
+# Avoid creating .DS_Store files on network volumes (duplicate removed - see line 41)
 
 # Enable snap-to-grid for icons on the desktop and in other icon views
 /usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:arrangeBy grid" ~/Library/Preferences/com.apple.finder.plist
@@ -237,17 +228,8 @@ defaults write com.apple.mail AddressesIncludeNameOnPasteboard -bool false
 defaults write com.apple.mail DisableInlineAttachmentViewing -bool true
 
 ###############################################################################
-# Spotlight                                                                   #
+# Spotlight (moved to .osx.root)                                             #
 ###############################################################################
-
-if [[ "$RUN_AS_ROOT" = true ]]; then
-  # Disable Spotlight indexing for any volume that gets mounted and has not yet been indexed before.
-  # Use `sudo mdutil -i off "/Volumes/foo"` to stop indexing any volume.
-  sudo defaults write /.Spotlight-V100/VolumeConfiguration Exclusions -array "/Volumes"
-
-  # Restart spotlight
-  killall mds > /dev/null 2>&1
-fi
 
 ###############################################################################
 # Activity Monitor                                                            #

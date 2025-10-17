@@ -1,13 +1,12 @@
 # Why?
 
-Closed Joint-Stock Company "The brj"
+Just becouse
 
-## what?
-Roman Y. Bogdanov public script ~~svalka~~ monorepo
+## What?
+Roman Bogdanov public script ~~svalka~~ monorepo
 
-## plan?
+## Any plan?
 
 * Reorder everything.
 * Do not try this at home.
 * That’s all.
-

@@ -1,0 +1,40 @@
+#
+# brj@gitconfig
+#
+
+# 2025.10.17 rebase
+
+[user]
+	name = Roman Bogdanov
+	email = sam@brj.pp.ru
+
+[core]
+	editor = vim
+
+[init]
+	defaultBranch = main
+
+[pull]
+	rebase = true
+
+[fetch]
+	prune = true
+
+[rerere]
+	enabled = true
+
+[alias]
+	force-push = push --force-with-lease
+	l = log --oneline --graph
+	st = status -sb
+	co = checkout
+	br = branch
+	last = log -1 HEAD
+	unstage = reset HEAD --
+
+[log]
+	decorate = full
+
+[merge]
+	tool = vimdiff
+	log = true

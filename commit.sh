@@ -5,6 +5,7 @@
 #
 # 2024.04.25 fix script for a days
 # 2024.06.22 fix .DS_Store
+# 2025.10.17 fix double quotes
 #
 
 dated=$(date +%Y-%m-%d-%H%M%S)
@@ -14,9 +15,9 @@ find . -name ".DS_Store" -delete
 
 git add .
 
-echo run git push on ${dated} ${commt}
+echo run git push on "${dated}" "${commt}"
 
-for i in `git status | grep deleted | awk '{print $2}'`; do git rm $i; done
+for i in $(git status | grep deleted | awk '{print $2}'); do git rm "$i"; done
 
 git commit -m "$dated $commt"
 
