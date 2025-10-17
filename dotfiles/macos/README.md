@@ -88,7 +88,16 @@ softwareupdate --fetch-full-installer --full-installer-version 15.0
 ```
 
 ```
-brjed@air ~ % sudo /Applications/Install\ macOS\ Monterey.app/Contents/Resources/createinstallmedia --volume /volumes/macos15
+$ sudo /Applications/Install\ macOS\ Sequoia.app/Contents/Resources/createinstallmedia --volume /volumes/macos15 
+Ready to start.
+To continue we need to erase the volume at /volumes/macos15.
+If you wish to continue type (Y) then press return: y
+Erasing disk: 0%... 10%... 20%... 30%... 100%
+Copying essential files...
+Copying the macOS RecoveryOS...
+Making disk bootable...
+Copying to disk: 0%... 10%... 20%... 30%... 40%... 50%... 60%... 70%... 80%... 100%
+Install media now available at "/Volumes/Install macOS Sequoia"
 ```
 
 ###  mail.app
