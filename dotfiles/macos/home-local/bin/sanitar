@@ -75,7 +75,7 @@ def make_unique_name(path: Path, new_name: str) -> str:
         counter += 1
 
 def process_entry(entry: Path):
-    """Process a single file entry."""
+    """Process a single file or directory entry."""
     original = entry.name
     sanitized = sanitize_filename(original)
     
@@ -88,22 +88,42 @@ def process_entry(entry: Path):
     
     try:
         entry.rename(entry.parent / new_name)
-        print(f"Renamed: {original} → {new_name}")
+        entry_type = "directory" if entry.is_dir() else "file"
+        print(f"Renamed {entry_type}: {original} → {new_name}")
     except Exception as e:
         print(f"Error renaming {original}: {str(e)}")
 
 def process_directory(root: Path, recursive: bool):
-    """Process directory with bottom-up recursion."""
-    # First, process subdirectories recursively (bottom-up)
-    if recursive:
-        for entry in root.iterdir():
-            if entry.is_dir():
-                process_directory(entry, recursive)
-    
-    # Then process files in current directory
+    """Process directory with top-down recursion."""
+    # First, process files in current directory
     for entry in root.iterdir():
         if entry.is_file():
             process_entry(entry)
+    
+    # Then process subdirectories (if recursive)
+    if recursive:
+        # Get list of subdirectories before processing to avoid iteration issues
+        subdirs = [entry for entry in root.iterdir() if entry.is_dir()]
+        for entry in subdirs:
+            # Store original name
+            original_name = entry.name
+            # Rename the subdirectory first
+            process_entry(entry)
+            
+            # Determine the new path after potential renaming
+            sanitized = sanitize_filename(original_name)
+            if sanitized != original_name:
+                # Name was changed, find the new path
+                new_name = make_unique_name(root / sanitized, sanitized)
+                new_path = root / new_name
+            else:
+                # No renaming occurred, use original path
+                new_name = original_name
+                new_path = entry
+            
+            # Recursively process the directory
+            if new_path.exists():
+                process_directory(new_path, recursive)
 
 def main():
     """Main entry point."""
@@ -131,7 +151,7 @@ if __name__ == "__main__":
 # Requirements:
 # 1. Accept one parameter: -R (case insensitive) for recursive directory processing
 # 2. Process files in current directory (and subdirectories if -R flag is used)
-# 3. For each file, apply the following transformations:
+# 3. For each file and directory, apply the following transformations:
 #    - Transliterate Russian letters to English using standard transliteration table
 #    - Replace FAT32 forbidden characters (< > : " / \ | ? *) with dash (-)
 #    - Replace control characters (0-31) and extended characters (127-255) with dash (-)
@@ -141,14 +161,17 @@ if __name__ == "__main__":
 # 4. If filename changes after sanitization:
 #    - Check if target filename already exists
 #    - If exists, add _1, _2, etc. before extension to make it unique
-#    - Rename the file
-# 5. Use bottom-up recursion: process subdirectories first, then current directory
+#    - Rename the file or directory
+# 5. Use top-down recursion: process files in current directory first, then rename 
+#    subdirectories and recursively process them
 # 6. Use pathlib.Path for POSIX compatibility (Linux, FreeBSD, macOS)
 # 7. Use argparse for command line argument parsing
 # 8. Handle exceptions gracefully
-# 9. Print progress messages for renamed files
+# 9. Print progress messages for renamed files and directories
 # 
 # Key understanding: The script should sanitize the ENTIRE filename (including 
-# extension), not just the stem. This was the main issue in the original version."
+# extension), not just the stem. With -R flag, it should also rename directories
+# and process them recursively in top-down order."
 # 
+# =============================================================================
 # =============================================================================

@@ -17,9 +17,9 @@ This document covers that, at least in terms of setting up a brand new Mac out o
 - EOL + EOS on macos -> https://endoflife.date/macos
 - hot keys -> https://support.apple.com/en-us/HT201236
 
-## Клавиатура
+## Keyboard
 
- - Хоткеи: ⇧ = Shift, ⌃ = Control, ⌘ = Command, ⌥ = Option / Alt.
+ - Hotkeys: ⇧ = Shift, ⌃ = Control, ⌘ = Command, ⌥ = Option / Alt.
  - Shift-Command-G: Open a Go to Folder window.
 
 ## my hardware
@@ -66,28 +66,28 @@ Result: the Mac survives the night losing only 1-2% battery. Downside: all conne
 
 ## MacOS reinstall
 
-Используйте возможности восстановления macOS для переустановки операционной системы Mac. -> Процессор Apple -> Нажмите кнопку питания, чтобы включить компьютер Mac, и продолжайте удерживать ее нажатой, пока не отобразится окно с параметрами запуска. Нажмите значок в виде шестеренки (меню «Параметры»), затем нажмите «Продолжить».
+Use macOS recovery options to reinstall the Mac operating system. -> Apple Processor -> Press the power button to turn on your Mac, and continue holding it until the startup options window appears. Click the gear icon (Options menu), then click Continue.
 
 ## boot flash / reinstall
 
-```
+```bash
 softwareupdate --list-full-installers; echo; echo "Please enter version number you wish to download:"; read REPLY; [ -n "$REPLY" ] && softwareupdate --fetch-full-installer --full-installer-version "$REPLY"
 ```
 
-Для создания установочной флешки нужен USB накопитель не меньше шестнадцати гигабайт. Его нужно отформатировать в файловую систему Mac OS Extended Journaled c таблицей разделов GUID.
+To create an installation USB drive, you need a USB drive of at least sixteen gigabytes. It needs to be formatted in Mac OS Extended Journaled file system with GUID partition table.
 
-Открыть Disk Utility. В меню View выбрать Show All Devices. Выбрать флешку и нажать Erase. В поле Name указать название например MyUSB. В поле Format выбрать Mac OS Extended Journaled. В поле Scheme выбрать GUID Partition Map. Подтвердить удаление.
+Open Disk Utility. In the View menu, select Show All Devices. Select the USB drive and click Erase. In the Name field, specify a name like MyUSB. In the Format field, select Mac OS Extended Journaled. In the Scheme field, select GUID Partition Map. Confirm deletion.
 
 By default, Disk Utility only shows partitions -> press Cmd/Win+2 to show all devices (alternatively you can press the View button)
 
   - installer docs -> https://support.apple.com/en-us/101578
 
-```
+```bash
 softwareupdate --list-full-installers
 softwareupdate --fetch-full-installer --full-installer-version 15.0
 ```
 
-```
+```text
 $ sudo /Applications/Install\ macOS\ Sequoia.app/Contents/Resources/createinstallmedia --volume /volumes/macos15 
 Ready to start.
 To continue we need to erase the volume at /volumes/macos15.
@@ -102,11 +102,11 @@ Install media now available at "/Volumes/Install macOS Sequoia"
 
 ###  mail.app
 
-- для перемешения почты по favorites папкам Control-Command-2
+- to move mail to favorites folders Control-Command-2
 
 ### hostname
 
-```
+```bash
 FDQN	
 sudo scutil --set HostName pro05.l0.brj.kz
 
@@ -119,7 +119,7 @@ sudo scutil --set ComputerName pro05.l0.brj.kz
 
 ## root
 
-```
+```bash
 dsenableroot
 ```
 
@@ -134,12 +134,12 @@ sudo su root -c 'chmod +w /etc/pam.d/sudo && echo "auth       sufficient     pam
 
 Regular spacer script:
 
-```
+```bash
 defaults write com.apple.dock persistent-apps -array-add '{"tile-type"="spacer-tile";}'; killall Dock
 ```
 Small spacer script:
 
-```
+```bash
 defaults write com.apple.dock persistent-apps -array-add '{"tile-type"="small-spacer-tile";}'; killall Dock
 ```
 
@@ -155,11 +155,11 @@ Move the spacer? Drag and drop the spacer to the desired location on your dock. 
 
 non brew, but installed from app store
 
-```
+```bash
 find /Applications -path '*Contents/_MASReceipt/receipt' -maxdepth 4 -print |\sed 's#.app/Contents/_MASReceipt/receipt#.app#g; s#/Applications/##'
 ```
 
-```
+```text
 Windows App.app
 iMovie.app
 Mollama.app
@@ -170,12 +170,12 @@ Receiver Radio.app
 ```
 
 
-```
+```bash
 brew deps --tree --installed
 brew leaves | xargs brew desc --eval-all
 ```
 
-```
+```bash
 brew list --formula | \
     xargs -n1 -P8 -I {} \
     sh -c "
@@ -193,7 +193,7 @@ install flat, not casc, http://localhost:8384/
 
 config for Syncthing live in $HOME/Library/Application Support/Syncthing
 
-```
+```bash
 brew services stop syncthing
 pgrep syncthing
 brew services start syncthing
@@ -241,9 +241,7 @@ brew services start syncthing
 - sipcalc
 - sevenzip
 - rar unrar
-- htop
 - ffmpeg
-- midnight-commander
 - connectmenow
 - tablecruncher
 
@@ -255,7 +253,7 @@ brew services start syncthing
 - forklift
 - fbreader
 - appcleaner
-- brave
+- brave-browser
 - audacity
 - blackhole-2ch
 - butt
@@ -301,14 +299,14 @@ brew services start syncthing
 
 https://github.com/mas-cli/mas -> 📦 Mac App Store command line interface
 
-```
+```bash
 brew install mas
 mas signin icloud@icloud.com
 mas search pasta
 mas install 1438389787
 ```
 
-```
+```text
 mas install 1438389787
 ==> Downloading Pasta - Clipboard Manager (1.4.10)
 ==> Downloaded Pasta - Clipboard Manager (1.4.10)
@@ -318,7 +316,7 @@ mas install 1438389787
 
 ## wined
 
-```
+```bash
 softwareupdate --install-rosetta --agree-to-license
 brew install --cask --no-quarantine wine-stable
 brew install --no-quarantine winetricks
@@ -340,13 +338,13 @@ No access to local network sites? Go to “Local Network” setting in macOS Pri
 
 xattr -cr removes extended attributes (like quarantine flags) from the app to fix "damaged" errors. codesign --force --deep --sign - re-signs the app locally to resolve macOS signature issues. It's for fixing untrusted or non-Store apps.
 
-```
+```bash
 /Applications/thebrj.app && codesign --force --deep --sign - /Applications/thebrj.app
 ```
 
 or
 
-```
+```bash
 Game="/Applications/xmind.app"
 sudo xattr -c -r "$Game"
 sudo xattr -r -d com.apple.quarantine "$Game"
@@ -365,30 +363,32 @@ chflags uchg file or nouchg -> Prevents changes to the file's contents or metada
 
 ## ioquake3 files
 
-```~/Library/Application Support/Quake3/baseq3/```
+```text
+~/Library/Application Support/Quake3/baseq3/
+```
 
 ## zsh
 
-```
+```bash
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 ```
 
-```
+```bash
 git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 ```
 
-```
+```bash
 git clone https://github.com/TamCore/autoupdate-oh-my-zsh-plugins $ZSH_CUSTOM/plugins/autoupdate
 ```
 
-```
+```bash
 git clone https://github.com/zdharma-continuum/fast-syntax-highlighting.git \
  ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fast-syntax-highlighting
 ```
 
 ## dd
 
-```
+```bash
 diskutil list
 sudo diskutil unmountDisk disk4
 xzcat file.img.xz | sudo dd of=/dev/rdisk4 bs=1m
@@ -398,7 +398,6 @@ sudo sync
 ## startup fixes
 
 You likely have an extremely tiny file in /Library/LaunchAgents or /Library/LaunchDeamons that would launch someshit the background if required. Obviously it cant work now since you removed it but the tiny file is still present -> Open Finder -> Under locations select your macbook/macintosh HD/library/LaunchAgents AND also check LaunchDaemons
-
 
 ## erase old mac
 
