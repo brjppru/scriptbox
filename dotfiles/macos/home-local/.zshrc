@@ -7,6 +7,7 @@
 # 2024.06.22 Fix autoupdate, a to zaebalo
 # 2024.12.19 Optimized
 # 2025.10.17 full rewrite add kitty integration
+# 2025.10.24 battary plugin -> fix shell
 
 # =============================================================================
 # ENVIRONMENT VARIABLES
@@ -45,8 +46,8 @@ export DISABLE_UNTRACKED_FILES_DIRTY="true"
 # Check if Oh My Zsh exists
 if [[ -d "$ZSH" ]]; then
     # Theme
-    ZSH_THEME="agnoster"
-    
+    ZSH_THEME="jonathan"
+
     # Plugins (removed duplicates and optimized)
     plugins=(
         battery
@@ -119,9 +120,6 @@ fpath+=~/.zfunc
 # mc hack - Midnight Commander with proper terminal support
 alias mc="SHELL=/bin/bash TERM=xterm-256color /opt/homebrew/bin/mc --nosubshell"
 
-# Open current directory in Cursor
-alias nacur="open -a \"Cursor\" ."
-
 # =============================================================================
 # ADDITIONAL OPTIMIZATIONS
 # =============================================================================
@@ -169,6 +167,7 @@ function ll() {
 
 BATTERY_CHARGING="⚡️"
 BATTERY_SHOW_WATTS=true
+RPROMPT='$(battery_pct_prompt) '"$RPROMPT"
 
 # =============================================================================
 # The end
