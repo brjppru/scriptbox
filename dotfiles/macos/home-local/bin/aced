@@ -1,3 +1,4 @@
 #!/bin/sh
 
-LANG=ru_RU.UTF-8 wine /Users/brjed/aced/AceMoney.exe
+LANG=ru_RU.UTF-8 LC_ALL=ru_RU.UTF-8 wine /Users/brjed/aced/AceMoney.exe
+

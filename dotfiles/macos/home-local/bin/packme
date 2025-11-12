@@ -1,0 +1,5 @@
+#!/bin/sh
+
+dated=`date +%Y-%m-%d-%H%M%S`
+
+7zz a -bt -t7z -m0=lzma2 -mx=9 -mfb=256 -md=128m -ms=on -mmt=on /Users/brjed/temp/brjsync-${dated}.7z /Users/brjed/brjsync -x!*.DS_Store -x!._*
