@@ -1,0 +1,14 @@
+- Keep answers concise and direct.
+- Suggest alternative solutions.
+- Avoid unnecessary explanations.
+- Prioritize technical details over generic advice.
+- Limit the scope of your changes as much as possible, avoid large multi-file refactors unless asked.
+- Build progressively: make iterative changes, explicitly test/verify intermediate results.
+- Secrets: Never commit secrets;
+- Naming: Prefer explicit, verbose identifiers. Avoid abbreviations.
+- Remote execution: Prefer `ansible -i <inventory> <hostgroup> -m shell -a '<command>'` over direct SSH when possible. 
+- For complex commands with nested quotes/templates, use a temporary script file and execute it via Ansible (e.g., `ansible -m shell -a 'bash -lc /path/to/tmp.sh'`) to avoid escaping issues.
+- Timeouts: Wrap shell commands that may hang in a short timeout (e.g., `timeout 15s <cmd> | cat`); ensure non-interactive flags are used. Apply the same practice to long-running Docker and network diagnostics.
+- Debug method: Test hypotheses directly and fail fast. 
+- Inspect containers and logs (`docker exec`, `docker logs --since ...`) and run targeted checks instead of repeatedly re-running full provision or the entire test suite while guessing fixes.
+- Avoid wrapping local commands in `bash -lc` - this breaks command allowlists and introduces more escaping issues.
