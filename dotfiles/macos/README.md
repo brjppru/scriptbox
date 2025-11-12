@@ -351,12 +351,16 @@ mas install 1438389787
 - rectangle
 - numi
 - https://sponsor.ajay.app
-- pasta (appstore)
+- ~~pasta (appstore)~~ -> hammerspoon
 - sublime-text
 - audacity
 - notion-calendar
 - kepassxc
 - telephone
+
+## hammerspoon
+
+Makes a sound when something is copied to clipboard. Lives in ~/.hammerspoon.
 
 ### Syncthing
 
