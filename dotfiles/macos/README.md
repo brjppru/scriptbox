@@ -380,11 +380,11 @@ No access to local network sites? Go to "Local Network" setting in macOS Privacy
 
 #### Plugins
 
-- Imagus mod
-- SingleFile
+- Imagus mod -> https://www.reddit.com/r/imagus/
+- SingleFile -> https://github.com/gildas-lormeau/SingleFile
 - Enhancer for YouTube™
 - SponsorBlock for YouTube
-- RSS Subscription Extension, Reader
+- RSS Hub radar -> https://github.com/DIYgod/RSSHub-Radar
 
 ### Other Applications
 
