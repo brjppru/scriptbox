@@ -328,6 +328,7 @@ brew install --cask --no-quarantine
 - rar
 - jordanbaird-ice
 - fliqlo
+- runcat
 
 ### Mac App Store (mas)
 
