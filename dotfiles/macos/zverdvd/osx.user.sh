@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
 # brj@.macos X configuration - USER LEVEL SETTINGS
+# Or, in other words, set shit how I like in macOS
+
 # For root-level settings, see .osx.root
 
 # 2024.04.25 Woman That Rolls
@@ -9,6 +11,7 @@
 # 2025.03.30 EnableStandardClickToShowDesktop
 # 2025.09.25 defaults write -g com.apple.sound.beep.sound "Submerge"
 # 2025.10.17 remove root command's to separate file
+# 2025.12.22 add some stuff and refactor
 
 # If you want to figure out what default needs changing, do the following:
 #
@@ -23,7 +26,7 @@
 # @see ->  https://git.herrbischoff.com/awesome-macos-command-line/about/
 #
 
-# original via Jeff Geerling
+# original take from Jeff Geerling
 
 # This script contains user-level settings only
 # For root-level settings, run: sudo ./osx.root.sh
@@ -35,9 +38,38 @@
 #Prevent macOS writing ._DS_Store files to SMB shares (Source #2) a to zaebalo
 defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool TRUE
 
+# Hide Safari's bookmark bar
+defaults write com.apple.Safari ShowFavoritesBar -bool false
+
+# Set up Safari for development
+defaults write com.apple.Safari IncludeInternalDebugMenu -bool true
+defaults write com.apple.Safari IncludeDevelopMenu -bool true
+defaults write com.apple.Safari WebKitDeveloperExtrasEnabledPreferenceKey -bool true
+defaults write com.apple.Safari "com.apple.Safari.ContentPageGroupIdentifier.WebKit2DeveloperExtrasEnabled" -bool true
+defaults write NSGlobalDomain WebKitDeveloperExtras -bool true
+
+# Disable the annoying backswipe in Chrome
+defaults write com.google.Chrome AppleEnableSwipeNavigateWithScrolls -bool false
+
 ###############################################################################
 # General UI/UX                                                               #
 ###############################################################################
+
+# Disable it from starting everytime a device is plugged in
+defaults -currentHost write com.apple.ImageCapture disableHotPlug -bool true
+
+# Show path bar
+defaults write com.apple.finder ShowPathbar -bool true
+
+# Turn off keyboard illumination when computer is not used for 5 minutes
+defaults write com.apple.BezelServices kDimTime -int 300
+
+# Require password immediately after sleep or screen saver begins"
+defaults write com.apple.screensaver askForPassword -int 1
+defaults write com.apple.screensaver askForPasswordDelay -int 0
+
+# Always show scrollbars
+defaults write NSGlobalDomain AppleShowScrollBars -string "Always"
 
 #Set default beep sound
 defaults write -g com.apple.sound.beep.sound "Submerge"
@@ -87,11 +119,14 @@ defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
 
 # Set a blazingly fast keyboard repeat rate, and make it happen more quickly.
 # (The KeyRepeat option requires logging out and back in to take effect.)
-defaults write NSGlobalDomain InitialKeyRepeat -int 20
+defaults write NSGlobalDomain InitialKeyRepeat -int 15
 defaults write NSGlobalDomain KeyRepeat -int 1
 
 # Disable auto-correct
 defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
+
+# Disable text replacement almost everywhere
+defaults write -g WebAutomaticTextReplacementEnabled -bool false
 
 ###############################################################################
 # Screen                                                                      #
@@ -148,8 +183,6 @@ defaults write NSGlobalDomain com.apple.springing.enabled -bool true
 # Remove the spring loading delay for directories
 defaults write NSGlobalDomain com.apple.springing.delay -float 0.1
 
-# Avoid creating .DS_Store files on network volumes (duplicate removed - see line 41)
-
 # Enable snap-to-grid for icons on the desktop and in other icon views
 /usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:arrangeBy grid" ~/Library/Preferences/com.apple.finder.plist
 /usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:arrangeBy grid" ~/Library/Preferences/com.apple.finder.plist
@@ -173,16 +206,29 @@ chflags nohidden ~/Library
 ###############################################################################
 
 # Set the icon size of Dock items
-defaults write com.apple.dock tilesize -int 30
-
-# Speed up Mission Control animations
-defaults write com.apple.dock expose-animation-duration -float 0.15
+defaults write com.apple.dock tilesize -int 45
 
 # Make Dock icons of hidden applications translucent
 defaults write com.apple.dock showhidden -bool true
 
 # Enable the 'reduce transparency' option. Save GPU cycles.
-defaults write com.apple.universalaccess reduceTransparency -bool true
+defaults write com.apple.universalaccess reduceTransparency -bool false
+
+# Speeding up Mission Control animations and grouping windows by application
+defaults write com.apple.dock expose-animation-duration -float 0.1
+defaults write com.apple.dock "expose-group-by-app" -bool true
+
+# Remove the auto-hiding Dock delay"
+defaults write com.apple.dock autohide-delay -float 0
+
+# Remove the animation when hiding/showing the Dock"
+defaults write com.apple.dock autohide-time-modifier -float 0
+
+# Automatically hide and show the Dock"
+defaults write com.apple.dock autohide -bool true
+
+# Don't animate opening applications from the Dock"
+defaults write com.apple.dock launchanim -bool false
 
 # Hot corners
 # Possible values:
@@ -228,6 +274,26 @@ defaults write com.apple.mail AddressesIncludeNameOnPasteboard -bool false
 # Show Attachments as Icons
 defaults write com.apple.mail DisableInlineAttachmentViewing -bool true
 
+
+# Display emails in threaded mode, sorted by date (oldest at the top)"
+defaults write com.apple.mail DraftsViewerAttributes -dict-add "DisplayInThreadedMode" -string "no"
+defaults write com.apple.mail DraftsViewerAttributes -dict-add "SortedDescending" -string "yes"
+defaults write com.apple.mail DraftsViewerAttributes -dict-add "SortOrder" -string "received-date"
+
+# Disable inline attachments (just show the icons)"
+defaults write com.apple.mail DisableInlineAttachmentViewing -bool true
+
+# Disable automatic spell checking"
+defaults write com.apple.mail SpellCheckingBehavior -string "NoSpellCheckingEnabled"
+
+# Disable send and reply animations in Mail.app
+defaults write com.apple.mail DisableReplyAnimations -bool true
+defaults write com.apple.mail DisableSendAnimations -bool true
+
+# Prevent Time Machine from prompting to use new hard drives as backup volume"
+defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool true
+
+
 ###############################################################################
 # Spotlight (moved to .osx.root)                                             #
 ###############################################################################
@@ -271,3 +337,4 @@ if [[ ! ($* == *--no-restart*) ]]; then
 fi
 
 printf "Please log out and log back in to make all settings take effect.\n"
+

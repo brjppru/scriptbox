@@ -29,6 +29,9 @@ systemsetup -setrestartfreeze on
 # Use `sudo mdutil -i off "/Volumes/foo"` to stop indexing any volume.
 sudo defaults write /.Spotlight-V100/VolumeConfiguration Exclusions -array "/Volumes"
 
+# Show volumes
+sudo chflags nohidden /Volumes
+
 # Restart spotlight
 killall mds > /dev/null 2>&1
 

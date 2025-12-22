@@ -9,4 +9,5 @@ else
     echo "✅ Homebrew already installed"
 fi
 
-brew update && brew upgrade
+brew update
+brew upgrade
