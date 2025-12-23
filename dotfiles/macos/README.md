@@ -36,6 +36,21 @@ This document covers that, at least in terms of setting up a brand new Mac out o
 
 ## Initial Setup
 
+### Naming controls
+
+Open the MacBook you want to rename in apple account, then go to Applo > System Settings > General > About, and change the Name field.
+Set it to something clear, for example “Air Kitchen” and “Air Work”, wait a couple of minutes, then open Apple Account again.
+The devices list usually does not update immediately.
+For other use:
+
+```
+sudo scutil --set ComputerName "0xDEADBEEF"
+sudo scutil --set HostName "0xDEADBEEF"
+sudo scutil --set LocalHostName "0xDEADBEEF"
+sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "0xDEADBEEF"
+```
+
+
 ### Basic Setup Steps
 
 - Sign in to App Store (since mas can't sign in automatically)
@@ -53,18 +68,6 @@ On the Mac you want to connect to: Go to System Preferences > Sharing -> Enable 
 sudo systemsetup -setremotelogin on
 ```
 
-### Hostname Configuration
-
-```bash
-# FQDN
-sudo scutil --set HostName pro05.l0.brj.kz
-
-# Bonjour hostname
-sudo scutil --set LocalHostName pro05
-
-# Computer name
-sudo scutil --set ComputerName pro05.l0.brj.kz
-```
 
 ### Enable Root and Sudo
 
