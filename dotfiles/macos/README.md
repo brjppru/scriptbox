@@ -313,6 +313,7 @@ brew install --cask --no-quarantine
 - monitorcontrol
 - flameshot
 - losslesscut
+- glow
 
 #### Media Applications
 - brave-browser
