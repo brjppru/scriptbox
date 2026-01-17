@@ -5,6 +5,7 @@
 
 # 2025.10.17 first fork ()
 # 2025.12.22 refactor
+# 2026.01.18 tahoe updates fix
 
 # This script MUST be run as root
 if [[ $EUID -ne 0 ]]; then
@@ -31,6 +32,12 @@ while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 ###############################################################################
 # System Configuration (requires root)                                       #
 ###############################################################################
+
+# Keeps macOS 15.7.x and security updates enabled while preventing installation and intrusive prompts for the major upgrade to Tahoe
+
+defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticCheckEnabled -bool true
+defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticallyInstallMacOSUpdates -bool false
+defaults write /Library/Preferences/com.apple.commerce AutoUpdateRestartRequired -bool false
 
 # Restart automatically if the computer freezes
 systemsetup -setrestartfreeze on
