@@ -33,6 +33,7 @@ This document covers that, at least in terms of setting up a brand new Mac out o
 
 - Hotkeys: ⇧ = Shift, ⌃ = Control, ⌘ = Command, ⌥ = Option / Alt
 - Shift-Command-G: Open a Go to Folder window
+- telegramm -> https://github.com/telegramdesktop/tdesktop/wiki/Keyboard-Shortcuts
 
 ## Initial Setup
 
