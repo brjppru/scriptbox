@@ -4,25 +4,14 @@ brj@macos zverdvd 2025 edition(tm) -> There are some things in life that just ca
 
 This document covers that, at least in terms of setting up a brand new Mac out of the box.
 
-## Table of Contents
-
-- [Hardware & System Info](#hardware--system-info)
-- [Initial Setup](#initial-setup)
-- [System Configuration](#system-configuration)
-- [Backup & Recovery](#backup--recovery)
-- [Package Management](#package-management)
-- [Applications Setup](#applications-setup)
-- [Developer Tools](#developer-tools)
-- [Utilities & Tips](#utilities--tips)
-- [Paid Software](#paid-software)
-
-## Hardware & System Info
+## Preflight & References
 
 ### My Hardware
 
 - MacBook Air (M1, 2020) -> 16G/1tb -> 13,3" -> (2560 × 1600) -> https://support.apple.com/ru-ru/111883
 - MacBook Pro (M1 Pro, 2021) -> 16G/512G -> 16,1" -> (3456×2234) -> https://support.apple.com/ru-ru/111901
 - MacBook Pro (M3 Pro, Nov 2023) -> 36G/512G -> 16,1" -> (3456x2234) -> https://support.apple.com/ru-ru/117737
+- MacBook Air (M4, 2025) -> 16G/256G -> 13,6" -> (2560x1664) -> https://support.apple.com/en-us/122209
 
 ### EOL + EOS
 
@@ -33,7 +22,10 @@ This document covers that, at least in terms of setting up a brand new Mac out o
 
 - Hotkeys: ⇧ = Shift, ⌃ = Control, ⌘ = Command, ⌥ = Option / Alt
 - Shift-Command-G: Open a Go to Folder window
-- telegramm -> https://github.com/telegramdesktop/tdesktop/wiki/Keyboard-Shortcuts
+
+- Telegramm -> https://github.com/telegramdesktop/tdesktop/wiki/Keyboard-Shortcuts
+- macOS shortcuts -> [hotkeys/macos-shortcuts.md](hotkeys/macos-shortcuts.md)
+- VSCode shortcuts (macOS) -> [hotkeys/vscode-shortcuts-macos.md](hotkeys/vscode-shortcuts-macos.md)
 
 ## Initial Setup
 
@@ -61,6 +53,8 @@ sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.serve
 - Install Wireguard VPN configurations (if needed)
 - Install viscosity (Mac OpenVPN client) (if needed)
 
+## Access & Security
+
 ### Remote Login Setup
 
 On the Mac you want to connect to: Go to System Preferences > Sharing -> Enable 'Remote Login' -> You can also enable remote login on the command line:
@@ -84,11 +78,41 @@ Use TouchID for sudo:
 sudo su root -c 'chmod +w /etc/pam.d/sudo && echo "auth       sufficient     pam_tid.so\n$(cat /etc/pam.d/sudo)" > /etc/pam.d/sudo && chmod -w /etc/pam.d/sudo'
 ```
 
-## System Configuration
+### File Attributes and App Signing
 
-# PowerHour(tm)
+#### Special Installations
+```bash
+brew install alienator88/homebrew-cask/sentinel-app
+```
 
-### Sleeping
+#### Resign Apps and Remove Attributes
+
+xattr -cr removes extended attributes (like quarantine flags) from the app to fix "damaged" errors. codesign --force --deep --sign - re-signs the app locally to resolve macOS signature issues. It's for fixing untrusted or non-Store apps.
+
+```bash
+/Applications/thebrj.app && codesign --force --deep --sign - /Applications/thebrj.app
+```
+
+or
+
+```bash
+Game="/Applications/xmind.app"
+sudo xattr -c -r "$Game"
+sudo xattr -r -d com.apple.quarantine "$Game"
+sudo xattr -cr "$Game"
+sudo xattr -rd com.apple.quarantine "$Game"
+chmod +x "$Game"
+```
+
+#### File Attributes (chattr)
+
+chflags uchg file or nouchg -> Prevents changes to the file's contents or metadata. This is similar to the i attribute in chattr.
+
+## Power & Sleep
+
+### PowerHour(tm)
+
+#### Sleeping
 
 https://support.apple.com/en-us/120622
 
@@ -126,7 +150,7 @@ To undo any of the previous commands and reenable automatic startup when opening
 sudo nvram -d BootPreference
 ```
 
-### DeepSleep
+#### DeepSleep
 
 Got into the classic trap: close the MacBook at night, and in the morning it won't wake up without a charger. Macs these days just ain't what they used to be. In fact, I've got a ton of terminals, remote desktops and other toys that the Mac kindly remembers and wakes itself up for, all night long.
 
@@ -145,6 +169,8 @@ sudo pmset -b tcpkeepalive 0
 
 Result: the Mac survives the night losing only 1-2% battery. Downside: all connections drop, so after opening the lid you wait about a minute for the world to come back.
 
+## Interface Tweaks
+
 ### Dock Customization
 
 #### Add Dock Spacers
@@ -162,36 +188,6 @@ defaults write com.apple.dock persistent-apps -array-add '{"tile-type"="small-sp
 ```
 
 Move the spacer? Drag and drop the spacer to the desired location on your dock. You can delete spacers like any other icon on your dock. Drag the icon off your dock to remove it from your dock or right-click and choose Remove from Dock.
-
-### File Attributes and App Signing
-
-#### Special Installations
-```bash
-brew install alienator88/homebrew-cask/sentinel-app
-```
-
-#### Resign Apps and Remove Attributes
-
-xattr -cr removes extended attributes (like quarantine flags) from the app to fix "damaged" errors. codesign --force --deep --sign - re-signs the app locally to resolve macOS signature issues. It's for fixing untrusted or non-Store apps.
-
-```bash
-/Applications/thebrj.app && codesign --force --deep --sign - /Applications/thebrj.app
-```
-
-or
-
-```bash
-Game="/Applications/xmind.app"
-sudo xattr -c -r "$Game"
-sudo xattr -r -d com.apple.quarantine "$Game"
-sudo xattr -cr "$Game"
-sudo xattr -rd com.apple.quarantine "$Game"
-chmod +x "$Game"
-```
-
-#### File Attributes (chattr)
-
-chflags uchg file or nouchg -> Prevents changes to the file's contents or metadata. This is similar to the i attribute in chattr.
 
 ## Backup & Recovery
 
@@ -304,7 +300,6 @@ brew install --cask --no-quarantine
 #### Utilities
 - forklift
 - appcleaner
-- appcleaner
 - keepassxc
 - rectangle
 - macs-fan-control
@@ -365,7 +360,7 @@ mas install 1438389787
 - kepassxc
 - telephone
 
-## hammerspoon
+### Hammerspoon
 
 Makes a sound when something is copied to clipboard. Lives in ~/.hammerspoon.
 
@@ -447,7 +442,7 @@ git clone https://github.com/zdharma-continuum/fast-syntax-highlighting.git \
  ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fast-syntax-highlighting
 ```
 
-## Utilities & Tips
+## Maintenance & Troubleshooting
 
 ### Disk Operations (dd)
 
@@ -467,6 +462,7 @@ You likely have an extremely tiny file in /Library/LaunchAgents or /Library/Laun
 ```text
 ~/Library/Application Support/Quake3/baseq3/
 ```
+
 ## Paid Software
 
 - https://mixedinkey.com/platinum-notes/

@@ -1,6 +1,9 @@
 #!/bin/sh
 
-exit 0
+if [ "${WINE_INIT_ENABLED:-0}" -ne 1 ]; then
+    echo "[init] INFO: init.wine.sh disabled; set WINE_INIT_ENABLED=1 to run"
+    exit 0
+fi
 
 winecfg >/dev/null 2>&1 || true
 

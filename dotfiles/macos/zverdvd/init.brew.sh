@@ -1,12 +1,12 @@
 #!/bin/sh
 
-if ! command -v brew &>/dev/null; then
-    echo "📦 install homebrew..."
+if ! command -v brew >/dev/null 2>&1; then
+    echo "[init] INFO: install homebrew..."
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
+    echo "eval \"\$(/opt/homebrew/bin/brew shellenv)\"" >> "$HOME/.zprofile"
     eval "$(/opt/homebrew/bin/brew shellenv)"
 else
-    echo "✅ Homebrew already installed"
+    echo "[init] INFO: homebrew already installed"
 fi
 
 brew update
