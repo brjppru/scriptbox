@@ -12,6 +12,7 @@
 # 2025.09.25 defaults write -g com.apple.sound.beep.sound "Submarine"
 # 2025.10.17 remove root command's to separate file
 # 2025.12.22 add some stuff and refactor
+# 2026.01.26 fix fullscreen, a to zaebalo
 
 # If you want to figure out what default needs changing, do the following:
 #
@@ -64,6 +65,9 @@ done
 ###############################################################################
 # System Preferences (NSGlobalDomain)                                         #
 ###############################################################################
+
+# AppleMenuBarVisibleInFullscreen
+defaults write NSGlobalDomain AppleMenuBarVisibleInFullscreen -bool true
 
 # Always show scrollbars
 defaults write NSGlobalDomain AppleShowScrollBars -string "Always"
