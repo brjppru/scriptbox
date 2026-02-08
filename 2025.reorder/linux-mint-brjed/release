@@ -1,0 +1,10 @@
+#!/bin/sh
+
+echo "Посмотреть все релизы и дней с момента выхода (и до выхода)"
+distro-info -y -c -r -f --all
+
+echo "Посмотреть LTS"
+distro-info -y -c -r -f --lts
+
+echo "Поддерживаемые в текущий момент релизы"
+distro-info --supported -c -f -r

@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# but, before start
+
+# v4l2-ctl --list-devices
+# $ffmpeg -hide_banner -f v4l2 -list_formats all -i /dev/video2
+# arecord -l
+
+# ffmpeg -f v4l2 -input_format mjpeg -framerate 30 -video_size 1920x1080 -i /dev/video2 -f alsa -i hw:2 -vcodec copy out.avi
+
+dated=`date +%Y-%m-%d-%H%M%S`
+
+ffmpeg  -f v4l2 \
+	-input_format yuyv422 -framerate 30 -video_size 1920x1080 -i /dev/video2 \
+	-f alsa -i hw:2 -acodec libmp3lame -ab 192k -ar 44100 -ac 1 -filter:a dynaudnorm \
+	-vcodec copy \
+	~/Videos/out-${dated}.avi

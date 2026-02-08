@@ -1,0 +1,5 @@
+#!/bin/sh
+
+openssl rand -base64 24
+
+pwgen -Byncs 24 1
