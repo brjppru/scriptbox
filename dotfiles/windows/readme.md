@@ -503,3 +503,41 @@ New-NetFirewallRule -DisplayName “SQL Server Browse Button Service” -Directi
 #Enable Windows Firewall
 Set-NetFirewallProfile -DefaultInboundAction Block -DefaultOutboundAction Allow -NotifyOnListen True -AllowUnicastResponseToMulticast True
 ``
+
+### eufi boot
+
+Удаление лишних записей загрузчика UEFI
+Windows 10-11. Удаляем linux записи в EFI
+Запускаем Powershell от администратора
+
+```diskpart
+list volume
+select volume 2 //выбираем с FAT32
+assign letter=z
+exit
+cd z:\EFI
+ls
+del ubuntu //для Windows нужен только boot и windows
+diskpart
+remove letter=z
+exit
+```
+
+Все очень просто теперь. Вспоминаю, когда установщики ОС убивали друг друга при установке: ntdlr, lilo, grub.
+Кстати можно посмотреть на refind.
+
+
+### Как отключить экран блокировки
+
+Экран блокировки - это не только красивая картинка, но и лишние телодвижения перед вводом пароля или ПИН-кода.
+
+Начиная с Windows 8 требуется нажать пробел или щёлкнуть мышью, чтобы экран блокировки уехал вверх. Причём в ряде сценариев это может тормозить - например, после выхода из сна.
+
+Если вам скорость важнее эстетики, выполните эту команду от имени администратора:
+
+
+```reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\Personalization" /v NoLockScreen /t REG_DWORD /d 1 /f```
+
+Изменения вступают в силу немедленно. В организации можно применить политику
+
+https://gpsearch.azurewebsites.net/#7401
