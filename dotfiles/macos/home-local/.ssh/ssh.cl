@@ -1,110 +1,56 @@
 # CloudLinux SSH configuration
+# Ownership map:
+# - Domains: *.*.cloudlinux.com, *.atm.svcs.io, gateway-*.atm.svcs.io
+# - Networks: 10.100.*.*, 10.192.*.*, 10.193.*.*, 10.194.*.*, 10.195.*.*, 10.255.*.*
+# - Jump route: jump.atm.svcs.io -> 142.132.147.88
+# - Default key: /Users/brjed/clbrj/clbrj202507
+# - Dedicated key: 206.252.237.34 -> /Users/brjed/clbrj/gitlab.priv
 
-host 10.192.16.6
-	User root
-	IdentityFile /Users/brjed/clbrj/clbrj202507
-
-host  10.192.4.99
-	User root
-	IdentityFile /Users/brjed/clbrj/infra.priv
-	BatchMode yes
-
-host  206.252.237.34
+# Hosts with dedicated non-default keys
+Host 206.252.237.34
 	User root
 	IdentityFile /Users/brjed/clbrj/gitlab.priv
+	IdentitiesOnly yes
 
-# opennebula
-Host 10.100.*.*
+# CL jump hosts and explicit proxy target
+Host jump.atm.svcs.io
 	User rbogdanov
 	IdentityFile /Users/brjed/clbrj/clbrj202507
+	IdentitiesOnly yes
+	ForwardAgent yes
 
-# opennebula
-Host 10.192.*.*
+Host 142.132.147.88
 	User rbogdanov
 	IdentityFile /Users/brjed/clbrj/clbrj202507
+	IdentitiesOnly yes
+	ProxyJump jump.atm.svcs.io
+	ForwardAgent yes
 
-# opennebula
-Host 10.193.*.*
-	User rbogdanov
-	IdentityFile /Users/brjed/clbrj/clbrj202507
-
-Host 77.79.198.33
+# Aliases
+Host atm-jump
+	HostName 192.168.251.1
 	User root
 	IdentityFile /Users/brjed/clbrj/clbrj202507
+	IdentitiesOnly yes
 
-# opennebula
-Host 10.194.*.*
+# CL defaults for root
+Host 10.192.16.6 77.79.198.33
+	User root
+	IdentityFile /Users/brjed/clbrj/clbrj202507
+	IdentitiesOnly yes
+
+# CL defaults for rbogdanov
+Host 10.100.*.* 10.192.*.* 10.193.*.* 10.194.*.* 10.195.*.* 10.255.*.*
 	User rbogdanov
 	IdentityFile /Users/brjed/clbrj/clbrj202507
+	IdentitiesOnly yes
 
-# opennebula
-Host 10.195.*.*
+Host *.*.cloudlinux.com 206.252.237.2 206.252.237.32 206.252.237.33 77.79.198.14 77.79.198.15 138.199.237.44 192.168.245.253 192.168.245.254
 	User rbogdanov
 	IdentityFile /Users/brjed/clbrj/clbrj202507
+	IdentitiesOnly yes
 
-# opennebula
-Host 10.255.*.*
+Host gateway-*.atm.svcs.io *.atm.svcs.io
 	User rbogdanov
 	IdentityFile /Users/brjed/clbrj/clbrj202507
-
-Host 10.192.4.*
-	User rbogdanov
-	IdentityFile /Users/brjed/clbrj/clbrj202507
-
-Host *.*.cloudlinux.com
-	User rbogdanov
-	IdentityFile /Users/brjed/clbrj/clbrj202507
-
-host 206.252.237.32
-	User rbogdanov
-	IdentityFile /Users/brjed/clbrj/clbrj202507
-
-host 206.252.237.33
-	User rbogdanov
-	IdentityFile /Users/brjed/clbrj/clbrj202507
-
-
-host 138.199.237.44
-	User rbogdanov
-	IdentityFile /Users/brjed/clbrj/clbrj202507
-
-host 206.252.237.2
-	User rbogdanov
-	IdentityFile /Users/brjed/clbrj/clbrj202507
-
-
-host 77.79.198.14
-	User rbogdanov
-	IdentityFile /Users/brjed/clbrj/clbrj202507
-
-host 77.79.198.15
-	User rbogdanov
-	IdentityFile /Users/brjed/clbrj/clbrj202507
-
-# ssh -J 192.168.245.254 192.168.251.253
-
-host  192.168.245.254
-	User rbogdanov
-	IdentityFile /Users/brjed/clbrj/clbrj202507
-
-host  192.168.245.253
-	User rbogdanov
-	IdentityFile /Users/brjed/clbrj/clbrj202507
-
-# vm routers in nebula
-
-#Host atm-*-node-*.corp.cloudlinux.com
-#	User root
-#	IdentityFile /Users/brjed/clbrj/infra.priv
-#	BatchMode yes
-
-Host gateway-*.atm.svcs.io
-	User rbogdanov
-	IdentityFile /Users/brjed/clbrj/clbrj202507
-
-# =77.79.198.19/26
-Host atm-jump
-    HostName 192.168.251.1
-    User root
-    IdentityFile ~/brjed/clbrj/clbrj202507
-    IdentitiesOnly yes
+	IdentitiesOnly yes
