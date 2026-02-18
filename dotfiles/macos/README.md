@@ -264,6 +264,7 @@ find /Applications -path '*Contents/_MASReceipt/receipt' -maxdepth 4 -print |\se
 - fdupes
 - lazygit
 - gitup-app
+- whosthere
 
 #### Network Tools
 - mtr
