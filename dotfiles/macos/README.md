@@ -218,6 +218,11 @@ softwareupdate --fetch-full-installer --full-installer-version 15.0
 sudo /Applications/Install\ macOS\ Sequoia.app/Contents/Resources/createinstallmedia --volume /volumes/macos15 
 ```
 
+### Alternative way
+
+- https://github.com/Kruszoneq/macUSB
+- https://github.com/ninxsoft/Mist
+
 ### Erase Old Mac
 
 Erase your Mac and reset it to factory settings -> https://support.apple.com/en-au/102664
