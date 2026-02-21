@@ -1,0 +1,114 @@
+#!/bin/sh
+
+# 2024.10.02 fix the htong
+# 2024.10.25 broken brave cookie integration
+# 2024.11.20 brave cookie restored
+# 2026.02.21 1st public version, reborn
+
+print_usage() {
+    cat <<'USAGE'
+Usage:
+  brjudl makebin
+
+Then use:
+  yta <url> [yt-dlp options]
+  vta <url> [yt-dlp options]
+
+Direct run as brjudl is disabled for downloads.
+Create links first with:
+  brjudl makebin
+USAGE
+}
+
+fail() {
+    printf 'Error: %s\n' "$1" >&2
+    exit 1
+}
+
+require_ytdlp() {
+    command -v yt-dlp >/dev/null 2>&1 || fail "yt-dlp not found in PATH"
+}
+
+get_script_dir() {
+    self_path=$0
+
+    case "$self_path" in
+        */*) ;;
+        *) self_path=$(command -v "$self_path" 2>/dev/null || printf '%s' "$self_path") ;;
+    esac
+
+    cd "$(dirname "$self_path")" >/dev/null 2>&1 && pwd
+}
+
+makebin() {
+    script_dir=$(get_script_dir) || fail "cannot determine script directory"
+    target="$script_dir/brjudl"
+
+    [ -f "$target" ] || fail "cannot find $target"
+
+    ln -sf "$target" "$script_dir/yta" || fail "failed to create $script_dir/yta"
+    ln -sf "$target" "$script_dir/vta" || fail "failed to create $script_dir/vta"
+
+    printf 'Created/updated links:\n'
+    printf '  %s -> %s\n' "$script_dir/yta" "$target"
+    printf '  %s -> %s\n' "$script_dir/vta" "$target"
+}
+
+run_audio() {
+    [ "$#" -gt 0 ] || {
+        print_usage
+        exit 1
+    }
+
+    require_ytdlp
+
+    yt-dlp -4 -x \
+        --trim-filenames 30 \
+        --restrict-filenames \
+        --newline \
+        --console-title \
+        --print-traffic \
+        --audio-quality 0 \
+        --cookies-from-browser brave \
+        --verbose \
+        --write-link \
+        --concurrent-fragments 5 \
+        -f ba --extract-audio --audio-format wav "$@"
+}
+
+run_video() {
+    [ "$#" -gt 0 ] || {
+        print_usage
+        exit 1
+    }
+
+    require_ytdlp
+
+    yt-dlp -4 \
+        --trim-filenames 30 \
+        --newline \
+        --audio-quality 0 \
+        --verbose \
+        --cookies-from-browser brave \
+        "$@"
+}
+
+if [ "${1:-}" = "makebin" ]; then
+    makebin
+    exit 0
+fi
+
+script_name=${0##*/}
+
+case "$script_name" in
+    yta)
+        run_audio "$@"
+        ;;
+    vta)
+        run_video "$@"
+        ;;
+    *)
+        print_usage
+        exit 1
+        ;;
+esac
