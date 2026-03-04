@@ -318,6 +318,7 @@ brew install --cask --no-quarantine
 - flameshot
 - losslesscut
 - glow
+- llmfit
 
 #### Media Applications
 - brave-browser

@@ -541,3 +541,107 @@ exit
 Изменения вступают в силу немедленно. В организации можно применить политику
 
 https://gpsearch.azurewebsites.net/#7401
+
+# Краткая выжимка: отключение IPv6 в Windows
+
+Источник: https://winitpro.ru/index.php/2026/01/29/pro-otkluchenie-ipv6-v-windows/
+
+Статья рекомендует не отключать IPv6 полностью без явной необходимости. Сначала лучше повысить приоритет IPv4 над IPv6. Полное отключение делается через реестр, а простое снятие галочки `Internet Protocol Version 6 (TCP/IPv6)` в свойствах адаптера отключает IPv6 только на конкретном интерфейсе, но не весь стек IPv6 в системе.
+
+Все команды ниже нужно запускать от имени администратора. Для изменений через реестр после применения нужен перезапуск Windows.
+
+## Что лучше делать в первую очередь
+
+Предпочтительный вариант: оставить IPv6 включенным, но заставить Windows предпочитать IPv4.
+
+```bat
+reg add "HKLM\SYSTEM\CurrentControlSet\Services\Tcpip6\Parameters" /v DisabledComponents /t REG_DWORD /d 0x20 /f
+```
+
+## Отключить IPv6 только на одном сетевом адаптере
+
+Это отключает привязку IPv6 только на указанном интерфейсе.
+
+```powershell
+Disable-NetAdapterBinding -Name "Ethernet0" -ComponentID ms_tcpip6
+```
+
+Проверка привязок адаптера:
+
+```powershell
+Get-NetAdapterBinding -Name "Ethernet0"
+```
+
+## Полностью отключить IPv6 в Windows
+
+Это уже отключает стек IPv6 глобально. По статье такой вариант нежелателен без реальной необходимости.
+
+```bat
+reg add "HKLM\SYSTEM\CurrentControlSet\Services\Tcpip6\Parameters" /v DisabledComponents /t REG_DWORD /d 0xFF /f
+```
+
+После этого перезагрузите компьютер.
+
+## Проверка, что IPv6 действительно выключен
+
+Если IPv6 отключен полностью, список интерфейсов IPv6 должен быть пустым, а `ping localhost` должен возвращать `127.0.0.1`, а не `::1`.
+
+```bat
+netsh interface ipv6 show interfaces
+```
+
+```bat
+ping localhost
+```
+
+## Включить IPv6 обратно
+
+Самый простой откат: удалить параметр `DisabledComponents`.
+
+```bat
+reg delete "HKLM\SYSTEM\CurrentControlSet\Services\Tcpip6\Parameters" /v DisabledComponents /f
+```
+
+Альтернатива: выставить значение `0` (состояние по умолчанию).
+
+```bat
+reg add "HKLM\SYSTEM\CurrentControlSet\Services\Tcpip6\Parameters" /v DisabledComponents /t REG_DWORD /d 0 /f
+```
+
+## Готовые `.reg` файлы
+
+### 1. Предпочитать IPv4, не отключая IPv6 (`prefer-ipv4.reg`)
+
+```reg
+Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip6\Parameters]
+"DisabledComponents"=dword:00000020
+```
+
+### 2. Полностью отключить IPv6 (`disable-ipv6.reg`)
+
+```reg
+Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip6\Parameters]
+"DisabledComponents"=dword:000000ff
+```
+
+### 3. Вернуть стандартное поведение / включить IPv6 (`enable-ipv6-default.reg`)
+
+```reg
+Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip6\Parameters]
+"DisabledComponents"=dword:00000000
+```
+
+## Полезные значения `DisabledComponents`
+
+- `0` - IPv6 включен (по умолчанию)
+- `0x10` - отключить IPv6 на не-туннельных интерфейсах
+- `0x01` - отключить IPv6 на туннельных интерфейсах
+- `0x11` - отключить IPv6 везде, кроме loopback
+- `0x20` - предпочитать IPv4 вместо IPv6
+- `0xFF` - полностью отключить IPv6
