@@ -1,0 +1,87 @@
+add_newline = true
+command_timeout = 500
+scan_timeout = 30
+
+format = """
+$username$hostname$directory$git_branch$git_status$battery$line_break$character
+"""
+
+right_format = """$status$time"""
+
+[character]
+success_symbol = "[>](bold cyan)"
+error_symbol = "[>](bold red)"
+vicmd_symbol = "[<](bold green)"
+
+[username]
+show_always = false
+style_user = "bold green"
+style_root = "bold red"
+format = "[$user]($style)"
+
+[hostname]
+ssh_only = true
+style = "bold blue"
+format = "[@$hostname]($style) "
+trim_at = "."
+
+[directory]
+style = "bold cyan"
+truncate_to_repo = false
+truncation_length = 3
+read_only = " !"
+format = "[$path]($style)[$read_only]($read_only_style) "
+
+[git_branch]
+symbol = "git:"
+style = "bold green"
+format = "[$symbol$branch]($style) "
+
+[git_status]
+style = "bold yellow"
+format = "([$all_status$ahead_behind]($style) )"
+ahead = ">${count}"
+behind = "<${count}"
+conflicted = "=${count}"
+deleted = "x${count}"
+diverged = "<>${ahead_count}/${behind_count}"
+modified = "!${count}"
+renamed = "r${count}"
+staged = "+${count}"
+stashed = "$${count}"
+typechanged = "t${count}"
+untracked = "?${count}"
+up_to_date = ""
+
+[status]
+disabled = false
+symbol = "x"
+format = "[$symbol$status]($style) "
+style = "bold red"
+
+[battery]
+disabled = false
+full_symbol = "bat="
+charging_symbol = "bat+"
+discharging_symbol = "bat"
+unknown_symbol = "bat?"
+empty_symbol = "bat!"
+format = "[$symbol $percentage]($style) "
+
+[[battery.display]]
+threshold = 20
+style = "bold red"
+
+[[battery.display]]
+threshold = 50
+style = "bold yellow"
+
+[[battery.display]]
+threshold = 100
+style = "bold blue"
+
+[time]
+disabled = false
+time_format = "%H:%M:%S"
+format = "[$time]($style)"
+style = "bold cyan"
