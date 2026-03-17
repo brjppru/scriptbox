@@ -311,6 +311,7 @@ brew install --cask --no-quarantine
 - rectangle
 - macs-fan-control
 - betterdisplay
+- DisplayBuddy
 - applite
 - pearcleaner
 - macwhisper
