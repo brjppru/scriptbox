@@ -287,6 +287,7 @@ find /Applications -path '*Contents/_MASReceipt/receipt' -maxdepth 4 -print |\se
 #### Development Tools
 - hugo
 - tablecruncher
+- steipete/tap/codexbar
 
 #### Other Tools
 - scrcpy
