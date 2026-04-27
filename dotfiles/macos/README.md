@@ -80,6 +80,21 @@ sudo su root -c 'chmod +w /etc/pam.d/sudo && echo "auth       sufficient     pam
 
 ### File Attributes and App Signing
 
+#### fix extension opening
+
+```
+#!/usr/bin/env bash
+
+brew install duti
+
+BUNDLE_ID=$(osascript -e 'id of app "Sublime Text"')
+
+duti -s "$BUNDLE_ID" .md all
+duti -s "$BUNDLE_ID" net.daringfireball.markdown all
+
+killall Finder
+```
+
 #### Special Installations
 ```bash
 brew install alienator88/homebrew-cask/sentinel-app
@@ -260,6 +275,7 @@ find /Applications -path '*Contents/_MASReceipt/receipt' -maxdepth 4 -print |\se
 
 #### System Tools
 - ncdu
+- duti
 - tmux
 - htop
 - midnight-commander
