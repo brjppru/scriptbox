@@ -407,6 +407,8 @@ brew services start syncthing
 
 No access to local network sites? Go to "Local Network" setting in macOS Privacy settings and enable it.
 
+For cookies open brave://settings/content/all
+
 #### Plugins
 
 - Imagus mod -> https://www.reddit.com/r/imagus/
