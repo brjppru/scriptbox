@@ -315,6 +315,9 @@ find /Applications -path '*Contents/_MASReceipt/receipt' -maxdepth 4 -print |\se
 brew install --cask --no-quarantine
 ```
 
+- brew install --cask vorssaint
+- brew install --cask caskhub
+
 #### Development Tools
 - sublime-text
 - kitty
