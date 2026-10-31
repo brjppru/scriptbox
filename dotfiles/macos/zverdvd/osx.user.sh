@@ -350,8 +350,8 @@ defaults write com.apple.messageshelper.MessageController SOInputLineSettings -d
 # Show the main window when launching Activity Monitor
 defaults write com.apple.ActivityMonitor OpenMainWindow -bool true
 
-# Show all processes in Activity Monitor
-defaults write com.apple.ActivityMonitor ShowCategory -int 0
+# Show all processes in Activity Monitor (100 = All Processes, the old value 0 is not used anymore)
+defaults write com.apple.ActivityMonitor ShowCategory -int 100
 
 ###############################################################################
 # App Store                                                                   #
