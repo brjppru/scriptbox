@@ -1,0 +1,247 @@
+tap "anomalyco/tap"
+tap "autobrr/mkbrr"
+tap "domcyrus/rustnet"
+tap "erickochen/purple"
+tap "homebrew/services"
+tap "saidutt46/domain-check"
+tap "steipete/tap"
+tap "zsuroy/ctty"
+# Simple, modern, secure file encryption
+brew "age"
+# Command-line tool for downloading APK files from various sources
+brew "apkeep"
+# Calculate various network masks, etc. from a given IP address
+brew "ipcalc"
+# 'traceroute' and 'ping' in a single tool
+brew "mtr"
+# Port scanning utility for large networks
+brew "nmap"
+# Organization lookup and server tool (ASN / IPv4 / IPv6 / Prefix / AS Path)
+brew "asn"
+# Clone of cat(1) with syntax highlighting and Git integration
+brew "bat"
+# Extract files from Microsoft cabinet files
+brew "cabextract"
+# Text-based personal organizer
+brew "calcurse"
+# Play, record, convert, and stream select audio and video codecs
+brew "ffmpeg"
+# Duplicate file utility
+brew "czkawka"
+# Disk Usage/Free Utility - a better 'df' alternative
+brew "duf"
+# Identify or delete duplicate files
+brew "fdupes"
+# Command-line fuzzy finder written in Go
+brew "fzf"
+# Render markdown on the CLI
+brew "glow"
+# Open source programming language to build simple/reliable/efficient software
+brew "go"
+# Graph visualization software from AT&T and Bell Labs
+brew "graphviz"
+# Easy plain text accounting with command-line, terminal and web UIs
+brew "hledger"
+# Improved top (interactive process viewer)
+brew "htop"
+# Configurable static site generator
+brew "hugo"
+# Migrate or backup IMAP mail accounts
+brew "imapsync"
+# Json incremental digger
+brew "jid"
+# Lightweight and flexible command-line JSON processor
+brew "jq"
+# Simple terminal UI for git commands
+brew "lazygit"
+# Find what models run on your hardware
+brew "llmfit"
+# Mac App Store command-line interface
+brew "mas"
+# Terminal-based visual file manager
+brew "midnight-commander"
+# Powerful paging program
+brew "most"
+# NCurses Disk Usage
+brew "ncdu"
+# Ambitious Vim-fork focused on extensibility and agility
+brew "neovim"
+# Open-source, cross-platform JavaScript runtime environment
+brew "node"
+# Parchive: Parity Archive Volume Set for data recovery
+brew "par2"
+# Execute binaries from Python packages in isolated environments
+brew "pipx"
+# PDF rendering library (based on the xpdf-3.0 code base)
+brew "poppler"
+# Search tool like grep and The Silver Searcher
+brew "ripgrep"
+# Cross-platform network monitoring terminal UI with deep packet inspection
+brew "rustnet"
+# Display and control your Android device
+brew "scrcpy"
+# 7-Zip is a file archiver with a high compression ratio
+brew "sevenzip"
+# Static analysis and lint tool, for (ba)sh scripts
+brew "shellcheck"
+# Advanced console-based IP subnet calculator
+brew "sipcalc"
+# Traffic generator for the SIP protocol
+brew "sipp"
+# SIP Swiss army knife
+brew "sipsak"
+# SMART hard drive monitoring
+brew "smartmontools"
+# Cross-platform application to monitor your network traffic
+brew "sniffnet"
+# Cross-shell prompt for astronauts
+brew "starship"
+# Open source continuous file synchronization application
+brew "syncthing", restart_service: :changed
+# OCR (Optical Character Recognition) engine
+brew "tesseract"
+# Enables extra languages support for Tesseract
+brew "tesseract-lang"
+# Text interface for Git repositories
+brew "tig"
+# Terminal multiplexer
+brew "tmux"
+# Lightweight BitTorrent client
+brew "transmission-cli"
+# Network diagnostic tool, inspired by mtr
+brew "trippy"
+# Internet file retriever
+brew "wget"
+# Automatic workarounds for problems in Wine
+brew "winetricks"
+# Tools for the WireGuard secure network tunnel
+brew "wireguard-tools"
+# Blazing fast terminal file manager written in Rust, based on async I/O
+brew "yazi"
+# Feature-rich command-line audio/video downloader
+brew "yt-dlp"
+# Suite of barcodes-reading tools
+brew "zbar"
+# Shell extension to navigate your filesystem faster
+brew "zoxide"
+# The AI coding agent built for the terminal.
+brew "anomalyco/tap/opencode", trusted: true
+# Command-line tool for creating, modifying and inspecting torrent files
+brew "autobrr/mkbrr/mkbrr", trusted: true
+# Open-source terminal SSH manager and SSH config editor
+brew "erickochen/purple/purple", trusted: true
+# Fast, powerful CLI tool for checking domain availability using RDAP and WHOIS
+brew "saidutt46/domain-check/domain-check", trusted: true
+# A lightweight terminal connection manager for SSH, serial, and SFTP
+brew "zsuroy/ctty/ctty", trusted: true
+# Enable Windows-like alt-tab
+cask "alt-tab"
+# Android SDK component
+cask "android-platform-tools"
+# Multi-track audio editor and recorder
+cask "audacity@3"
+# Display management tool
+cask "betterdisplay"
+# Desktop password and login vault
+cask "bitwarden"
+# Virtual Audio Driver
+cask "blackhole-2ch"
+# Web browser focusing on privacy
+cask "brave-browser"
+# Shoutcast and Icecast streaming client
+cask "butt"
+# Native GUI for Homebrew casks
+cask "caskhub"
+# OpenAI's official ChatGPT desktop app
+cask "chatgpt"
+# Terminal-based AI coding assistant
+cask "claude-code"
+# OpenAI's coding agent that runs in your terminal
+cask "codex"
+# Menu bar usage monitor for Codex and Claude
+cask "steipete/tap/codexbar", trusted: true
+# Mount network shares quick and easy
+cask "connectmenow"
+# Server and cloud storage browser
+cask "cyberduck"
+# API documentation browser and code snippet manager
+cask "dash"
+# Universal database tool and SQL client
+cask "dbeaver-community"
+# AI-powered translator
+cask "deepl"
+# Drive health diagnostic & monitoring tool
+cask "drivedx"
+# Per-application volume mixer, equalizer, and audio router
+cask "finetune"
+# Web browser
+cask "firefox"
+# Download manager with a torrent client
+cask "folx"
+cask "font-inconsolata-nerd-font"
+cask "font-jetbrains-mono-nerd-font"
+cask "font-victor-mono-nerd-font"
+# Git interface focused on visual interaction
+cask "gitup-app"
+# Web browser
+cask "google-chrome"
+# Open Source Multimedia Framework
+cask "gstreamer-runtime"
+# Desktop automation application
+cask "hammerspoon"
+# Personal data manager focusing on security
+cask "keepassx"
+# Password manager app
+cask "keepassxc"
+# Tool to prevent the system from going into sleep mode
+cask "keepingyouawake"
+# File archiver
+cask "keka"
+# Audio tagger focusing on efficiency
+cask "kid3"
+# GPU-based terminal emulator
+cask "kitty"
+# Controls and monitors all fans on Apple computers
+cask "macs-fan-control"
+# Utility that automatically downloads firmwares and installers
+cask "mist"
+# Network information and diagnostics utility
+cask "neo-network-utility"
+# Dual-pane file manager
+cask "nimble-commander"
+# Calendar for professionals and teams
+cask "notion-calendar"
+# Calculator and converter application
+cask "numi"
+# Document editor
+cask "onlyoffice"
+# Verify system files structure, run miscellaneous maintenance and more
+cask "onyx"
+# AI coding agent desktop client
+cask "opencode-desktop"
+# Archive manager for data compression and backups
+cask "rar"
+# Move and resize windows using keyboard shortcuts or snap areas
+cask "rectangle"
+# Emoji picker optimised for blind people
+cask "rocket"
+# System monitor for the menu bar
+cask "stats"
+# Text editor for code, markup and prose
+cask "sublime-text"
+# Customizable email client
+cask "thunderbird"
+# Open-source BitTorrent client
+cask "transmission"
+# AI image upscaler
+cask "upscayl"
+# Multimedia player
+cask "vlc"
+# Menu bar toolkit with keep-awake, system monitor and volume mixer
+cask "vorssaint"
+# Compatibility layer to run Windows applications
+cask "wine-stable"
+mas "Telephone", id: 406825478
+mas "Windows App", id: 1295203466
+npm "@devtheops/opencode-plugin-otel"
+npm "@mariozechner/pi-coding-agent"
