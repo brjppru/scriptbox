@@ -292,9 +292,16 @@ defaults write com.apple.dock wvous-bl-modifier -int 0
 # Hide Safari's bookmark bar
 defaults write com.apple.Safari ShowFavoritesBar -bool false
 
+# Show full website address in the address bar
+defaults write com.apple.Safari ShowFullURLInSmartSearchField -bool true
+
 # Set up Safari for development
 defaults write com.apple.Safari IncludeInternalDebugMenu -bool true
 defaults write com.apple.Safari IncludeDevelopMenu -bool true
+# Safari 17+: without SandboxBroker ShowDevelopMenu Safari resets IncludeDevelopMenu to 0 on launch
+# (keys taken from a before/after diff of the "Show features for web developers" checkbox, 2026.10.31)
+defaults write com.apple.Safari.SandboxBroker ShowDevelopMenu -bool true
+defaults write com.apple.Safari WebKitPreferences.developerExtrasEnabled -bool true
 defaults write com.apple.Safari WebKitDeveloperExtrasEnabledPreferenceKey -bool true
 defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2DeveloperExtrasEnabled -bool true
 
