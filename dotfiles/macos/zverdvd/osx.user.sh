@@ -100,6 +100,39 @@ defaults write NSGlobalDomain AppleShowAllExtensions -bool true
 defaults write -g com.apple.sound.beep.sound "/System/Library/Sounds/Submarine.aiff"
 
 ###############################################################################
+# Apple Intelligence                                                          #
+###############################################################################
+
+# Explicit opt-out, stops the "finish setting up Apple Intelligence" nag.
+# Key 1086019912 is what the System Settings toggle writes (macOS 15.8.1 / 15.8.2).
+defaults write com.apple.CloudSubscriptionFeatures.optIn 1086019912 -bool false
+
+###############################################################################
+# Software Update                                                             #
+###############################################################################
+
+# Stay on macOS 15: auto-install of macOS is off in osx.root.sh, here only the nagging is silenced.
+# Turn off "Allow Notifications" for Software Update (bit 25 of flags in com.apple.ncprefs).
+# macOS 15 keeps notification settings in com.apple.ncprefs; macOS 26 moved them elsewhere.
+NC_TMP="$(mktemp -t ncprefs).plist"
+defaults export com.apple.ncprefs "$NC_TMP"
+i=0
+while /usr/libexec/PlistBuddy -c "Print :apps:$i" "$NC_TMP" >/dev/null 2>&1; do
+  bid=$(/usr/libexec/PlistBuddy -c "Print :apps:$i:bundle-id" "$NC_TMP" 2>/dev/null)
+  if [ "$bid" = "_SYSTEM_CENTER_:com.apple.SoftwareUpdateNotification" ]; then
+    flags=$(/usr/libexec/PlistBuddy -c "Print :apps:$i:flags" "$NC_TMP")
+    /usr/libexec/PlistBuddy -c "Set :apps:$i:flags $((flags & ~(1 << 25)))" "$NC_TMP"
+  fi
+  i=$((i + 1))
+done
+defaults import com.apple.ncprefs "$NC_TMP"
+rm -f "$NC_TMP"
+killall usernoted NotificationCenter > /dev/null 2>&1
+
+# Push the "upgrade to the next major macOS" reminder far into the future.
+defaults write com.apple.SoftwareUpdate MajorOSUserNotificationDate -date "2035-01-01 00:00:00 +0000"
+
+###############################################################################
 # Keyboard & Trackpad                                                         #
 ###############################################################################
 
@@ -292,6 +325,9 @@ defaults write com.apple.mail SpellCheckingBehavior -string "NoSpellCheckingEnab
 # Disable send and reply animations in Mail.app
 defaults write com.apple.mail DisableReplyAnimations -bool true
 defaults write com.apple.mail DisableSendAnimations -bool true
+
+# New mail sound: Pop
+defaults write com.apple.mail NewMessagesSoundName -string "Pop"
 
 ###############################################################################
 # Messages                                                                    #

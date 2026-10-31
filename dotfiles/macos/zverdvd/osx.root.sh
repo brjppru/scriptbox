@@ -49,9 +49,22 @@ defaults write com.apple.universalaccess reduceTransparency -bool false
 # Spotlight                                                                   #
 ###############################################################################
 
-# Disable Spotlight indexing for any volume that gets mounted and has not yet been indexed before.
+# Exclude from Spotlight: mounted volumes, ~/Library/Application Support, ~/Library/Caches
+# (app data there made mds_stores write ~5 GB/h on air13m4w, 2026.10.18)
+# and ~/clms (ticket snapshots, ~30k JSON files rewritten every few days, 2026.10.31).
+# Dot-folders (~/.claude, ~/.codex) are not indexed by Spotlight anyway.
 # Use `sudo mdutil -i off "/Volumes/foo"` to stop indexing any volume.
-sudo defaults write /.Spotlight-V100/VolumeConfiguration Exclusions -array "/Volumes"
+# Exclusions live on the Data volume, /.Spotlight-V100 does not exist on modern macOS.
+# Entries are appended, existing ones are kept (-array would wipe the list).
+SPOTLIGHT_PLIST="/System/Volumes/Data/.Spotlight-V100/VolumeConfiguration.plist"
+USER_HOME=$(dscl . -read "/Users/${SUDO_USER:-$(id -un)}" NFSHomeDirectory | cut -d' ' -f2)
+/usr/libexec/PlistBuddy -c "Print :Exclusions" "$SPOTLIGHT_PLIST" >/dev/null 2>&1 \
+  || /usr/libexec/PlistBuddy -c "Add :Exclusions array" "$SPOTLIGHT_PLIST"
+for dir in "/Volumes" "$USER_HOME/Library/Application Support" "$USER_HOME/Library/Caches" "$USER_HOME/clms"; do
+  if ! /usr/libexec/PlistBuddy -c "Print :Exclusions" "$SPOTLIGHT_PLIST" | grep -qxF "    $dir"; then
+    /usr/libexec/PlistBuddy -c "Add :Exclusions: string $dir" "$SPOTLIGHT_PLIST"
+  fi
+done
 
 # Show volumes
 sudo chflags nohidden /Volumes
