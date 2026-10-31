@@ -42,9 +42,6 @@ defaults write /Library/Preferences/com.apple.commerce AutoUpdateRestartRequired
 # Restart automatically if the computer freezes
 systemsetup -setrestartfreeze on
 
-# Enable the 'reduce transparency' option. Save GPU cycles.
-defaults write com.apple.universalaccess reduceTransparency -bool false
-
 ###############################################################################
 # Spotlight                                                                   #
 ###############################################################################

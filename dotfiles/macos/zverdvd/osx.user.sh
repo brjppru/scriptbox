@@ -99,6 +99,10 @@ defaults write NSGlobalDomain AppleShowAllExtensions -bool true
 # Set default beep sound
 defaults write -g com.apple.sound.beep.sound "/System/Library/Sounds/Submarine.aiff"
 
+# Keep transparency effects on (reduceTransparency false).
+# Moved here from osx.root.sh 2026.10.31: under sudo it was written to root's domain, not the user's.
+defaults write com.apple.universalaccess reduceTransparency -bool false
+
 ###############################################################################
 # Apple Intelligence                                                          #
 ###############################################################################
