@@ -1,0 +1,155 @@
+tap "anomalyco/tap"
+tap "hudochenkov/sshpass"
+tap "steipete/tap", trusted: { casks: ["codexbar"] }
+# Simple, modern, secure file encryption
+brew "age"
+# Automate deployment, configuration, and upgrading
+brew "ansible"
+# Checks ansible playbooks for practices and behaviour
+brew "ansible-lint"
+# Official Amazon AWS command-line interface
+brew "awscli"
+# Incredibly fast JavaScript runtime, bundler, test runner, and package manager
+brew "bun"
+# GNU File, Shell, and Text utilities
+brew "coreutils"
+# Select default apps for documents and URL schemes on macOS
+brew "duti"
+# Collection of GNU find, xargs, and locate
+brew "findutils"
+# Command-line fuzzy finder written in Go
+brew "fzf"
+# GNU awk utility
+brew "gawk"
+# Distributed revision control system
+brew "git"
+# Quickly rewrite git repository history
+brew "git-filter-repo"
+# GNU implementation of the famous stream editor
+brew "gnu-sed"
+# Open source programming language to build simple/reliable/efficient software
+brew "go"
+# Graph visualization software from AT&T and Bell Labs
+brew "graphviz"
+# GNU grep, egrep and fgrep
+brew "grep"
+# CLI email client written in Rust
+brew "himalaya"
+# Easy plain text accounting with command-line, terminal and web UIs
+brew "hledger"
+# Improved top (interactive process viewer)
+brew "htop"
+# Configurable static site generator
+brew "hugo"
+# Calculate various network masks, etc. from a given IP address
+brew "ipcalc"
+# Update of iperf: measures TCP, UDP, and SCTP bandwidth
+brew "iperf3"
+# Kubernetes command-line interface
+brew "kubernetes-cli"
+# High quality MPEG Audio Layer III (MP3) encoder
+brew "lame"
+# Terminal-based visual file manager
+brew "midnight-commander"
+# 'traceroute' and 'ping' in a single tool
+brew "mtr"
+# NCurses Disk Usage
+brew "ncdu"
+# Drop-in replacement for Terraform. Infrastructure as Code Tool
+brew "opentofu"
+# 7-Zip (high compression file archiver) implementation
+brew "p7zip"
+# Execute binaries from Python packages in isolated environments
+brew "pipx"
+# PDF rendering library (based on the xpdf-3.0 code base)
+brew "poppler"
+# Framework for managing multi-language pre-commit hooks
+brew "pre-commit"
+# Search tool like grep and The Silver Searcher
+brew "ripgrep"
+# CLI proxy to minimize LLM token consumption
+brew "rtk"
+# Extremely fast Python linter, written in Rust
+brew "ruff"
+# 7-Zip is a file archiver with a high compression ratio
+brew "sevenzip"
+# Static analysis and lint tool, for (ba)sh scripts
+brew "shellcheck"
+# Cross-shell prompt for astronauts
+brew "starship"
+# Modern and pretty fancy file manager for the terminal
+brew "superfile"
+# Open source continuous file synchronization application
+brew "syncthing", restart_service: :changed
+# OCR (Optical Character Recognition) engine
+brew "tesseract"
+# Enables extra languages support for Tesseract
+brew "tesseract-lang"
+# Linter for Terraform files
+brew "tflint"
+# Text interface for Git repositories
+brew "tig"
+# Terminal multiplexer
+brew "tmux"
+# Command-line unarchiving tools supporting multiple formats
+brew "unar"
+# Internet file retriever
+brew "wget"
+# LAN discovery tool with a modern TUI written in Go
+brew "whosthere"
+# Linter for YAML files
+brew "yamllint"
+# Process YAML, JSON, XML, CSV and properties documents from the CLI
+brew "yq"
+# Feature-rich command-line audio/video downloader
+brew "yt-dlp"
+# Shell extension to navigate your filesystem faster
+brew "zoxide"
+# The AI coding agent built for the terminal.
+brew "anomalyco/tap/opencode", trusted: true
+# Desktop password and login vault
+cask "bitwarden"
+# Web browser focusing on privacy
+cask "brave-browser"
+# OpenAI's official ChatGPT desktop app
+cask "chatgpt"
+# Free app that makes your Internet safer
+cask "cloudflare-warp"
+# OpenAI's coding agent that runs in your terminal
+cask "codex"
+# Menu bar app for tracking agentic coding limits and usage
+cask "codexbar"
+# Write, edit, and chat about your code with AI
+cask "cursor"
+cask "font-jetbrains-mono-nerd-font"
+# Set of tools to manage resources and applications hosted on Google Cloud
+cask "gcloud-cli"
+# Git interface focused on visual interaction
+cask "gitup-app"
+# Adds an OpenGL renderer to the ZDoom source port
+cask "gzdoom"
+# Desktop automation application
+cask "hammerspoon"
+# Password manager app
+cask "keepassxc"
+# GPU-based terminal emulator
+cask "kitty"
+# Calendar for professionals and teams
+cask "notion-calendar"
+# Calculator and converter application
+cask "numi"
+# Replacement for Docker Desktop
+cask "orbstack"
+# Move and resize windows using keyboard shortcuts or snap areas
+cask "rectangle"
+cask "sentinel-app"
+# Team communication and collaboration software
+cask "slack"
+# Text editor for code, markup and prose
+cask "sublime-text"
+# Multimedia player
+cask "vlc"
+# Menu bar toolkit with keep-awake, system monitor and volume mixer
+cask "vorssaint"
+# Video communication and virtual meeting platform
+cask "zoom"
