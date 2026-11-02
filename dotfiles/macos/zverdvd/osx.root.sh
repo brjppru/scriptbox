@@ -43,6 +43,27 @@ defaults write /Library/Preferences/com.apple.commerce AutoUpdateRestartRequired
 systemsetup -setrestartfreeze on
 
 ###############################################################################
+# Power & battery                                                             #
+###############################################################################
+
+# Captured from air13m4w (MacBook Air M4, macOS 15.8.2) on 2026.11.02.
+# -b battery, -c charger, -a both. Not listed here = macOS default
+# (standby 1, hibernatemode 3, tcpkeepalive 1, womp: charger 1 / battery 0).
+
+# Do not dim the display on battery ("Slightly dim the display on battery" off)
+pmset -b lessbright 0
+# Do not sleep on the charger when the display is off (downloads and ssh keep running)
+pmset -c sleep 0
+# Turn the display off after 5 minutes on battery and on the charger
+pmset -a displaysleep 5
+# Power Nap on battery too, not only on the charger
+pmset -b powernap 1
+
+# Optimized Battery Charging (holds at 80% and tops off before unplug) is on.
+# It is a System Settings toggle with no supported pmset/defaults key, so it is not set here.
+# macOS 15 has no manual charge limit (smartcharging ManualChargeLimit 0); use AlDente for a hard 80% cap.
+
+###############################################################################
 # Spotlight                                                                   #
 ###############################################################################
 
