@@ -46,18 +46,22 @@ systemsetup -setrestartfreeze on
 # Power & battery                                                             #
 ###############################################################################
 
-# Captured from air13m4w (MacBook Air M4, macOS 15.8.2) on 2026.11.02.
-# -b battery, -c charger, -a both. Not listed here = macOS default
+# Same on air13m4w and pro16m1p, set on both on 2026.11.02.
+# -b battery, -c charger. Not listed here = macOS default
 # (standby 1, hibernatemode 3, tcpkeepalive 1, womp: charger 1 / battery 0).
 
-# Do not dim the display on battery ("Slightly dim the display on battery" off)
+# Battery: do not dim the display ("Slightly dim the display on battery" off)
 pmset -b lessbright 0
-# Do not sleep on the charger when the display is off (downloads and ssh keep running)
-pmset -c sleep 0
-# Turn the display off after 5 minutes on battery and on the charger
-pmset -a displaysleep 5
-# Power Nap on battery too, not only on the charger
+# Battery: Low Power Mode off
+pmset -b lowpowermode 0
+# Battery: turn the display off after 5 minutes
+pmset -b displaysleep 5
+# Battery: Power Nap on, not only on the charger
 pmset -b powernap 1
+# Charger: do not sleep when the display is off (downloads and ssh keep running)
+pmset -c sleep 0
+# Charger: turn the display off after 10 minutes
+pmset -c displaysleep 10
 
 # Optimized Battery Charging (holds at 80% and tops off before unplug) is on.
 # It is a System Settings toggle with no supported pmset/defaults key, so it is not set here.
